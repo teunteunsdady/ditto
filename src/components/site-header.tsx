@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 const MENUS = [
   { label: "서비스 안내", href: "/" },
@@ -12,6 +13,7 @@ const MENUS = [
 export function SiteHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const checkSession = async () => {
@@ -28,7 +30,17 @@ export function SiteHeader() {
     };
 
     void checkSession();
-  }, []);
+
+    const handleWindowFocus = () => {
+      void checkSession();
+    };
+
+    window.addEventListener("focus", handleWindowFocus);
+
+    return () => {
+      window.removeEventListener("focus", handleWindowFocus);
+    };
+  }, [pathname]);
 
   const handleLogout = async () => {
     try {
