@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Incoaching Clone Starter
+
+1인 개발/무료 운영을 목표로 한 `Next.js + Supabase` 기반 홈페이지 스타터입니다.
+
+레퍼런스: [incoaching.com](https://incoaching.com/)
 
 ## Getting Started
 
-First, run the development server:
+```bash
+npm install
+cp .env.example .env.local
+```
+
+`.env.local`에 Supabase 값을 넣은 뒤 실행:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+
+필수 환경변수:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+MASTER_LOGIN_EMAIL=...
+MASTER_LOGIN_PASSWORD=...
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 기술 스택
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- Frontend: Next.js(App Router) + React + TailwindCSS
+- Backend: Supabase(PostgreSQL, Auth, Storage, Edge Functions)
+- Deploy: Vercel + Supabase Free Tier
 
-## Learn More
+## 백엔드 추천 아키텍처
 
-To learn more about Next.js, take a look at the following resources:
+현재 조건(1인 개발, 무료 운영, 빠른 MVP)에서는 **별도 백엔드 서버를 두지 않는 구조**가 가장 효율적입니다.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- 데이터베이스/인증/스토리지: Supabase
+- 서버 로직: Next.js Route Handlers 또는 Server Actions
+- 필요한 경우 비동기/스케줄 로직: Supabase Edge Functions
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+이 구조는 운영 단순성, 비용, 개발 속도 모두에서 유리합니다.
 
-## Deploy on Vercel
+## Supabase 세팅 문서
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `docs/supabase-setup.md`: Supabase 프로젝트 생성/키 설정/RLS 가이드
+- `docs/vercel-deploy-checklist.md`: Vercel 배포 절차 체크리스트
+- `docs/worklog.md`: 작업일지
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## 현재 포함된 구조
+
+- `src/lib/supabase/client.ts`: 브라우저용 Supabase 클라이언트
+- `src/lib/supabase/server.ts`: 서버 컴포넌트/핸들러용 클라이언트
+- `src/lib/supabase/middleware.ts` + `middleware.ts`: 세션 동기화
+
+## 다음 단계 제안
+
+1. 메인 섹션 UI를 레퍼런스 스타일에 맞게 구체화
+2. 문의 폼 + DB 저장 API 구현
+3. 인사이트 게시글 CRUD 구현
+4. 어드민 인증 및 권한 분리(RLS 정책)

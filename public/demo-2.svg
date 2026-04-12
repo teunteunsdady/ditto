@@ -1,0 +1,17 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" rx="40" fill="url(#paint0_linear_2_1)"/>
+  <rect x="90" y="120" width="1020" height="560" rx="28" fill="white" fill-opacity="0.12"/>
+  <path d="M170 250C170 233.431 183.431 220 200 220H560C576.569 220 590 233.431 590 250V550C590 566.569 576.569 580 560 580H200C183.431 580 170 566.569 170 550V250Z" fill="white" fill-opacity="0.25"/>
+  <path d="M640 250C640 233.431 653.431 220 670 220H1000C1016.57 220 1030 233.431 1030 250V340C1030 356.569 1016.57 370 1000 370H670C653.431 370 640 356.569 640 340V250Z" fill="white" fill-opacity="0.24"/>
+  <path d="M640 420C640 403.431 653.431 390 670 390H1000C1016.57 390 1030 403.431 1030 420V550C1030 566.569 1016.57 580 1000 580H670C653.431 580 640 566.569 640 550V420Z" fill="white" fill-opacity="0.18"/>
+  <text x="120" y="90" fill="white" font-family="Arial, sans-serif" font-size="58" font-weight="700">Sample Visual 02</text>
+  <text x="205" y="290" fill="white" font-family="Arial, sans-serif" font-size="30" font-weight="600">Program List</text>
+  <text x="680" y="300" fill="white" font-family="Arial, sans-serif" font-size="28" font-weight="600">Case Study</text>
+  <text x="680" y="470" fill="white" font-family="Arial, sans-serif" font-size="28" font-weight="600">Insight Feed</text>
+  <defs>
+    <linearGradient id="paint0_linear_2_1" x1="130" y1="40" x2="1080" y2="760" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7C3AED"/>
+      <stop offset="1" stop-color="#4F46E5"/>
+    </linearGradient>
+  </defs>
+</svg>

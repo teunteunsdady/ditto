@@ -1,0 +1,18 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" rx="40" fill="url(#paint0_linear_3_1)"/>
+  <circle cx="220" cy="180" r="90" fill="white" fill-opacity="0.16"/>
+  <circle cx="980" cy="620" r="130" fill="white" fill-opacity="0.16"/>
+  <path d="M150 230C150 207.909 167.909 190 190 190H1010C1032.09 190 1050 207.909 1050 230V280C1050 302.091 1032.09 320 1010 320H190C167.909 320 150 302.091 150 280V230Z" fill="white" fill-opacity="0.23"/>
+  <path d="M150 360C150 337.909 167.909 320 190 320H1010C1032.09 320 1050 337.909 1050 360V410C1050 432.091 1032.09 450 1010 450H190C167.909 450 150 432.091 150 410V360Z" fill="white" fill-opacity="0.2"/>
+  <path d="M150 490C150 467.909 167.909 450 190 450H1010C1032.09 450 1050 467.909 1050 490V540C1050 562.091 1032.09 580 1010 580H190C167.909 580 150 562.091 150 540V490Z" fill="white" fill-opacity="0.16"/>
+  <text x="150" y="125" fill="white" font-family="Arial, sans-serif" font-size="58" font-weight="700">Sample Visual 03</text>
+  <text x="180" y="264" fill="white" font-family="Arial, sans-serif" font-size="30" font-weight="600">Consulting Request Funnel</text>
+  <text x="180" y="394" fill="white" font-family="Arial, sans-serif" font-size="30" font-weight="600">Customer Journey Mapping</text>
+  <text x="180" y="524" fill="white" font-family="Arial, sans-serif" font-size="30" font-weight="600">Operation Dashboard Snapshot</text>
+  <defs>
+    <linearGradient id="paint0_linear_3_1" x1="90" y1="20" x2="1120" y2="760" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0D9488"/>
+      <stop offset="1" stop-color="#0E7490"/>
+    </linearGradient>
+  </defs>
+</svg>

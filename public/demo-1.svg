@@ -1,0 +1,16 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="800" rx="40" fill="url(#paint0_linear_1_1)"/>
+  <circle cx="950" cy="180" r="120" fill="white" fill-opacity="0.2"/>
+  <circle cx="220" cy="620" r="180" fill="white" fill-opacity="0.14"/>
+  <path d="M150 220C150 197.909 167.909 180 190 180H690C712.091 180 730 197.909 730 220V280C730 302.091 712.091 320 690 320H190C167.909 320 150 302.091 150 280V220Z" fill="white" fill-opacity="0.25"/>
+  <path d="M150 380C150 357.909 167.909 340 190 340H860C882.091 340 900 357.909 900 380V440C900 462.091 882.091 480 860 480H190C167.909 480 150 462.091 150 440V380Z" fill="white" fill-opacity="0.2"/>
+  <text x="155" y="130" fill="white" font-family="Arial, sans-serif" font-size="58" font-weight="700">Sample Visual 01</text>
+  <text x="170" y="262" fill="white" font-family="Arial, sans-serif" font-size="34" font-weight="600">Leadership Coaching Program</text>
+  <text x="170" y="422" fill="white" font-family="Arial, sans-serif" font-size="30" font-weight="500">Build trust, performance, and team synergy</text>
+  <defs>
+    <linearGradient id="paint0_linear_1_1" x1="70" y1="20" x2="1120" y2="770" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2563EB"/>
+      <stop offset="1" stop-color="#1D4ED8"/>
+    </linearGradient>
+  </defs>
+</svg>
