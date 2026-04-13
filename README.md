@@ -2,8 +2,6 @@
 
 1인 개발/무료 운영을 목표로 한 `Next.js + Supabase` 기반 홈페이지 스타터입니다.
 
-레퍼런스 사이트: [incoaching.com](https://incoaching.com/)
-
 ## Getting Started
 
 ```bash
@@ -59,7 +57,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## 다음 단계 제안
 
-1. 메인 섹션 UI를 레퍼런스 스타일에 맞게 구체화
+1. 메인 섹션 UI 고도화
 2. 문의 폼 + DB 저장 API 구현
 3. 인사이트 게시글 CRUD 구현
 4. 어드민 인증 및 권한 분리(RLS 정책)
