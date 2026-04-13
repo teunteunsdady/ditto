@@ -1,4 +1,4 @@
-# ditto's templates Starter
+# ditto's templates Start
 
 1인 개발/무료 운영을 목표로 한 `Next.js + Supabase` 기반 홈페이지 스타터입니다.
 
