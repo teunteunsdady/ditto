@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef } from "react";
+import { PERSONALITY_QUESTIONS, PERSONALITY_SCALE_OPTIONS } from "@/lib/personality-questions";
 
 type Point = { x: number; y: number };
 type Stroke = {
@@ -63,6 +64,21 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
   const boardRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const strokes = useMemo(() => normalizeStrokes(resultData), [resultData]);
+  const personalityAnswers = useMemo(() => {
+    if (!resultData || typeof resultData !== "object") return {} as Record<number, number>;
+    const raw = (resultData as { answers?: unknown }).answers;
+    if (!raw || typeof raw !== "object") return {} as Record<number, number>;
+    return Object.entries(raw as Record<string, unknown>).reduce<Record<number, number>>(
+      (acc, [key, value]) => {
+        const no = Number(key);
+        const score = Number(value);
+        if (!Number.isFinite(no) || !Number.isFinite(score)) return acc;
+        acc[no] = score;
+        return acc;
+      },
+      {},
+    );
+  }, [resultData]);
 
   const drawShapeBoard = useCallback((
     ctx: CanvasRenderingContext2D,
@@ -263,6 +279,35 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
     window.addEventListener("resize", redraw);
     return () => window.removeEventListener("resize", redraw);
   }, [redraw]);
+
+  if (testSlug === "personality") {
+    return (
+      <div className="overflow-x-auto rounded-xl border border-slate-300 bg-white">
+        <table className="min-w-[900px] w-full border-collapse text-sm">
+          <thead className="bg-slate-100 text-slate-900">
+            <tr>
+              <th className="border border-slate-300 px-3 py-2 text-center font-semibold">번호</th>
+              <th className="border border-slate-300 px-3 py-2 text-left font-semibold">문항</th>
+              <th className="border border-slate-300 px-3 py-2 text-center font-semibold">응답</th>
+            </tr>
+          </thead>
+          <tbody>
+            {PERSONALITY_QUESTIONS.map((question) => {
+              const score = personalityAnswers[question.no];
+              const label = PERSONALITY_SCALE_OPTIONS.find((option) => option.value === score)?.label ?? "-";
+              return (
+                <tr key={question.no} className="odd:bg-white even:bg-slate-50">
+                  <td className="border border-slate-200 px-3 py-2 text-center">{question.no}</td>
+                  <td className="border border-slate-200 px-3 py-2">{question.text}</td>
+                  <td className="border border-slate-200 px-3 py-2 text-center">{label}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
 
   if (testSlug !== "shape-6" && testSlug !== "life-graph") {
     return (
