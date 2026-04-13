@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { SixShapeTestBoard } from "@/components/admin/six-shape-test-board";
 import { LifeGraphBoard } from "@/components/admin/life-graph-board";
 import { PersonalityTestSheet } from "@/components/admin/personality-test-sheet";
+import { PersonalityPlusSheet } from "@/components/admin/personality-plus-sheet";
 import { AUTH_COOKIE_NAME, isMasterSession } from "@/lib/auth/master-session";
 import { CURRICULUM_TESTS } from "@/lib/curriculum-tests";
 
@@ -64,10 +65,12 @@ export default function CurriculumTestPage({ params, searchParams }: TestPagePro
         {currentTest.slug === "personality" ? (
           <PersonalityTestSheet clientId={clientId} testSlug={currentTest.slug} />
         ) : null}
+        {currentTest.slug === "personality-plus" ? <PersonalityPlusSheet /> : null}
 
         {currentTest.slug !== "shape-6" &&
         currentTest.slug !== "life-graph" &&
-        currentTest.slug !== "personality" ? (
+        currentTest.slug !== "personality" &&
+        currentTest.slug !== "personality-plus" ? (
           <div className="mt-8 space-y-4">
             {sampleQuestions.map((question, index) => (
               <article key={question} className="rounded-xl border border-slate-200 p-4">
