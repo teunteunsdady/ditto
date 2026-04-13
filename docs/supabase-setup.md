@@ -22,7 +22,11 @@ cp .env.example .env.local
 ```env
 NEXT_PUBLIC_SUPABASE_URL=...
 NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+SUPABASE_SERVICE_ROLE_KEY=...
 ```
+
+`SUPABASE_SERVICE_ROLE_KEY`는 서버(API Route)에서만 사용해야 하며
+클라이언트 코드에 노출되면 안 됩니다.
 
 ## 3) 테이블 설계 (1차 권장)
 초기에는 아래 2개 테이블로 시작하는 것을 권장합니다.
@@ -43,6 +47,39 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=...
   - `content` text
   - `published_at` timestamptz
   - `created_at` timestamptz default now()
+
+### 코칭 운영용 스키마 (admin + clients)
+
+요청하신 관리자/대상자 관리 테이블은 아래 SQL로 생성할 수 있습니다.
+
+- 실행 파일: `docs/sql/001_init_admin_clients.sql`
+- 포함 항목:
+  - `admins` 테이블
+  - `clients` 테이블
+  - `created_at`, `updated_at`
+  - `created_id`, `updated_id` (관리자 참조)
+  - `updated_at` 자동 갱신 trigger
+  - RLS 기본 잠금(서비스 롤 전용)
+
+실행 방법:
+1. Supabase 대시보드 > SQL Editor
+2. `docs/sql/001_init_admin_clients.sql` 내용 전체 붙여넣기
+3. Run 실행
+
+이미 `001`을 먼저 실행한 경우(기존 환경):
+1. SQL Editor에서 `docs/sql/002_add_soft_delete_to_clients.sql` 실행
+2. `clients`에 소프트 삭제 컬럼(`deleted_at`, `deleted_id`)이 추가됩니다.
+
+검사 결과 저장 기능을 쓰려면 아래도 실행해주세요:
+1. SQL Editor에서 `docs/sql/003_add_client_test_results.sql` 실행
+2. `client_assessments` 테이블이 생성되고, 대상자/검사별 결과가 저장됩니다.
+
+## 3-1) 앱 연동 시 필요한 환경변수
+
+관리자 전용 대상자 등록/조회 API를 사용할 때는 아래도 필요합니다.
+
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `MASTER_LOGIN_EMAIL`
 
 ## 4) RLS(Row Level Security) 권장 정책
 - 기본: 테이블마다 RLS 활성화

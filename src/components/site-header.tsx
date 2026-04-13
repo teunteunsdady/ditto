@@ -59,7 +59,7 @@ export function SiteHeader() {
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6">
         <Link href="/" className="flex items-center gap-2">
           <div className="h-8 w-8 rounded bg-blue-600" />
-          <span className="font-semibold">LOGO</span>
+          <span className="font-semibold">ditto&apos;s templates</span>
         </Link>
 
         <nav className="hidden items-center gap-6 text-sm md:flex">

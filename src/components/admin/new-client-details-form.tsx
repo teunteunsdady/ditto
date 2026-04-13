@@ -9,6 +9,8 @@ export function NewClientDetailsForm() {
   const [birthDate, setBirthDate] = useState("");
   const [stressFactor, setStressFactor] = useState("");
   const [location, setLocation] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const isDisabled =
     name.trim().length < 2 ||
@@ -16,16 +18,48 @@ export function NewClientDetailsForm() {
     stressFactor.trim().length < 1 ||
     location.trim().length < 1;
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const query = new URLSearchParams({
-      mode: "new",
-      name: name.trim(),
-      birthDate,
-      stressFactor: stressFactor.trim(),
-      location: location.trim(),
-    });
-    router.push(`/admin/clients/curriculum?${query.toString()}`);
+
+    setErrorMessage("");
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("/api/clients", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: name.trim(),
+          birthDate,
+          stressFactor: stressFactor.trim(),
+          location: location.trim(),
+        }),
+      });
+
+      const result = (await response.json()) as {
+        message?: string;
+        item?: { id: string; name: string };
+      };
+
+      if (!response.ok || !result.item) {
+        setErrorMessage(result.message ?? "대상자 등록 중 오류가 발생했습니다.");
+        return;
+      }
+
+      const query = new URLSearchParams({
+        mode: "new",
+        clientId: result.item.id,
+        name: result.item.name,
+      });
+      router.push(`/admin/clients/curriculum?${query.toString()}`);
+      router.refresh();
+    } catch {
+      setErrorMessage("서버와 통신 중 오류가 발생했습니다.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -78,12 +112,14 @@ export function NewClientDetailsForm() {
       <div className="mt-8 flex flex-col gap-3 sm:flex-row">
         <button
           type="submit"
-          disabled={isDisabled}
+          disabled={isDisabled || isSubmitting}
           className="h-12 flex-1 rounded-md bg-blue-600 text-base font-bold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300"
         >
-          대상자 등록 후 커리큘럼 이동
+          {isSubmitting ? "등록 중..." : "대상자 등록 후 커리큘럼 이동"}
         </button>
       </div>
+
+      {errorMessage ? <p className="mt-3 text-sm text-rose-600">{errorMessage}</p> : null}
     </form>
   );
 }

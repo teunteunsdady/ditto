@@ -9,7 +9,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Incoaching Clone Starter",
+  title: "ditto's templates",
   description: "Next.js + Supabase 기반 코칭 서비스 웹사이트 스타터",
 };
 

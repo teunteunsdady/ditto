@@ -3,24 +3,18 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { AUTH_COOKIE_NAME, isMasterSession } from "@/lib/auth/master-session";
-
-const curriculum = [
-  { order: 1, title: "6도형 검사", description: "심층 상황 파악" },
-  { order: 2, title: "인생그래프", description: "삶의 궤적 시각화" },
-  { order: 3, title: "성격유형 검사", description: "성격 유형 분석" },
-  { order: 4, title: "성격유형 검사(심화)", description: "성격 유형 심화 분석" },
-  { order: 5, title: "애착유형 검사", description: "대인관계 패턴 및 정서적 유대 분석" },
-  { order: 6, title: "핵심감정 검사", description: "내면 감정 파악" },
-];
+import { CURRICULUM_TESTS } from "@/lib/curriculum-tests";
+import { createServiceClient } from "@/lib/supabase/service";
 
 type CurriculumPageProps = {
   searchParams?: {
     name?: string;
     mode?: string;
+    clientId?: string;
   };
 };
 
-export default function CurriculumPage({ searchParams }: CurriculumPageProps) {
+export default async function CurriculumPage({ searchParams }: CurriculumPageProps) {
   const cookieStore = cookies();
   const authenticated = isMasterSession(cookieStore.get(AUTH_COOKIE_NAME)?.value);
 
@@ -29,10 +23,25 @@ export default function CurriculumPage({ searchParams }: CurriculumPageProps) {
   }
 
   const clientName = searchParams?.name?.trim();
+  const clientId = searchParams?.clientId?.trim();
   const title = clientName
     ? `${clientName} 대상자 검사 커리큘럼`
     : "코칭 대상자 검사 커리큘럼";
   const isNewFlow = searchParams?.mode === "new";
+  const savedTestSet = new Set<string>();
+
+  if (clientId) {
+    const supabase = createServiceClient();
+    const { data } = await supabase
+      .from("client_assessments")
+      .select("test_slug")
+      .eq("client_id", clientId);
+    (data ?? []).forEach((row) => {
+      if (row.test_slug) {
+        savedTestSet.add(String(row.test_slug));
+      }
+    });
+  }
 
   return (
     <main className="mx-auto min-h-screen w-full max-w-5xl px-4 py-16 sm:px-6">
@@ -49,7 +58,10 @@ export default function CurriculumPage({ searchParams }: CurriculumPageProps) {
         ) : null}
 
         <div className="mt-8 space-y-4">
-          {curriculum.map((item) => (
+          {CURRICULUM_TESTS.map((item) => (
+            (() => {
+              const isSaved = savedTestSet.has(item.slug);
+              return (
             <article
               key={item.order}
               className="flex flex-wrap items-center gap-4 rounded-xl border border-slate-200 bg-slate-50 px-4 py-4 sm:flex-nowrap sm:px-6"
@@ -61,14 +73,31 @@ export default function CurriculumPage({ searchParams }: CurriculumPageProps) {
                 <h2 className="text-lg font-bold text-slate-900">{item.title}</h2>
                 <p className="text-sm text-slate-500">{item.description}</p>
               </div>
-              <p className="text-sm font-semibold text-sky-600">진행 전</p>
-              <button
-                type="button"
-                className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
+              <p
+                className={`text-sm font-semibold ${
+                  isSaved ? "text-emerald-600" : "text-sky-600"
+                }`}
               >
-                검사 시작
-              </button>
+                {isSaved ? "저장됨" : "진행 전"}
+              </p>
+              {isSaved ? (
+                <Link
+                  href={`/admin/clients/curriculum/${item.slug}/result?clientId=${clientId ?? ""}&name=${encodeURIComponent(clientName ?? "")}`}
+                  className="rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700"
+                >
+                  결과 보기
+                </Link>
+              ) : (
+                <Link
+                  href={`/admin/clients/curriculum/${item.slug}?order=${item.order}&clientId=${clientId ?? ""}&name=${encodeURIComponent(clientName ?? "")}`}
+                  className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
+                >
+                  검사 시작
+                </Link>
+              )}
             </article>
+              );
+            })()
           ))}
         </div>
 

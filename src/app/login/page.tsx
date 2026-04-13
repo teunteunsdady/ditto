@@ -28,8 +28,8 @@ export default function LoginPage() {
       if (!response.ok) {
         setMessage("이메일 또는 비밀번호가 올바르지 않습니다.");
       } else {
-        setMessage("로그인 성공! 홈으로 이동합니다.");
-        router.push("/");
+        setMessage("로그인 성공! 운영 대시보드로 이동합니다.");
+        router.push("/admin");
         router.refresh();
       }
     } catch {
@@ -40,8 +40,8 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-6xl items-center px-4 py-24 sm:px-6">
-      <section className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+    <main className="flex min-h-[calc(100dvh-4rem)] w-full items-center justify-center px-4 py-8 sm:px-6">
+      <section className="w-full max-w-[22rem] rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:max-w-md">
         <h1 className="text-2xl font-bold">운영자 로그인</h1>
         <p className="mt-2 text-sm text-gray-600">
           마스터 계정만 로그인 가능한 운영 대시보드 전용 로그인입니다.
