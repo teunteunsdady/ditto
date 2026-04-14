@@ -65,45 +65,45 @@ export function NewClientDetailsForm() {
   return (
     <form className="mt-6" onSubmit={handleSubmit}>
       <div className="grid gap-5 md:grid-cols-2">
-        <label className="block">
+        <label className="block min-w-0">
           <span className="mb-2 block text-lg font-semibold text-slate-800">이름</span>
           <input
             type="text"
             value={name}
             onChange={(event) => setName(event.target.value)}
-            className="h-12 w-full rounded-md border border-gray-300 px-4 text-base text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
+            className="h-12 w-full max-w-full rounded-md border border-gray-300 px-4 text-base text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
             placeholder="이름을 입력해주세요"
           />
         </label>
 
-        <label className="block">
+        <label className="block min-w-0">
           <span className="mb-2 block text-lg font-semibold text-slate-800">생년월일</span>
           <input
             type="date"
             value={birthDate}
             onChange={(event) => setBirthDate(event.target.value)}
-            className="h-12 w-full rounded-md border border-gray-300 px-4 text-base text-gray-900 focus:border-blue-500 focus:outline-none"
+            className="h-12 w-full max-w-full appearance-none rounded-md border border-gray-300 px-4 text-base text-gray-900 focus:border-blue-500 focus:outline-none"
           />
         </label>
 
-        <label className="block">
+        <label className="block min-w-0">
           <span className="mb-2 block text-lg font-semibold text-slate-800">스트레스 요인</span>
           <input
             type="text"
             value={stressFactor}
             onChange={(event) => setStressFactor(event.target.value)}
-            className="h-12 w-full rounded-md border border-gray-300 px-4 text-base text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
+            className="h-12 w-full max-w-full rounded-md border border-gray-300 px-4 text-base text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
             placeholder="예: 학업, 진로, 인간관계"
           />
         </label>
 
-        <label className="block">
+        <label className="block min-w-0">
           <span className="mb-2 block text-lg font-semibold text-slate-800">사는곳(동)</span>
           <input
             type="text"
             value={location}
             onChange={(event) => setLocation(event.target.value)}
-            className="h-12 w-full rounded-md border border-gray-300 px-4 text-base text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
+            className="h-12 w-full max-w-full rounded-md border border-gray-300 px-4 text-base text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
             placeholder="예: 광진구 자양동"
           />
         </label>
