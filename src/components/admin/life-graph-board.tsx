@@ -418,7 +418,7 @@ export function LifeGraphBoard({ clientId }: LifeGraphBoardProps) {
           >
             {saveState === "saving" ? "저장 중..." : "💾 저장"}
           </button>
-          <label className="ml-auto flex items-center gap-2 text-sm text-slate-700">
+          <label className="flex w-full items-center justify-end gap-2 text-sm text-slate-700 sm:ml-auto sm:w-auto">
             ✍️ 선 색상
             <input
               type="color"
@@ -434,7 +434,7 @@ export function LifeGraphBoard({ clientId }: LifeGraphBoardProps) {
           </p>
         ) : null}
         {saveState === "saved" && clientId ? (
-          <Link href={resultHref} className="mt-2 inline-flex text-xs font-semibold text-blue-600 hover:text-blue-700">
+          <Link href={resultHref} className="mt-2 inline-flex text-xs font-semibold text-[#2f4f46] hover:text-[#1f3a33]">
             저장된 결과 보기
           </Link>
         ) : null}

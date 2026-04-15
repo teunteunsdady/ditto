@@ -6,7 +6,7 @@ const ROW_COUNT = 81;
 export function PersonalityPlusSheet() {
   return (
     <div className="mt-8 overflow-x-auto rounded-xl border border-slate-300 bg-white">
-      <table className="min-w-[900px] w-full border-collapse text-sm">
+      <table className="min-w-[760px] w-full border-collapse text-xs sm:min-w-[900px] sm:text-sm">
         <thead className="bg-slate-100 text-slate-900">
           <tr>
             <th className="border border-slate-300 px-3 py-2 text-center font-semibold">번호</th>

@@ -116,7 +116,7 @@ export function PersonalityTestSheet({ clientId, testSlug }: PersonalityTestShee
   return (
     <div className="mt-8 space-y-4">
       <div className="overflow-x-auto rounded-xl border border-slate-300 bg-white">
-        <table className="min-w-[900px] w-full border-collapse text-sm">
+        <table className="min-w-[760px] w-full border-collapse text-xs sm:min-w-[900px] sm:text-sm">
           <thead className="bg-slate-100 text-slate-900">
             <tr>
               <th className="border border-slate-300 px-3 py-2 text-center font-semibold">번호</th>
@@ -146,7 +146,7 @@ export function PersonalityTestSheet({ clientId, testSlug }: PersonalityTestShee
                       value={option.value}
                       checked={answers[question.no] === option.value}
                       onChange={() => handleSelect(question.no, option.value)}
-                      className="h-4 w-4 accent-slate-700"
+                      className="h-4 w-4 accent-[#2f4f46]"
                     />
                   </td>
                 ))}
@@ -162,7 +162,7 @@ export function PersonalityTestSheet({ clientId, testSlug }: PersonalityTestShee
             type="button"
             onClick={saveResult}
             disabled={saveState === "saving"}
-            className="rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-700 disabled:cursor-not-allowed disabled:opacity-60"
+            className="rounded-md border border-[#bcc7c1] px-3 py-1.5 text-sm text-[#2f4f46] hover:bg-[#edf3ef] disabled:cursor-not-allowed disabled:opacity-60"
           >
             {saveState === "saving" ? "저장 중..." : "💾 저장"}
           </button>
@@ -181,7 +181,7 @@ export function PersonalityTestSheet({ clientId, testSlug }: PersonalityTestShee
           </p>
         ) : null}
         {saveState === "saved" && clientId ? (
-          <Link href={resultHref} className="mt-2 inline-flex text-xs font-semibold text-blue-600 hover:text-blue-700">
+          <Link href={resultHref} className="mt-2 inline-flex text-xs font-semibold text-[#2f4f46] hover:text-[#1f3a33]">
             저장된 결과 보기
           </Link>
         ) : null}

@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 
 import {
   AUTH_COOKIE_NAME,
-  AUTH_COOKIE_VALUE,
+  SESSION_MAX_AGE_SECONDS,
+  createMasterSessionToken,
 } from "@/lib/auth/master-session";
 
 type LoginBody = {
@@ -35,12 +36,12 @@ export async function POST(request: Request) {
   const response = NextResponse.json({ ok: true });
   response.cookies.set({
     name: AUTH_COOKIE_NAME,
-    value: AUTH_COOKIE_VALUE,
+    value: createMasterSessionToken(),
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
     path: "/",
-    maxAge: 60 * 60 * 24 * 7,
+    maxAge: SESSION_MAX_AGE_SECONDS,
   });
 
   return response;

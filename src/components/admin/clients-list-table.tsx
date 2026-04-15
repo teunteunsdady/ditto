@@ -13,7 +13,8 @@ type ClientRow = {
   deletedAt?: string | null;
 };
 
-const PAGE_SIZE = 6;
+const DEFAULT_PAGE_SIZE = 10;
+const PAGE_SIZE_OPTIONS = [10, 20, 30];
 type ViewMode = "active" | "deleted";
 
 function maskName(name: string) {
@@ -35,10 +36,16 @@ function formatKoreanDate(isoDate: string) {
 }
 
 export function ClientsListTable() {
+  const currentYear = new Date().getFullYear();
+  const yearOptions = Array.from({ length: 8 }, (_, idx) => currentYear - idx);
   const [search, setSearch] = useState("");
   const [viewMode, setViewMode] = useState<ViewMode>("active");
   const [displayMode, setDisplayMode] = useState<ViewMode>("active");
   const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
+  const [showDateFilter, setShowDateFilter] = useState(false);
+  const [filterYear, setFilterYear] = useState("");
+  const [filterMonth, setFilterMonth] = useState("");
   const [revealedNames, setRevealedNames] = useState<Record<string, boolean>>({});
   const [clients, setClients] = useState<ClientRow[]>([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -55,10 +62,14 @@ export function ClientsListTable() {
       try {
         const params = new URLSearchParams({
           page: String(currentPage),
-          pageSize: String(PAGE_SIZE),
+          pageSize: String(pageSize),
           search,
           status: viewMode,
         });
+        if (filterYear && filterMonth) {
+          params.set("year", filterYear);
+          params.set("month", filterMonth);
+        }
 
         const response = await fetch(`/api/clients?${params.toString()}`, {
           method: "GET",
@@ -86,22 +97,28 @@ export function ClientsListTable() {
     };
 
     void loadClients();
-  }, [currentPage, search, reloadKey, viewMode]);
+  }, [currentPage, filterMonth, filterYear, pageSize, search, reloadKey, viewMode]);
 
   const totalPages = useMemo(
-    () => Math.max(1, Math.ceil(totalCount / PAGE_SIZE)),
-    [totalCount],
+    () => Math.max(1, Math.ceil(totalCount / pageSize)),
+    [pageSize, totalCount],
   );
   const safePage = Math.min(currentPage, totalPages);
-  const startIndex = (safePage - 1) * PAGE_SIZE;
+  const startIndex = (safePage - 1) * pageSize;
   const visibleFrom = totalCount === 0 ? 0 : startIndex + 1;
-  const visibleTo = Math.min(startIndex + PAGE_SIZE, totalCount);
+  const visibleTo = Math.min(startIndex + pageSize, totalCount);
 
   useEffect(() => {
     if (currentPage > totalPages) {
       setCurrentPage(totalPages);
     }
   }, [currentPage, totalPages]);
+
+  useEffect(() => {
+    if (!filterYear && filterMonth) {
+      setFilterMonth("");
+    }
+  }, [filterMonth, filterYear]);
 
   const toggleName = (clientId: string) => {
     setRevealedNames((prev) => ({
@@ -185,7 +202,7 @@ export function ClientsListTable() {
             }}
             className={`rounded-md px-3 py-1.5 text-xs font-semibold ${
               viewMode === "active"
-                ? "bg-blue-600 text-white"
+                ? "bg-[#2f4f46] text-white"
                 : "border border-gray-300 text-gray-600"
             }`}
           >
@@ -208,19 +225,98 @@ export function ClientsListTable() {
           </button>
         </div>
 
-        <label className="block">
-          <span className="mb-2 block text-sm font-semibold text-gray-800">이름 검색</span>
-          <input
-            type="text"
-            value={search}
-            onChange={(event) => {
-              setSearch(event.target.value);
-              setCurrentPage(1);
-            }}
-            placeholder="이름을 입력하세요."
-            className="h-11 w-full max-w-md rounded-md border border-gray-300 px-4 text-sm focus:border-blue-500 focus:outline-none"
-          />
-        </label>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <label className="block">
+            <span className="mb-2 block text-sm font-semibold text-gray-800">이름 검색</span>
+            <input
+              type="text"
+              value={search}
+              onChange={(event) => {
+                setSearch(event.target.value);
+                setCurrentPage(1);
+              }}
+              placeholder="이름을 입력하세요."
+              className="h-11 w-full max-w-md rounded-md border border-gray-300 px-4 text-sm focus:border-[#2f4f46] focus:outline-none"
+            />
+          </label>
+          <div className="flex flex-wrap items-center gap-2 text-xs text-gray-600 sm:justify-end">
+            <button
+              type="button"
+              onClick={() => {
+                setShowDateFilter((prev) => {
+                  const next = !prev;
+                  if (!next) {
+                    setFilterYear("");
+                    setFilterMonth("");
+                    setCurrentPage(1);
+                  }
+                  return next;
+                });
+              }}
+              className="inline-flex h-8 items-center rounded-md border border-gray-300 bg-white px-2.5 text-xs font-semibold text-gray-700 hover:bg-gray-50"
+            >
+              {showDateFilter ? "검색조건 숨기기" : "검색조건 입력"}
+            </button>
+            {showDateFilter ? (
+              <>
+                <label className="inline-flex items-center gap-2">
+                  연도
+                  <select
+                    value={filterYear}
+                    onChange={(event) => {
+                      setFilterYear(event.target.value);
+                      setCurrentPage(1);
+                    }}
+                    className="h-8 rounded-md border border-gray-300 bg-white px-2 text-xs text-gray-700 focus:border-[#2f4f46] focus:outline-none"
+                  >
+                    <option value="">전체</option>
+                    {yearOptions.map((year) => (
+                      <option key={year} value={String(year)}>
+                        {year}년
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="inline-flex items-center gap-2">
+                  월
+                  <select
+                    value={filterMonth}
+                    onChange={(event) => {
+                      setFilterMonth(event.target.value);
+                      setCurrentPage(1);
+                    }}
+                    disabled={!filterYear}
+                    className="h-8 rounded-md border border-gray-300 bg-white px-2 text-xs text-gray-700 focus:border-[#2f4f46] focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
+                  >
+                    <option value="">전체</option>
+                    {Array.from({ length: 12 }, (_, idx) => idx + 1).map((month) => (
+                      <option key={month} value={String(month)}>
+                        {month}월
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </>
+            ) : null}
+            <label className="inline-flex items-center gap-2">
+              페이지당 표시
+              <select
+                value={pageSize}
+                onChange={(event) => {
+                  setPageSize(Number(event.target.value));
+                  setCurrentPage(1);
+                }}
+                className="h-8 rounded-md border border-gray-300 bg-white px-2 text-xs text-gray-700 focus:border-[#2f4f46] focus:outline-none"
+              >
+                {PAGE_SIZE_OPTIONS.map((size) => (
+                  <option key={size} value={size}>
+                    {size}개
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+        </div>
         <p className="mt-2 text-xs text-gray-500">
           이름을 클릭하면 해당 행만 마스킹이 해제되며, 다시 클릭하면 마스킹됩니다.
         </p>
@@ -251,7 +347,7 @@ export function ClientsListTable() {
                     <button
                       type="button"
                       onClick={() => toggleName(client.id)}
-                      className="font-semibold text-gray-800 hover:text-blue-700"
+                      className="font-semibold text-gray-800 hover:text-[#1f3a33]"
                     >
                       {isRevealed ? client.name : maskName(client.name)}
                     </button>
@@ -272,7 +368,7 @@ export function ClientsListTable() {
                         <>
                           <Link
                             href={`/admin/clients/curriculum?clientId=${client.id}&name=${encodeURIComponent(client.name)}`}
-                            className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700"
+                            className="rounded-md bg-[#2f4f46] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#223c35]"
                           >
                             상세 보기
                           </Link>

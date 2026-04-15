@@ -49,7 +49,7 @@ export default function CurriculumTestPage({ params, searchParams }: TestPagePro
     <main className="mx-auto min-h-screen w-full max-w-6xl px-4 py-16 sm:px-8">
       <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-10">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
+          <p className="rounded-full bg-[#d7e2dc] px-3 py-1 text-xs font-semibold text-[#2f4f46]">
             검사 {currentTest.order} / {CURRICULUM_TESTS.length}
           </p>
           {clientName ? <p className="text-sm font-medium text-slate-500">대상자: {clientName}</p> : null}
@@ -82,7 +82,7 @@ export default function CurriculumTestPage({ params, searchParams }: TestPagePro
                     <button
                       key={label}
                       type="button"
-                      className="rounded-md border border-slate-300 px-2 py-2 text-slate-600 hover:border-blue-400 hover:text-blue-700"
+                      className="rounded-md border border-slate-300 px-2 py-2 text-slate-600 hover:border-[#2f4f46] hover:text-[#1f3a33]"
                     >
                       {label}
                     </button>

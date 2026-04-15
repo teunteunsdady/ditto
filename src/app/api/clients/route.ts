@@ -42,11 +42,13 @@ export async function GET(request: Request) {
     const search = (searchParams.get("search") ?? "").trim();
     const status = searchParams.get("status") === "deleted" ? "deleted" : "active";
     const page = Number(searchParams.get("page") ?? 1);
-    const pageSize = Number(searchParams.get("pageSize") ?? 6);
+    const pageSize = Number(searchParams.get("pageSize") ?? 10);
+    const year = Number(searchParams.get("year") ?? "");
+    const month = Number(searchParams.get("month") ?? "");
 
     const safePage = Number.isFinite(page) && page > 0 ? page : 1;
     const safePageSize =
-      Number.isFinite(pageSize) && pageSize > 0 && pageSize <= 50 ? pageSize : 6;
+      Number.isFinite(pageSize) && pageSize > 0 && pageSize <= 50 ? pageSize : 10;
     const from = (safePage - 1) * safePageSize;
     const to = from + safePageSize - 1;
 
@@ -70,6 +72,15 @@ export async function GET(request: Request) {
 
     if (search) {
       query = query.ilike("name", `%${search}%`);
+    }
+
+    const hasValidYear = Number.isInteger(year) && year >= 2000 && year <= 2100;
+    const hasValidMonth = Number.isInteger(month) && month >= 1 && month <= 12;
+    if (hasValidYear && hasValidMonth) {
+      const fromDate = new Date(Date.UTC(year, month - 1, 1)).toISOString();
+      const toDate = new Date(Date.UTC(year, month, 1)).toISOString();
+      const targetDateColumn = status === "deleted" ? "deleted_at" : "created_at";
+      query = query.gte(targetDateColumn, fromDate).lt(targetDateColumn, toDate);
     }
 
     const { data, count, error } = await query;

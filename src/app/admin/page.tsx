@@ -13,14 +13,14 @@ export default function AdminPage() {
   }
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-5xl px-4 py-24 sm:px-6">
-      <h1 className="text-3xl font-bold">코칭대상자 관리 화면</h1>
-      <p className="mt-3 text-sm text-gray-600">코칭 대상자 등록 및 목록 확인 메뉴입니다.</p>
+    <main className="mx-auto min-h-screen w-full max-w-5xl px-4 py-16 sm:px-6 sm:py-24">
+      <h1 className="text-2xl font-bold text-[#1f3a33] sm:text-3xl">코칭대상자 관리 화면</h1>
+      <p className="mt-3 text-sm text-[#52605b]">코칭 대상자 등록 및 목록 확인 메뉴입니다.</p>
 
       <section className="mt-10 grid gap-4 sm:grid-cols-2">
         <Link
           href="/admin/clients/new"
-          className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm hover:border-gray-300"
+          className="rounded-xl border border-[#d8d3c5] bg-white p-5 shadow-sm hover:border-[#bfc8be] sm:p-6"
         >
           <h2 className="flex items-center gap-2 text-lg font-semibold">
             <span aria-hidden>➕</span>
@@ -31,7 +31,7 @@ export default function AdminPage() {
 
         <Link
           href="/admin/clients"
-          className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm hover:border-gray-300"
+          className="rounded-xl border border-[#d8d3c5] bg-white p-5 shadow-sm hover:border-[#bfc8be] sm:p-6"
         >
           <h2 className="flex items-center gap-2 text-lg font-semibold">
             <span aria-hidden>📋</span>

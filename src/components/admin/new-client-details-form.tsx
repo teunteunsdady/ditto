@@ -71,7 +71,7 @@ export function NewClientDetailsForm() {
             type="text"
             value={name}
             onChange={(event) => setName(event.target.value)}
-            className="h-12 w-full max-w-full rounded-md border border-gray-300 px-4 text-base text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
+            className="h-12 w-full max-w-full rounded-md border border-gray-300 px-4 text-base text-gray-900 placeholder:text-gray-400 focus:border-[#2f4f46] focus:outline-none"
             placeholder="이름을 입력해주세요"
           />
         </label>
@@ -82,7 +82,7 @@ export function NewClientDetailsForm() {
             type="date"
             value={birthDate}
             onChange={(event) => setBirthDate(event.target.value)}
-            className="h-12 w-full max-w-full appearance-none rounded-md border border-gray-300 px-4 text-base text-gray-900 focus:border-blue-500 focus:outline-none"
+            className="h-12 w-full max-w-full appearance-none rounded-md border border-gray-300 px-4 text-base text-gray-900 focus:border-[#2f4f46] focus:outline-none"
           />
         </label>
 
@@ -92,7 +92,7 @@ export function NewClientDetailsForm() {
             type="text"
             value={stressFactor}
             onChange={(event) => setStressFactor(event.target.value)}
-            className="h-12 w-full max-w-full rounded-md border border-gray-300 px-4 text-base text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
+            className="h-12 w-full max-w-full rounded-md border border-gray-300 px-4 text-base text-gray-900 placeholder:text-gray-400 focus:border-[#2f4f46] focus:outline-none"
             placeholder="예: 학업, 진로, 인간관계"
           />
         </label>
@@ -103,7 +103,7 @@ export function NewClientDetailsForm() {
             type="text"
             value={location}
             onChange={(event) => setLocation(event.target.value)}
-            className="h-12 w-full max-w-full rounded-md border border-gray-300 px-4 text-base text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
+            className="h-12 w-full max-w-full rounded-md border border-gray-300 px-4 text-base text-gray-900 placeholder:text-gray-400 focus:border-[#2f4f46] focus:outline-none"
             placeholder="예: 광진구 자양동"
           />
         </label>
@@ -113,7 +113,7 @@ export function NewClientDetailsForm() {
         <button
           type="submit"
           disabled={isDisabled || isSubmitting}
-          className="h-12 flex-1 rounded-md bg-blue-600 text-base font-bold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300"
+          className="h-12 flex-1 rounded-md bg-[#2f4f46] text-base font-bold text-white hover:bg-[#223c35] disabled:cursor-not-allowed disabled:bg-[#9aa9a3]"
         >
           {isSubmitting ? "등록 중..." : "대상자 등록 후 커리큘럼 이동"}
         </button>

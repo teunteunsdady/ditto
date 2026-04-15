@@ -27,25 +27,33 @@ export default function NewClientPage() {
       return;
     }
 
-    const parentWidth = canvas.parentElement?.clientWidth ?? 600;
-    const cssHeight = 220;
-    const dpr = window.devicePixelRatio || 1;
+    const resizeCanvas = () => {
+      const parentWidth = canvas.parentElement?.clientWidth ?? 600;
+      const cssHeight = parentWidth < 480 ? 180 : 220;
+      const dpr = window.devicePixelRatio || 1;
 
-    canvas.width = parentWidth * dpr;
-    canvas.height = cssHeight * dpr;
-    canvas.style.width = `${parentWidth}px`;
-    canvas.style.height = `${cssHeight}px`;
+      canvas.width = parentWidth * dpr;
+      canvas.height = cssHeight * dpr;
+      canvas.style.width = `${parentWidth}px`;
+      canvas.style.height = `${cssHeight}px`;
 
-    const ctx = canvas.getContext("2d");
-    if (!ctx) {
-      return;
-    }
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        return;
+      }
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.scale(dpr, dpr);
+      ctx.lineWidth = 2;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.strokeStyle = "#1f2937";
+    };
 
-    ctx.scale(dpr, dpr);
-    ctx.lineWidth = 2;
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    ctx.strokeStyle = "#1f2937";
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+    return () => {
+      window.removeEventListener("resize", resizeCanvas);
+    };
   }, []);
 
   const getPoint = (event: PointerEvent<HTMLCanvasElement>) => {
@@ -114,14 +122,14 @@ export default function NewClientPage() {
   const isDisabled = !agreed || !isSigned;
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-5xl px-4 py-16 sm:px-6">
-      <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm sm:p-10">
-        <h1 className="text-center text-3xl font-extrabold tracking-tight">비밀 유지 서약서</h1>
-        <p className="mt-8 text-base font-medium">
+    <main className="mx-auto min-h-screen w-full max-w-5xl px-4 py-12 sm:px-6 sm:py-16">
+      <section className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-10">
+        <h1 className="text-center text-2xl font-extrabold tracking-tight sm:text-3xl">비밀 유지 서약서</h1>
+        <p className="mt-6 text-sm font-medium sm:mt-8 sm:text-base">
           본인은 아래의 조항을 충분히 이해하고 이에 동의하며 서명합니다.
         </p>
 
-        <ol className="mt-6 space-y-4 text-lg leading-relaxed">
+        <ol className="mt-5 space-y-3 text-base leading-relaxed sm:mt-6 sm:space-y-4 sm:text-lg">
           <li>
             <span className="font-bold">1. 계약 목적:</span> 상담자는 내담자의 동의 없이 상담 내용을 외부에
             공개하지 않습니다.
@@ -140,7 +148,7 @@ export default function NewClientPage() {
           </li>
         </ol>
 
-        <label className="mt-10 flex items-start gap-3 text-lg">
+        <label className="mt-8 flex items-start gap-3 text-base sm:mt-10 sm:text-lg">
           <input
             type="checkbox"
             className="mt-1 h-5 w-5 rounded border-gray-300"
@@ -150,11 +158,11 @@ export default function NewClientPage() {
           <span>상기 내용을 충분히 읽고 이해하였으며 이에 동의합니다.</span>
         </label>
 
-        <p className="mt-10 text-2xl font-semibold">작성일: {writtenDate}</p>
+        <p className="mt-8 text-xl font-semibold sm:mt-10 sm:text-2xl">작성일: {writtenDate}</p>
 
         <div className="mt-8">
-          <div className="flex items-center justify-between">
-            <label className="text-2xl font-semibold">서명:</label>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <label className="text-xl font-semibold sm:text-2xl">서명:</label>
             <button
               type="button"
               onClick={handleClearSignature}
@@ -181,7 +189,7 @@ export default function NewClientPage() {
         type="button"
         disabled={isDisabled}
         onClick={() => router.push("/admin/clients/new/details")}
-        className="mt-8 w-full rounded-md bg-blue-600 px-4 py-4 text-xl font-bold text-white disabled:cursor-not-allowed disabled:bg-blue-300"
+        className="mt-6 w-full rounded-md bg-[#2f4f46] px-4 py-3 text-lg font-bold text-white hover:bg-[#223c35] sm:mt-8 sm:py-4 sm:text-xl disabled:cursor-not-allowed disabled:bg-[#9aa9a3]"
       >
         서약서 동의 및 다음
       </button>

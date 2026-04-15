@@ -14,12 +14,12 @@ export default function ClientsPage() {
   }
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-4xl px-4 py-24 sm:px-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">코칭 대상자 목록</h1>
+    <main className="mx-auto min-h-screen w-full max-w-7xl px-4 py-16 sm:px-8 sm:py-24">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-2xl font-bold sm:text-3xl">코칭 대상자 목록</h1>
         <Link
           href="/admin/clients/new"
-          className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white"
+          className="inline-flex items-center justify-center rounded-md bg-[#2f4f46] px-4 py-2 text-sm font-medium text-white hover:bg-[#223c35]"
         >
           ➕ 코칭 대상자 추가
         </Link>

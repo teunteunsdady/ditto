@@ -9,8 +9,9 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "ditto's templates",
-  description: "Next.js + Supabase 기반 코칭 서비스 웹사이트 스타터",
+  title: "코어그라운드 | CoreGround",
+  description:
+    "타인에게 흔들리지 않는 가장 깊은 단단한 중심을 만드는 코칭 프로젝트, 코어그라운드",
 };
 
 export default function RootLayout({
@@ -21,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className={inter.className}>
-        <div className="min-h-screen bg-slate-50">
+        <div className="min-h-screen bg-white">
           <SiteHeader />
           <div className="pt-16">{children}</div>
           <SiteFooter />

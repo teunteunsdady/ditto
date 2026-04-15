@@ -52,7 +52,7 @@ export default async function CurriculumPage({ searchParams }: CurriculumPagePro
         </p>
 
         {isNewFlow ? (
-          <div className="mt-6 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700">
+          <div className="mt-6 rounded-lg border border-[#c7d4cc] bg-[#edf3ef] px-4 py-3 text-sm text-[#2f4f46]">
             대상자 등록이 완료되었습니다. 바로 검사 단계로 진행할 수 있습니다.
           </div>
         ) : null}
@@ -66,7 +66,7 @@ export default async function CurriculumPage({ searchParams }: CurriculumPagePro
               key={item.order}
               className="flex flex-wrap items-center gap-4 rounded-xl border border-slate-200 bg-slate-50 px-4 py-4 sm:flex-nowrap sm:px-6"
             >
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-blue-100 text-lg font-bold text-blue-700">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#d7e2dc] text-lg font-bold text-[#2f4f46]">
                 {item.order}
               </div>
               <div className="min-w-0 flex-1">
@@ -75,7 +75,7 @@ export default async function CurriculumPage({ searchParams }: CurriculumPagePro
               </div>
               <p
                 className={`text-sm font-semibold ${
-                  isSaved ? "text-emerald-600" : "text-sky-600"
+                  isSaved ? "text-[#2f4f46]" : "text-[#5d6964]"
                 }`}
               >
                 {isSaved ? "저장됨" : "진행 전"}
@@ -83,14 +83,14 @@ export default async function CurriculumPage({ searchParams }: CurriculumPagePro
               {isSaved ? (
                 <Link
                   href={`/admin/clients/curriculum/${item.slug}/result?clientId=${clientId ?? ""}&name=${encodeURIComponent(clientName ?? "")}`}
-                  className="rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700"
+                  className="rounded-lg bg-[#3f5f55] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#2f4f46]"
                 >
                   결과 보기
                 </Link>
               ) : (
                 <Link
                   href={`/admin/clients/curriculum/${item.slug}?order=${item.order}&clientId=${clientId ?? ""}&name=${encodeURIComponent(clientName ?? "")}`}
-                  className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
+                  className="rounded-lg bg-[#2f4f46] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#223c35]"
                 >
                   검사 시작
                 </Link>
@@ -104,7 +104,7 @@ export default async function CurriculumPage({ searchParams }: CurriculumPagePro
         <div className="mt-8 flex justify-center">
           <Link
             href="/admin/clients"
-            className="rounded-full bg-blue-600 px-8 py-3 text-sm font-semibold text-white hover:bg-blue-700"
+            className="rounded-full bg-[#2f4f46] px-8 py-3 text-sm font-semibold text-white hover:bg-[#223c35]"
           >
             대상자 목록으로 돌아가기
           </Link>

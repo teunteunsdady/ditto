@@ -453,7 +453,7 @@ export function SixShapeTestBoard({ clientId }: SixShapeTestBoardProps) {
             onClick={() => setMode("draw")}
             className={`rounded-md border px-3 py-1.5 text-sm ${
               mode === "draw"
-                ? "border-blue-600 bg-blue-50 text-blue-700"
+                ? "border-[#2f4f46] bg-[#edf3ef] text-[#1f3a33]"
                 : "border-slate-300 text-slate-700"
             }`}
           >
@@ -464,7 +464,7 @@ export function SixShapeTestBoard({ clientId }: SixShapeTestBoardProps) {
             onClick={() => setMode("erase")}
             className={`rounded-md border px-3 py-1.5 text-sm ${
               mode === "erase"
-                ? "border-blue-600 bg-blue-50 text-blue-700"
+                ? "border-[#2f4f46] bg-[#edf3ef] text-[#1f3a33]"
                 : "border-slate-300 text-slate-700"
             }`}
           >
@@ -485,7 +485,7 @@ export function SixShapeTestBoard({ clientId }: SixShapeTestBoardProps) {
           >
             {saveState === "saving" ? "저장 중..." : "💾 저장"}
           </button>
-          <label className="ml-auto flex items-center gap-2 text-sm text-slate-700">
+          <label className="flex w-full items-center justify-end gap-2 text-sm text-slate-700 sm:ml-auto sm:w-auto">
             🎨 선 색상
             <input
               type="color"
@@ -501,7 +501,7 @@ export function SixShapeTestBoard({ clientId }: SixShapeTestBoardProps) {
           </p>
         ) : null}
         {saveState === "saved" && clientId ? (
-          <Link href={resultHref} className="mt-2 inline-flex text-xs font-semibold text-blue-600 hover:text-blue-700">
+          <Link href={resultHref} className="mt-2 inline-flex text-xs font-semibold text-[#2f4f46] hover:text-[#1f3a33]">
             저장된 결과 보기
           </Link>
         ) : null}
