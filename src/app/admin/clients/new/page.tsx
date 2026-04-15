@@ -122,7 +122,7 @@ export default function NewClientPage() {
   const isDisabled = !agreed || !isSigned;
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-5xl px-4 py-12 sm:px-6 sm:py-16">
+    <main className="mx-auto min-h-screen w-full max-w-7xl px-4 py-12 sm:px-6 sm:py-16">
       <section className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-10">
         <h1 className="text-center text-2xl font-extrabold tracking-tight sm:text-3xl">비밀 유지 서약서</h1>
         <p className="mt-6 text-sm font-medium sm:mt-8 sm:text-base">

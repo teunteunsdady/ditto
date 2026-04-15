@@ -1,6 +1,6 @@
 export default function CompanyPage() {
   return (
-    <main className="mx-auto min-h-screen w-full max-w-5xl px-4 py-16 sm:px-6 sm:py-24">
+    <main className="mx-auto min-h-screen w-full max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
       <h1 className="text-2xl font-bold text-[#1f3a33] sm:text-3xl">코어그라운드 소개</h1>
       <p className="mt-6 text-sm leading-7 text-[#51605a] sm:text-base">
         코어그라운드는 타인에게 흔들리지 않는 가장 깊은 중심을 찾도록 돕는 코칭 브랜드입니다.

@@ -10,7 +10,7 @@ const footerLinks = [
 export function SiteFooter() {
   return (
     <footer className="border-t border-[#d8d3c5] bg-[#f6f2e8]">
-      <div className="mx-auto flex w-full max-w-[1280px] flex-col gap-4 px-3 py-6 sm:px-6 lg:px-8">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-6 sm:px-6">
         <div className="flex flex-wrap gap-3 text-sm">
           {footerLinks.map((link) => (
             <Link key={link.href} href={link.href} className="text-[#4e5d57] hover:text-[#1f3a33]">

@@ -48,7 +48,7 @@ export default async function CurriculumResultPage({ params, searchParams }: Res
   const backToCurriculumHref = `/admin/clients/curriculum?clientId=${clientId}&name=${encodeURIComponent(clientName ?? "")}`;
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-6xl px-4 py-16 sm:px-8">
+    <main className="mx-auto min-h-screen w-full max-w-7xl px-4 py-16 sm:px-6">
       <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-10">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <p className="rounded-full bg-[#d7e2dc] px-3 py-1 text-xs font-semibold text-[#2f4f46]">

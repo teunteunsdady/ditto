@@ -13,7 +13,7 @@ export default function AdminPage() {
   }
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-5xl px-4 py-16 sm:px-6 sm:py-24">
+    <main className="mx-auto min-h-screen w-full max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
       <h1 className="text-2xl font-bold text-[#1f3a33] sm:text-3xl">코칭대상자 관리 화면</h1>
       <p className="mt-3 text-sm text-[#52605b]">코칭 대상자 등록 및 목록 확인 메뉴입니다.</p>
 

@@ -208,7 +208,7 @@ export default function Home() {
           className="flex min-h-[calc(100dvh-4rem)] snap-start items-center px-2 py-6 transition-all duration-500 sm:px-4 lg:px-6"
         >
           <div
-            className={`mx-auto grid w-full max-w-[1280px] gap-5 rounded-2xl border p-4 shadow-sm transition-all duration-500 sm:rounded-3xl sm:gap-6 sm:p-8 lg:grid-cols-2 lg:gap-8 lg:p-12 ${
+            className={`mx-auto grid w-full max-w-7xl gap-5 rounded-2xl border p-4 shadow-sm transition-all duration-500 sm:rounded-3xl sm:gap-6 sm:p-8 lg:grid-cols-2 lg:gap-8 lg:p-12 ${
               activeSection === index
                 ? "scale-100 border-[#c6d3cb] bg-[#f6f2e8] opacity-100"
                 : "scale-[0.985] border-[#d8d3c5] bg-[#f0ece2] opacity-70"

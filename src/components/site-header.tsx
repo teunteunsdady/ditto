@@ -56,7 +56,7 @@ export function SiteHeader() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-[#d8d3c5] bg-[#f6f2e8]/95 backdrop-blur">
-      <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
+      <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
         <Link href="/" className="flex items-center gap-2">
           <div className="h-7 w-7 shrink-0 rounded bg-[#2f4f46] sm:h-8 sm:w-8" />
           <span className="truncate text-sm font-semibold text-[#1f3a33] sm:text-base">코어그라운드</span>

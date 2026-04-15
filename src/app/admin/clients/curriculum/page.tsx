@@ -44,7 +44,7 @@ export default async function CurriculumPage({ searchParams }: CurriculumPagePro
   }
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-5xl px-4 py-16 sm:px-6">
+    <main className="mx-auto min-h-screen w-full max-w-7xl px-4 py-16 sm:px-6">
       <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
         <h1 className="text-center text-2xl font-extrabold text-slate-900 sm:text-3xl">{title}</h1>
         <p className="mt-2 text-center text-sm text-slate-500">

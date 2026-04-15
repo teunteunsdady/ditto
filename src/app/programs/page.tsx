@@ -84,7 +84,7 @@ export default function ProgramsPage() {
   ];
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
+    <main className="mx-auto min-h-screen w-full max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
       <h1 className="text-2xl font-bold text-[#1f3a33] sm:text-3xl">코어그라운드 프로그램</h1>
       <p className="mt-4 max-w-3xl text-sm leading-7 text-[#52605b] sm:text-base">
         코어그라운드는 2030이 타인의 시선에 흔들리지 않고 자신의 중심을 세울 수 있도록
