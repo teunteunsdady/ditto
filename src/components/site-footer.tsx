@@ -9,7 +9,7 @@ const footerLinks = [
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-[#d8d3c5] bg-[#f6f2e8]">
+    <footer className="border-t border-[color:var(--core-base-border)] bg-[var(--core-base-bg)]">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-6 sm:px-6">
         <div className="flex flex-wrap gap-3 text-sm">
           {footerLinks.map((link) => (
