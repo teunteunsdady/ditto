@@ -1,15 +1,13 @@
 import type { Metadata } from "next";
-import { Inter, Geist } from "next/font/google";
+import { Inter } from "next/font/google";
 
-import { SiteFooter } from "@/components/site-footer";
-import { SiteHeader } from "@/components/site-header";
+import { LayoutShell } from "@/components/layout-shell";
+import { RouteTransitionProvider } from "@/components/route-transition-provider";
 
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
-
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
   title: "코어그라운드 | CoreGround",
@@ -23,13 +21,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className={cn("font-sans", geist.variable)}>
-      <body className={inter.className}>
-        <div className="min-h-screen bg-[var(--core-base-bg)]">
-          <SiteHeader />
-          <div className="pt-16">{children}</div>
-          <SiteFooter />
-        </div>
+    <html lang="ko" className={cn("font-sans", inter.variable)}>
+      <body className={cn(inter.className, "min-h-screen antialiased")}>
+        <RouteTransitionProvider>
+          <LayoutShell>{children}</LayoutShell>
+        </RouteTransitionProvider>
       </body>
     </html>
   );

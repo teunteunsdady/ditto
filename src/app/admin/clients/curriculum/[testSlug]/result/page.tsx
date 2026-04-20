@@ -48,8 +48,8 @@ export default async function CurriculumResultPage({ params, searchParams }: Res
   const backToCurriculumHref = `/admin/clients/curriculum?clientId=${clientId}&name=${encodeURIComponent(clientName ?? "")}`;
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-7xl px-4 py-16 sm:px-6">
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-10">
+    <main className="mx-auto min-h-screen w-full max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:py-16">
+      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-8 lg:p-10">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <p className="rounded-full bg-[#d7e2dc] px-3 py-1 text-xs font-semibold text-[#2f4f46]">
             검사 결과 보기
@@ -76,7 +76,7 @@ export default async function CurriculumResultPage({ params, searchParams }: Res
           )}
         </div>
 
-        <div className="mt-8 flex flex-wrap gap-3">
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           {data?.result_data ? (
             <DeleteAssessmentButton
               clientId={clientId}
@@ -86,7 +86,7 @@ export default async function CurriculumResultPage({ params, searchParams }: Res
           ) : null}
           <Link
             href={backToCurriculumHref}
-            className="rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+            className="inline-flex w-full items-center justify-center rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 sm:w-auto"
           >
             커리큘럼으로 돌아가기
           </Link>

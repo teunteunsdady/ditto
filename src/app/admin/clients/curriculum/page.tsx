@@ -44,8 +44,8 @@ export default async function CurriculumPage({ searchParams }: CurriculumPagePro
   }
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-7xl px-4 py-16 sm:px-6">
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+    <main className="mx-auto min-h-screen w-full max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:py-16">
+      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6 lg:p-8">
         <h1 className="text-center text-2xl font-extrabold text-slate-900 sm:text-3xl">{title}</h1>
         <p className="mt-2 text-center text-sm text-slate-500">
           검사 진행 전 상태를 확인하고 순서대로 시작해주세요.
@@ -64,7 +64,7 @@ export default async function CurriculumPage({ searchParams }: CurriculumPagePro
               return (
             <article
               key={item.order}
-              className="flex flex-wrap items-center gap-4 rounded-xl border border-slate-200 bg-slate-50 px-4 py-4 sm:flex-nowrap sm:px-6"
+              className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-slate-50 px-4 py-4 sm:flex-row sm:flex-wrap sm:items-center sm:px-6 lg:flex-nowrap"
             >
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#d7e2dc] text-lg font-bold text-[#2f4f46]">
                 {item.order}
@@ -80,21 +80,23 @@ export default async function CurriculumPage({ searchParams }: CurriculumPagePro
               >
                 {isSaved ? "저장됨" : "진행 전"}
               </p>
-              {isSaved ? (
-                <Link
-                  href={`/admin/clients/curriculum/${item.slug}/result?clientId=${clientId ?? ""}&name=${encodeURIComponent(clientName ?? "")}`}
-                  className="rounded-lg bg-[#3f5f55] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#2f4f46]"
-                >
-                  결과 보기
-                </Link>
-              ) : (
-                <Link
-                  href={`/admin/clients/curriculum/${item.slug}?order=${item.order}&clientId=${clientId ?? ""}&name=${encodeURIComponent(clientName ?? "")}`}
-                  className="rounded-lg bg-[#2f4f46] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#223c35]"
-                >
-                  검사 시작
-                </Link>
-              )}
+              <div className="w-full sm:w-auto">
+                {isSaved ? (
+                  <Link
+                    href={`/admin/clients/curriculum/${item.slug}/result?clientId=${clientId ?? ""}&name=${encodeURIComponent(clientName ?? "")}`}
+                    className="inline-flex w-full items-center justify-center rounded-lg bg-[#3f5f55] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#2f4f46] sm:w-auto"
+                  >
+                    결과 보기
+                  </Link>
+                ) : (
+                  <Link
+                    href={`/admin/clients/curriculum/${item.slug}?order=${item.order}&clientId=${clientId ?? ""}&name=${encodeURIComponent(clientName ?? "")}`}
+                    className="inline-flex w-full items-center justify-center rounded-lg bg-[#2f4f46] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#223c35] sm:w-auto"
+                  >
+                    검사 시작
+                  </Link>
+                )}
+              </div>
             </article>
               );
             })()

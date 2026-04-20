@@ -2,10 +2,12 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-import { SixShapeTestBoard } from "@/components/admin/six-shape-test-board";
+import { AdultAttachmentSheet } from "@/components/admin/adult-attachment-sheet";
+import { CoreEmotionSheet } from "@/components/admin/core-emotion-sheet";
+import { HtpDrawingBoard } from "@/components/admin/htp-drawing-board";
 import { LifeGraphBoard } from "@/components/admin/life-graph-board";
-import { PersonalityTestSheet } from "@/components/admin/personality-test-sheet";
 import { PersonalityPlusSheet } from "@/components/admin/personality-plus-sheet";
+import { SentenceCompletionSheet } from "@/components/admin/sentence-completion-sheet";
 import { AUTH_COOKIE_NAME, isMasterSession } from "@/lib/auth/master-session";
 import { CURRICULUM_TESTS } from "@/lib/curriculum-tests";
 
@@ -18,14 +20,6 @@ type TestPageProps = {
     clientId?: string;
   };
 };
-
-const sampleQuestions = [
-  "최근 2주 동안 감정 기복이 잦다고 느꼈다.",
-  "타인의 기대에 대한 부담감을 자주 느낀다.",
-  "새로운 과제를 시작할 때 불안감이 먼저 든다.",
-  "하루를 마무리할 때 피로감이 크다.",
-  "의사결정 시 확신보다 망설임이 큰 편이다.",
-];
 
 export default function CurriculumTestPage({ params, searchParams }: TestPageProps) {
   const cookieStore = cookies();
@@ -46,8 +40,8 @@ export default function CurriculumTestPage({ params, searchParams }: TestPagePro
   const backHref = `/admin/clients/curriculum?clientId=${clientId ?? ""}&name=${encodeURIComponent(clientName ?? "")}`;
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-7xl px-4 py-16 sm:px-6">
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-10">
+    <main className="mx-auto min-h-screen w-full max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:py-16">
+      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-8 lg:p-10">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="rounded-full bg-[#d7e2dc] px-3 py-1 text-xs font-semibold text-[#2f4f46]">
             검사 {currentTest.order} / {CURRICULUM_TESTS.length}
@@ -60,24 +54,34 @@ export default function CurriculumTestPage({ params, searchParams }: TestPagePro
         </h1>
         <p className="mt-2 text-sm text-slate-500">{currentTest.description}</p>
 
-        {currentTest.slug === "shape-6" ? <SixShapeTestBoard clientId={clientId} /> : null}
+        {currentTest.slug === "htp" ? <HtpDrawingBoard clientId={clientId} /> : null}
         {currentTest.slug === "life-graph" ? <LifeGraphBoard clientId={clientId} /> : null}
-        {currentTest.slug === "personality" ? (
-          <PersonalityTestSheet clientId={clientId} testSlug={currentTest.slug} />
+        {currentTest.slug === "personality-plus" ? (
+          <PersonalityPlusSheet clientId={clientId} testSlug={currentTest.slug} />
         ) : null}
-        {currentTest.slug === "personality-plus" ? <PersonalityPlusSheet /> : null}
+        {currentTest.slug === "attachment" ? (
+          <AdultAttachmentSheet clientId={clientId} testSlug={currentTest.slug} />
+        ) : null}
+        {currentTest.slug === "core-emotion" ? (
+          <CoreEmotionSheet clientId={clientId} testSlug={currentTest.slug} />
+        ) : null}
+        {currentTest.slug === "sentence-completion" ? (
+          <SentenceCompletionSheet clientId={clientId} testSlug={currentTest.slug} />
+        ) : null}
 
-        {currentTest.slug !== "shape-6" &&
+        {currentTest.slug !== "htp" &&
         currentTest.slug !== "life-graph" &&
-        currentTest.slug !== "personality" &&
-        currentTest.slug !== "personality-plus" ? (
+        currentTest.slug !== "personality-plus" &&
+        currentTest.slug !== "attachment" &&
+        currentTest.slug !== "core-emotion" &&
+        currentTest.slug !== "sentence-completion" ? (
           <div className="mt-8 space-y-4">
-            {sampleQuestions.map((question, index) => (
+            {["문항 준비 중입니다."].map((question, index) => (
               <article key={question} className="rounded-xl border border-slate-200 p-4">
                 <p className="text-sm font-semibold text-slate-800">
                   {index + 1}. {question}
                 </p>
-                <div className="mt-3 grid grid-cols-5 gap-2 text-xs">
+                <div className="mt-3 grid grid-cols-2 gap-2 text-xs sm:grid-cols-3 lg:grid-cols-5">
                   {["매우 아니다", "아니다", "보통", "그렇다", "매우 그렇다"].map((label) => (
                     <button
                       key={label}
@@ -93,10 +97,10 @@ export default function CurriculumTestPage({ params, searchParams }: TestPagePro
           </div>
         ) : null}
 
-        <div className="mt-8 flex flex-wrap justify-start gap-3">
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-start">
           <Link
             href={backHref}
-            className="rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+            className="inline-flex w-full items-center justify-center rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 sm:w-auto"
           >
             커리큘럼으로 돌아가기
           </Link>

@@ -325,7 +325,7 @@ export function ClientsListTable() {
 
       <div className="overflow-x-auto">
         <div className="relative">
-          <table className="min-w-full border-collapse text-sm">
+          <table className="min-w-[760px] w-full border-collapse text-sm">
           <thead className="bg-slate-100 text-left text-slate-900">
             <tr>
               <th className="px-4 py-3 font-semibold">이름</th>
@@ -363,7 +363,7 @@ export function ClientsListTable() {
                     )}
                   </td>
                   <td className="px-4 py-3">
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       {displayMode === "active" ? (
                         <>
                           <Link
@@ -430,7 +430,7 @@ export function ClientsListTable() {
         <p className="text-xs text-gray-500">
           총 {totalCount}명 중 {visibleFrom}-{visibleTo}명 표시
         </p>
-        <div className="flex items-center gap-1">
+        <div className="flex max-w-full items-center gap-1 overflow-x-auto pb-1">
           <button
             type="button"
             onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}

@@ -79,6 +79,115 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
       {},
     );
   }, [resultData]);
+  const genericScaleQuestions = useMemo(() => {
+    if (!resultData || typeof resultData !== "object") return [] as string[];
+    const raw = (resultData as { questions?: unknown }).questions;
+    if (!Array.isArray(raw)) return [] as string[];
+    return raw.filter((value): value is string => typeof value === "string");
+  }, [resultData]);
+  const genericScale = useMemo(() => {
+    if (!resultData || typeof resultData !== "object") return [] as Array<{ value: number; label: string }>;
+    const raw = (resultData as { scale?: unknown }).scale;
+    if (!Array.isArray(raw)) return [] as Array<{ value: number; label: string }>;
+    return raw
+      .map((item) => {
+        if (!item || typeof item !== "object") return null;
+        const option = item as { value?: unknown; label?: unknown };
+        if (typeof option.value !== "number" || typeof option.label !== "string") return null;
+        return { value: option.value, label: option.label };
+      })
+      .filter((value): value is { value: number; label: string } => value !== null);
+  }, [resultData]);
+  const genericScaleAnswers = useMemo(() => {
+    if (!resultData || typeof resultData !== "object") return {} as Record<number, number>;
+    const raw = (resultData as { answers?: unknown }).answers;
+    if (!raw || typeof raw !== "object") return {} as Record<number, number>;
+    return Object.entries(raw as Record<string, unknown>).reduce<Record<number, number>>(
+      (acc, [key, value]) => {
+        const no = Number(key);
+        const score = Number(value);
+        if (!Number.isFinite(no) || !Number.isFinite(score)) return acc;
+        acc[no] = score;
+        return acc;
+      },
+      {},
+    );
+  }, [resultData]);
+  const sentenceAnswers = useMemo(() => {
+    if (!resultData || typeof resultData !== "object") return {} as Record<number, string>;
+    const raw = (resultData as { answers?: unknown }).answers;
+    if (!raw || typeof raw !== "object") return {} as Record<number, string>;
+    return Object.entries(raw as Record<string, unknown>).reduce<Record<number, string>>(
+      (acc, [key, value]) => {
+        const no = Number(key);
+        if (!Number.isFinite(no) || typeof value !== "string") return acc;
+        acc[no] = value;
+        return acc;
+      },
+      {},
+    );
+  }, [resultData]);
+  const sentencePrompts = useMemo(() => {
+    if (!resultData || typeof resultData !== "object") return [] as string[];
+    const raw = (resultData as { prompts?: unknown }).prompts;
+    if (!Array.isArray(raw)) return [] as string[];
+    return raw.filter((item): item is string => typeof item === "string");
+  }, [resultData]);
+  const coreEmotionTypes = useMemo(() => {
+    if (!resultData || typeof resultData !== "object") return [] as Array<{
+      typeNo: number;
+      categories: Array<{ name: string; items: Array<{ text: string; checked: boolean }> }>;
+    }>;
+    const format = (resultData as { format?: unknown }).format;
+    if (format !== "core-emotion-grid") return [] as Array<{
+      typeNo: number;
+      categories: Array<{ name: string; items: Array<{ text: string; checked: boolean }> }>;
+    }>;
+    const rawTypes = (resultData as { types?: unknown }).types;
+    if (!Array.isArray(rawTypes)) return [] as Array<{
+      typeNo: number;
+      categories: Array<{ name: string; items: Array<{ text: string; checked: boolean }> }>;
+    }>;
+    return rawTypes
+      .map((rawType, index) => {
+        if (!rawType || typeof rawType !== "object") return null;
+        const typeNo =
+          typeof (rawType as { typeNo?: unknown }).typeNo === "number"
+            ? ((rawType as { typeNo: number }).typeNo)
+            : index + 1;
+        const rawCategories = (rawType as { categories?: unknown }).categories;
+        if (!Array.isArray(rawCategories)) return null;
+        const categories = rawCategories
+          .map((rawCategory) => {
+            if (!rawCategory || typeof rawCategory !== "object") return null;
+            const name = (rawCategory as { name?: unknown }).name;
+            const rawItems = (rawCategory as { items?: unknown }).items;
+            if (typeof name !== "string" || !Array.isArray(rawItems)) return null;
+            const items = rawItems
+              .map((rawItem) => {
+                if (!rawItem || typeof rawItem !== "object") return null;
+                const item = rawItem as { text?: unknown; checked?: unknown };
+                return {
+                  text: typeof item.text === "string" ? item.text : "",
+                  checked: item.checked === true,
+                };
+              })
+              .filter((item): item is { text: string; checked: boolean } => item !== null);
+            return { name, items };
+          })
+          .filter(
+            (category): category is { name: string; items: Array<{ text: string; checked: boolean }> } =>
+              category !== null,
+          );
+        return { typeNo, categories };
+      })
+      .filter(
+        (type): type is {
+          typeNo: number;
+          categories: Array<{ name: string; items: Array<{ text: string; checked: boolean }> }>;
+        } => type !== null,
+      );
+  }, [resultData]);
 
   const drawShapeBoard = useCallback((
     ctx: CanvasRenderingContext2D,
@@ -267,6 +376,12 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
       drawShapeBoard(ctx, scaledWidth, scaledHeight, dpr);
     } else if (testSlug === "life-graph") {
       drawLifeGraphTemplate(ctx, scaledWidth, scaledHeight, dpr);
+    } else if (testSlug === "htp") {
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, scaledWidth, scaledHeight);
+      ctx.strokeStyle = "#e2e8f0";
+      ctx.lineWidth = 1.2 * dpr;
+      ctx.strokeRect(0, 0, scaledWidth, scaledHeight);
     } else {
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, 0, scaledWidth, scaledHeight);
@@ -309,7 +424,117 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
     );
   }
 
-  if (testSlug !== "shape-6" && testSlug !== "life-graph") {
+  if (
+    (testSlug === "attachment" || testSlug === "core-emotion" || testSlug === "personality-plus") &&
+    genericScaleQuestions.length > 0
+  ) {
+    return (
+      <div className="overflow-x-auto rounded-xl border border-slate-300 bg-white">
+        <table className="min-w-[760px] w-full border-collapse text-xs sm:min-w-[900px] sm:text-sm">
+          <thead className="bg-slate-100 text-slate-900">
+            <tr>
+              <th className="border border-slate-300 px-3 py-2 text-center font-semibold">번호</th>
+              <th className="border border-slate-300 px-3 py-2 text-left font-semibold">문항</th>
+              <th className="border border-slate-300 px-3 py-2 text-center font-semibold">응답</th>
+            </tr>
+          </thead>
+          <tbody>
+            {genericScaleQuestions.map((question, index) => {
+              const no = index + 1;
+              const score = genericScaleAnswers[no];
+              const label = genericScale.find((item) => item.value === score)?.label ?? "-";
+              return (
+                <tr key={no} className="odd:bg-white even:bg-slate-50">
+                  <td className="border border-slate-200 px-3 py-2 text-center">{no}</td>
+                  <td className="border border-slate-200 px-3 py-2">{question}</td>
+                  <td className="border border-slate-200 px-3 py-2 text-center">{label}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+
+  if (testSlug === "sentence-completion" && sentencePrompts.length > 0) {
+    return (
+      <div className="space-y-3 rounded-xl border border-slate-300 bg-white p-4 sm:p-6">
+        {sentencePrompts.map((prompt, index) => {
+          const no = index + 1;
+          return (
+            <article key={no} className="rounded-lg border border-slate-200 bg-slate-50 p-3 sm:p-4">
+              <p className="text-sm font-semibold text-slate-800">
+                {no}. {prompt}
+              </p>
+              <p className="mt-2 whitespace-pre-wrap text-sm text-slate-700">
+                {sentenceAnswers[no] || "-"}
+              </p>
+            </article>
+          );
+        })}
+      </div>
+    );
+  }
+
+  if (testSlug === "core-emotion" && coreEmotionTypes.length > 0) {
+    return (
+      <div className="grid gap-4 lg:grid-cols-2">
+        {coreEmotionTypes.map((type) => (
+          <article
+            key={type.typeNo}
+            className="rounded-xl border border-slate-300 bg-white p-3 sm:p-4"
+          >
+            <h3 className="mb-3 text-base font-semibold text-slate-900">
+              감정 유형 {type.typeNo}
+            </h3>
+            <div className="overflow-x-auto">
+              <table className="min-w-[520px] w-full table-fixed border-collapse text-xs sm:text-sm">
+                <colgroup>
+                  <col className="w-24 sm:w-28" />
+                  <col />
+                </colgroup>
+                <thead className="bg-slate-100 text-slate-900">
+                  <tr>
+                    <th className="border border-slate-300 px-2 py-2 text-left font-semibold">카테고리</th>
+                    <th className="border border-slate-300 px-2 py-2 text-left font-semibold">항목</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {type.categories.map((category) => (
+                    <tr key={category.name} className="align-top">
+                      <td className="border border-slate-200 px-2 py-2 font-medium text-slate-700">
+                        {category.name}
+                      </td>
+                      <td className="border border-slate-200 px-2 py-2">
+                        <div className="space-y-1.5">
+                          {category.items.map((item, index) => (
+                            <div key={index} className="flex items-center gap-2">
+                              <input
+                                type="checkbox"
+                                checked={item.checked}
+                                readOnly
+                                className="h-4 w-4 accent-[#2f4f46]"
+                              />
+                              <span className="text-xs text-slate-700 sm:text-sm">
+                                {item.text || "항목 미입력"}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </article>
+        ))}
+      </div>
+    );
+  }
+
+  if (testSlug !== "shape-6" && testSlug !== "life-graph" && testSlug !== "htp") {
     return (
       <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
         <p className="mb-3 text-sm font-semibold text-slate-700">저장된 원본 데이터</p>
