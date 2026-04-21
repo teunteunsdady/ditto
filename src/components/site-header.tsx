@@ -72,18 +72,23 @@ export function SiteHeader() {
     <header className="fixed inset-x-0 top-0 z-50 border-b border-[#e5e8ee] bg-white/92 backdrop-blur supports-[backdrop-filter]:bg-white/78">
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
         <Link href="/" className="flex items-center gap-3">
-          <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-xl border border-[#d8dfdd] bg-white p-[2px]">
+          <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl">
             <Image
               src="/images/coreground-logo.png"
               alt="코어그라운드 로고"
               fill
-              sizes="40px"
+              sizes="44px"
               className="object-contain"
               priority
             />
           </div>
-          <span className="truncate text-sm font-semibold text-[#191f28] sm:text-base">
-            코어그라운드
+          <span className="flex min-w-0 flex-col leading-none">
+            <span className="truncate text-sm font-semibold tracking-tight text-[#191f28] sm:text-base">
+              CoreGround
+            </span>
+            <span className="mt-1 hidden truncate text-[10px] font-medium tracking-[0.14em] text-[#6b7684] sm:block">
+              COACHING INTELLIGENCE LAB
+            </span>
           </span>
         </Link>
 

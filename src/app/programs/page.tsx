@@ -88,7 +88,7 @@ export default function ProgramsPage() {
       <section className="mx-auto w-full max-w-6xl px-4 pb-16 pt-12 sm:px-6 sm:pb-20 sm:pt-16 lg:pb-24 lg:pt-20">
         <p className="text-xs font-semibold tracking-[0.16em] text-[#6b7684]">PROGRAMS</p>
         <h1 className="mt-5 text-3xl font-semibold leading-[1.18] tracking-tight sm:text-5xl lg:text-6xl">
-          코어그라운드는 목적에 맞는 트랙을 제안하고
+          CoreGround는 목적에 맞는 트랙을 제안하고
           <br />
           실행 가능한 변화까지 함께 설계합니다
         </h1>

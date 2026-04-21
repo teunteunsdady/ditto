@@ -77,7 +77,7 @@ export default function ContactPage() {
     <main className="mx-auto min-h-screen w-full max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
       <h1 className="text-2xl font-bold text-[#1f3a33] sm:text-3xl">상담 문의</h1>
       <p className="mt-6 text-sm leading-7 text-[#51605a] sm:text-base">
-        코어그라운드는 개인/그룹/온보딩 목적에 맞는 프로그램을 제안합니다. 참여 대상,
+        CoreGround는 개인/그룹/온보딩 목적에 맞는 프로그램을 제안합니다. 참여 대상,
         기대하는 변화, 운영 희망 시기를 남겨주시면 상담을 통해 맞춤형 흐름을 안내드립니다.
       </p>
 

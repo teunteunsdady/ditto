@@ -19,7 +19,7 @@ export function SiteFooter() {
           ))}
         </div>
         <p className="text-xs text-[#64726d]">
-          © {new Date().getFullYear()} 코어그라운드(CoreGround). All rights reserved.
+          © {new Date().getFullYear()} CoreGround Inc. All rights reserved.
         </p>
       </div>
     </footer>
