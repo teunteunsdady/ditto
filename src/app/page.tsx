@@ -109,6 +109,33 @@ export default function Home() {
     };
   }, []);
 
+  useEffect(() => {
+    const revealTargets = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-reveal]"),
+    );
+
+    revealTargets.forEach((element, index) => {
+      element.style.setProperty("--reveal-delay", `${Math.min(index * 35, 280)}ms`);
+    });
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("cg-reveal-visible");
+          } else {
+            entry.target.classList.remove("cg-reveal-visible");
+          }
+        });
+      },
+      { threshold: 0.22, rootMargin: "-8% 0px -8% 0px" },
+    );
+
+    revealTargets.forEach((element) => observer.observe(element));
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <main className="relative bg-[#f3f5f4] text-[#191f28]">
       <div className="pointer-events-none fixed right-5 top-1/2 z-40 hidden -translate-y-1/2 lg:block">
@@ -207,8 +234,11 @@ export default function Home() {
         </section>
 
         <section id="about" className="flex min-h-[100svh] items-center border-b border-[#e6ebe8] bg-white">
-          <div className="mx-auto grid w-full max-w-7xl gap-12 px-4 py-20 sm:px-6 sm:py-24 lg:grid-cols-[1.1fr_0.9fr]">
-            <div>
+          <div
+            data-reveal
+            className="mx-auto grid w-full max-w-7xl gap-12 px-4 py-20 sm:px-6 sm:py-24 lg:grid-cols-[1.1fr_0.9fr]"
+          >
+            <div data-reveal>
               <p className="text-sm font-semibold text-[#2f4f46]">Team Mission</p>
               <h2 className="mt-4 text-3xl font-semibold leading-tight tracking-tight sm:text-5xl">
                 변화를 열망하는 사람들이 모여
@@ -227,7 +257,7 @@ export default function Home() {
               </p>
             </div>
             <aside className="space-y-4">
-              <div className="rounded-3xl border border-[#dfe7e3] bg-[#f7faf8] p-6 sm:p-8">
+              <div data-reveal className="rounded-3xl border border-[#dfe7e3] bg-[#f7faf8] p-6 sm:p-8">
                 <p className="text-xs font-semibold tracking-[0.14em] text-[#72817a]">MISSION STATEMENT</p>
                 <p className="mt-4 text-lg font-semibold leading-relaxed text-[#1f2925]">
                   &quot;어렵고 막연한 변화가 아니라, 누구나 실행 가능한 변화를 만든다.&quot;
@@ -238,7 +268,10 @@ export default function Home() {
                   <li>- 결과가 남는 변화까지 함께 완성합니다</li>
                 </ul>
               </div>
-              <div className="rounded-2xl border border-[#e4ebe7] bg-white p-5 text-sm leading-relaxed text-[#4e5968]">
+              <div
+                data-reveal
+                className="rounded-2xl border border-[#e4ebe7] bg-white p-5 text-sm leading-relaxed text-[#4e5968]"
+              >
                 CoreGround는 개인 코칭, 그룹 코칭, 신입생 온보딩까지 하나의 미션 아래 일관된 실행
                 체계를 제공합니다.
               </div>
@@ -247,8 +280,11 @@ export default function Home() {
         </section>
 
         <section id="expertise-1" className="flex min-h-[100svh] items-center border-b border-[#e6ebe8] bg-[#f6f8f7]">
-          <div className="mx-auto grid w-full max-w-7xl gap-10 px-4 py-20 sm:px-6 sm:py-24 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
-            <div>
+          <div
+            data-reveal
+            className="mx-auto grid w-full max-w-7xl gap-10 px-4 py-20 sm:px-6 sm:py-24 lg:grid-cols-[1.05fr_0.95fr] lg:items-start"
+          >
+            <div data-reveal>
               <p className="text-sm font-semibold text-[#2f4f46]">전문 분야 1</p>
               <h2 className="mt-4 text-3xl font-semibold leading-tight tracking-tight sm:text-5xl">
                 정서 진단 기반
@@ -268,6 +304,7 @@ export default function Home() {
                 { title: "실행 루틴 설계", desc: "주간 점검 단위로 행동 변화 루프 운영" },
               ].map((item) => (
                 <article
+                  data-reveal
                   key={item.title}
                   className="rounded-2xl border border-[#dde5e1] bg-white p-5 shadow-[0_8px_20px_rgba(15,23,42,0.05)]"
                 >
@@ -280,8 +317,11 @@ export default function Home() {
         </section>
 
         <section id="expertise-2" className="flex min-h-[100svh] items-center border-b border-[#e6ebe8] bg-white">
-          <div className="mx-auto grid w-full max-w-7xl gap-10 px-4 py-20 sm:px-6 sm:py-24 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
-            <div className="rounded-3xl border border-[#dde5e1] bg-[#f8faf9] p-6 sm:p-8">
+          <div
+            data-reveal
+            className="mx-auto grid w-full max-w-7xl gap-10 px-4 py-20 sm:px-6 sm:py-24 lg:grid-cols-[0.95fr_1.05fr] lg:items-start"
+          >
+            <div data-reveal className="rounded-3xl border border-[#dde5e1] bg-[#f8faf9] p-6 sm:p-8">
               <p className="text-xs font-semibold tracking-[0.14em] text-[#72817a]">COACHING SYSTEM</p>
               <ul className="mt-4 space-y-3 text-sm leading-relaxed text-[#3f4e49] sm:text-base">
                 <li>진단 → 설계 → 실행 → 리뷰를 하나의 운영 모델로 통합</li>
@@ -290,7 +330,7 @@ export default function Home() {
                 <li>코치와 참여자가 같은 지표를 보며 변화 추적</li>
               </ul>
             </div>
-            <div>
+            <div data-reveal>
               <p className="text-sm font-semibold text-[#2f4f46]">전문 분야 2</p>
               <h2 className="mt-4 text-3xl font-semibold leading-tight tracking-tight sm:text-5xl">
                 코칭과 AI를 결합한
@@ -307,16 +347,18 @@ export default function Home() {
 
         <section id="process" className="flex min-h-[100svh] items-center border-b border-[#e6ebe8] bg-[#f6f8f7]">
           <div className="mx-auto w-full max-w-7xl px-4 py-20 sm:px-6 sm:py-24">
-            <p className="text-sm font-semibold text-[#2f4f46]">우리가 일하는 방식 (프로세스)</p>
-            <h2 className="mt-4 text-3xl font-semibold leading-tight tracking-tight sm:text-5xl">
-              혼자서는 막막한 변화를
-              <br />
-              함께 끝까지 완성합니다
-            </h2>
-            <p className="mt-5 max-w-3xl text-base leading-relaxed text-[#4e5968] sm:text-lg">
-              CoreGround의 프로세스는 단순한 체크리스트가 아닙니다. 현재 상태를 정확히 해석하고,
-              실제로 바뀌는 행동까지 연결해 결과로 남기는 실행 흐름입니다.
-            </p>
+            <div data-reveal>
+              <p className="text-sm font-semibold text-[#2f4f46]">우리가 일하는 방식 (프로세스)</p>
+              <h2 className="mt-4 text-3xl font-semibold leading-tight tracking-tight sm:text-5xl">
+                혼자서는 막막한 변화를
+                <br />
+                함께 끝까지 완성합니다
+              </h2>
+              <p className="mt-5 max-w-3xl text-base leading-relaxed text-[#4e5968] sm:text-lg">
+                CoreGround의 프로세스는 단순한 체크리스트가 아닙니다. 현재 상태를 정확히 해석하고,
+                실제로 바뀌는 행동까지 연결해 결과로 남기는 실행 흐름입니다.
+              </p>
+            </div>
             <ol className="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
               {[
                 { step: "01", title: "진단", desc: "먼저 지금의 상태를 감정, 관계, 행동 데이터로 정확히 읽어냅니다." },
@@ -326,6 +368,7 @@ export default function Home() {
                 { step: "05", title: "고도화", desc: "마지막으로 다음 단계 전략을 설계해 변화가 한 번으로 끝나지 않도록 확장합니다." },
               ].map((item) => (
                 <li
+                  data-reveal
                   key={item.step}
                   className="rounded-2xl border border-[#dfe6e3] bg-white p-6 shadow-[0_8px_20px_rgba(15,23,42,0.05)]"
                 >
@@ -342,7 +385,10 @@ export default function Home() {
           id="proof"
           className="relative flex min-h-[100svh] items-center overflow-hidden border-b border-[#11243f] bg-[#060d19] text-white"
         >
-          <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-20 sm:px-6 sm:py-24">
+          <div
+            data-reveal
+            className="relative z-10 mx-auto w-full max-w-7xl px-4 py-20 sm:px-6 sm:py-24"
+          >
             <p className="text-sm font-semibold text-[#9fc0ff]">수치로 증명하는 실적</p>
             <h2 className="mt-4 max-w-4xl text-3xl font-semibold leading-tight tracking-tight sm:text-5xl">
               변화를 열망하는 사람들이 모여,
@@ -373,7 +419,7 @@ export default function Home() {
                   note: "세션 후 주간 실행 리포트 기준",
                 },
               ].map((item) => (
-                <article key={item.label} className="border-b border-white/15 pb-6">
+                <article data-reveal key={item.label} className="border-b border-white/15 pb-6">
                   <p className="text-sm text-[#b8c7df]">{item.label}</p>
                   <p className="mt-2 text-5xl font-semibold tracking-tight text-white sm:text-6xl">{item.value}</p>
                   <p className="mt-2 text-xs text-[#8ea5c8]">{item.note}</p>
@@ -381,7 +427,7 @@ export default function Home() {
               ))}
             </div>
 
-            <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-[#9eb4d6]">
+            <div data-reveal className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-[#9eb4d6]">
               <span>교육기관</span>
               <span>초기 커리어 조직</span>
               <span>성장 커뮤니티</span>
@@ -429,7 +475,10 @@ export default function Home() {
 
         <section id="cta" className="bg-white">
           <div className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 sm:py-14">
-            <div className="rounded-2xl bg-[#2f4f46] px-6 py-7 text-white sm:px-8 sm:py-8">
+            <div
+              data-reveal
+              className="rounded-2xl bg-[#2f4f46] px-6 py-7 text-white sm:px-8 sm:py-8"
+            >
               <h2 className="text-xl font-semibold leading-tight sm:text-2xl">
                 지금 코어를 점검하고
                 <br />
