@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import coregroundLogo from "../../../public/images/coreground-logo.png";
 
 export default function CompanyPage() {
   const manifestoSlides = [
@@ -51,7 +52,14 @@ export default function CompanyPage() {
     <main className="bg-[#f5f6f4] text-[#191f28]">
       <section className="relative overflow-hidden border-b border-[#e7ebe8] bg-white">
         <div className="pointer-events-none absolute right-[-4.5rem] top-[-3rem] h-72 w-72 opacity-[0.06] sm:right-[-3rem] sm:h-96 sm:w-96">
-          <Image src="/images/coreground-logo.png" alt="" fill sizes="384px" className="object-contain" />
+          <Image
+            src={coregroundLogo}
+            alt=""
+            fill
+            sizes="384px"
+            className="object-contain"
+            placeholder="blur"
+          />
         </div>
         <div className="mx-auto w-full max-w-6xl px-4 pb-14 pt-12 sm:px-6 sm:pb-16 sm:pt-16 lg:pb-20 lg:pt-20">
           <p className="text-xs font-semibold tracking-[0.16em] text-[#6b7684]">FOUNDER&apos;S MANIFESTO</p>
@@ -74,7 +82,14 @@ export default function CompanyPage() {
               className="relative min-h-[64svh] overflow-hidden rounded-[28px] border border-[#dfe6e3] bg-white px-6 py-10 shadow-[0_14px_36px_rgba(15,23,42,0.06)] sm:px-10 sm:py-12"
             >
               <div className="pointer-events-none absolute right-4 top-4 h-20 w-20 opacity-[0.045] sm:h-28 sm:w-28">
-                <Image src="/images/coreground-logo.png" alt="" fill sizes="112px" className="object-contain" />
+                <Image
+                  src={coregroundLogo}
+                  alt=""
+                  fill
+                  sizes="112px"
+                  className="object-contain"
+                  placeholder="blur"
+                />
               </div>
               <p className="text-xs font-semibold tracking-[0.16em] text-[#6b7684]">
                 SHEET {index + 1} · {item.label}

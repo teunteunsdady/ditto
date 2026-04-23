@@ -2,6 +2,8 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 import { AUTH_COOKIE_NAME, isMasterSession } from "@/lib/auth/master-session";
+import { logServerError } from "@/lib/security/api-error";
+import { requireSameOrigin } from "@/lib/security/request-guards";
 import { createServiceClient } from "@/lib/supabase/service";
 
 type RouteParams = {
@@ -36,6 +38,11 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
+  const originError = requireSameOrigin(_request);
+  if (originError) {
+    return originError;
+  }
+
   const clientId = params.id?.trim();
   if (!clientId) {
     return NextResponse.json({ message: "Invalid client id" }, { status: 400 });
@@ -60,13 +67,15 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
           .is("deleted_at", null);
 
     if (error) {
-      return NextResponse.json({ message: error.message }, { status: 400 });
+      logServerError("api/clients/[id].delete", error, { clientId });
+      return NextResponse.json({ message: "대상자 삭제에 실패했습니다." }, { status: 400 });
     }
 
     return NextResponse.json({ ok: true });
   } catch (error) {
+    logServerError("api/clients/[id].delete.unhandled", error, { clientId });
     return NextResponse.json(
-      { message: "Failed to delete client", detail: String(error) },
+      { message: "대상자 삭제 중 오류가 발생했습니다." },
       { status: 500 },
     );
   }
@@ -75,6 +84,11 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
 export async function PATCH(request: Request, { params }: RouteParams) {
   if (!isAuthenticatedRequest()) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
+  const originError = requireSameOrigin(request);
+  if (originError) {
+    return originError;
   }
 
   const clientId = params.id?.trim();
@@ -101,13 +115,15 @@ export async function PATCH(request: Request, { params }: RouteParams) {
       .not("deleted_at", "is", null);
 
     if (error) {
-      return NextResponse.json({ message: error.message }, { status: 400 });
+      logServerError("api/clients/[id].patch", error, { clientId });
+      return NextResponse.json({ message: "대상자 복원에 실패했습니다." }, { status: 400 });
     }
 
     return NextResponse.json({ ok: true });
   } catch (error) {
+    logServerError("api/clients/[id].patch.unhandled", error, { clientId });
     return NextResponse.json(
-      { message: "Failed to restore client", detail: String(error) },
+      { message: "대상자 복원 중 오류가 발생했습니다." },
       { status: 500 },
     );
   }

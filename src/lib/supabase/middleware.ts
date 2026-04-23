@@ -1,6 +1,22 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+function applySecurityHeaders(response: NextResponse) {
+  response.headers.set("X-Content-Type-Options", "nosniff");
+  response.headers.set("X-Frame-Options", "DENY");
+  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+
+  if (process.env.NODE_ENV === "production") {
+    response.headers.set(
+      "Strict-Transport-Security",
+      "max-age=31536000; includeSubDomains; preload",
+    );
+  }
+
+  return response;
+}
+
 export function updateSession(request: NextRequest) {
   let response = NextResponse.next({
     request: {
@@ -12,7 +28,7 @@ export function updateSession(request: NextRequest) {
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    return response;
+    return applySecurityHeaders(response);
   }
 
   const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
@@ -44,5 +60,5 @@ export function updateSession(request: NextRequest) {
   // auth cookie를 최신 상태로 유지하기 위한 호출
   void supabase.auth.getUser();
 
-  return response;
+  return applySecurityHeaders(response);
 }

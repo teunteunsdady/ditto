@@ -1,4 +1,4 @@
-import { createHmac } from "node:crypto";
+import { createHmac, timingSafeEqual } from "node:crypto";
 
 export const AUTH_COOKIE_NAME = "master_session";
 export const SESSION_MAX_AGE_SECONDS = 60 * 60 * 8; // 8시간
@@ -8,11 +8,26 @@ type SessionPayload = {
 };
 
 function getSessionSecret() {
-  return (
-    process.env.MASTER_SESSION_SECRET ??
-    process.env.MASTER_LOGIN_PASSWORD ??
-    ""
-  );
+  const sessionSecret = process.env.MASTER_SESSION_SECRET;
+  if (sessionSecret) return sessionSecret;
+
+  // Local/dev 환경에서는 기존 동작을 유지하되, 운영 환경에서는 별도 시크릿을 강제합니다.
+  if (process.env.NODE_ENV !== "production") {
+    return process.env.MASTER_LOGIN_PASSWORD ?? "";
+  }
+
+  return "";
+}
+
+function isSignatureMatch(expected: string, actual: string) {
+  const expectedBuffer = Buffer.from(expected);
+  const actualBuffer = Buffer.from(actual);
+
+  if (expectedBuffer.length !== actualBuffer.length) {
+    return false;
+  }
+
+  return timingSafeEqual(expectedBuffer, actualBuffer);
 }
 
 function signPayload(payloadBase64: string) {
@@ -61,7 +76,7 @@ export function verifyMasterSession(
   }
 
   const expectedSignature = signPayload(payloadBase64);
-  if (!expectedSignature || expectedSignature !== signature) {
+  if (!expectedSignature || !isSignatureMatch(expectedSignature, signature)) {
     return { valid: false };
   }
 

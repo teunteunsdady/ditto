@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
+import coregroundLogo from "../../public/images/coreground-logo.png";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -72,13 +73,14 @@ export function SiteHeader() {
     <header className="fixed inset-x-0 top-0 z-50 border-b border-[#e5e8ee] bg-white/92 backdrop-blur supports-[backdrop-filter]:bg-white/78">
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
         <Link href="/" className="flex items-center gap-3">
-          <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl">
+          <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl bg-[#f2f4f8]">
             <Image
-              src="/images/coreground-logo.png"
+              src={coregroundLogo}
               alt="코어그라운드 로고"
               fill
               sizes="44px"
               className="object-contain"
+              placeholder="blur"
               priority
             />
           </div>

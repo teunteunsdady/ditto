@@ -2,6 +2,8 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 import { AUTH_COOKIE_NAME, isMasterSession } from "@/lib/auth/master-session";
+import { logServerError } from "@/lib/security/api-error";
+import { requireSameOrigin } from "@/lib/security/request-guards";
 import { createServiceClient } from "@/lib/supabase/service";
 
 type CreateClientBody = {
@@ -86,7 +88,8 @@ export async function GET(request: Request) {
     const { data, count, error } = await query;
 
     if (error) {
-      return NextResponse.json({ message: error.message }, { status: 400 });
+      logServerError("api/clients.get", error);
+      return NextResponse.json({ message: "대상자 목록 조회에 실패했습니다." }, { status: 400 });
     }
 
     return NextResponse.json({
@@ -104,8 +107,9 @@ export async function GET(request: Request) {
       pageSize: safePageSize,
     });
   } catch (error) {
+    logServerError("api/clients.get.unhandled", error);
     return NextResponse.json(
-      { message: "Failed to fetch clients", detail: String(error) },
+      { message: "대상자 목록 조회 중 오류가 발생했습니다." },
       { status: 500 },
     );
   }
@@ -114,6 +118,11 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   if (!isAuthenticatedRequest()) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
+  const originError = requireSameOrigin(request);
+  if (originError) {
+    return originError;
   }
 
   try {
@@ -147,7 +156,8 @@ export async function POST(request: Request) {
       .single();
 
     if (error) {
-      return NextResponse.json({ message: error.message }, { status: 400 });
+      logServerError("api/clients.post", error);
+      return NextResponse.json({ message: "대상자 등록에 실패했습니다." }, { status: 400 });
     }
 
     return NextResponse.json({
@@ -157,8 +167,9 @@ export async function POST(request: Request) {
       },
     });
   } catch (error) {
+    logServerError("api/clients.post.unhandled", error);
     return NextResponse.json(
-      { message: "Failed to create client", detail: String(error) },
+      { message: "대상자 등록 중 오류가 발생했습니다." },
       { status: 500 },
     );
   }

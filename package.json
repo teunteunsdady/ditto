@@ -6,7 +6,9 @@
     "dev": "next dev -p 3001",
     "build": "next build",
     "start": "next start -p 3001",
-    "lint": "next lint"
+    "lint": "next lint",
+    "security:smoke": "bash ./scripts/security-smoke.sh",
+    "security:smoke:full": "bash ./scripts/security-smoke.sh full"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",

@@ -210,8 +210,12 @@ export default function Home() {
                 삶의 중심을 실제 행동으로 구축하는 코칭 경험을 설계합니다.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
-                <Button asChild className="h-11 rounded-xl bg-[#2f4f46] px-6 text-white hover:bg-[#223c35]">
-                  <Link href="#about">브랜드 스토리 보기</Link>
+                <Button
+                  type="button"
+                  onClick={scrollToAbout}
+                  className="h-11 rounded-xl bg-[#2f4f46] px-6 text-white hover:bg-[#223c35]"
+                >
+                  CoreGround 알아보기
                 </Button>
                 <Button
                   asChild
