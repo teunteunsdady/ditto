@@ -122,8 +122,6 @@ const CORE_EMOTION_ITEMS: string[][][] = [
     ["\"올인\"한다", "목표 지향적이다", "위기대처 능력이 있다"],
   ],
 ];
-const TYPE_COUNT = CORE_EMOTION_ITEMS.length;
-
 function createInitialTypes(): EmotionType[] {
   return CORE_EMOTION_ITEMS.map((typeItems, typeIdx) => ({
     typeNo: typeIdx + 1,

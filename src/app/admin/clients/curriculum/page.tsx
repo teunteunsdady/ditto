@@ -84,7 +84,7 @@ export default async function CurriculumPage({ searchParams }: CurriculumPagePro
                 {isSaved ? (
                   <Link
                     href={`/admin/clients/curriculum/${item.slug}/result?clientId=${clientId ?? ""}&name=${encodeURIComponent(clientName ?? "")}`}
-                    className="inline-flex w-full items-center justify-center rounded-lg bg-[#3f5f55] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#2f4f46] sm:w-auto"
+                    className="inline-flex w-full items-center justify-center rounded-lg border border-[#cdd6d1] bg-white px-5 py-2.5 text-sm font-semibold text-[#2f4f46] hover:bg-[#f5f7f6] sm:w-auto"
                   >
                     결과 보기
                   </Link>

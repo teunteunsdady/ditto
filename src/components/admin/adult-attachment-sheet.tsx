@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
 type AdultAttachmentSheetProps = {
@@ -70,6 +71,7 @@ function normalizeAnswerMap(value: unknown): AnswerMap {
 }
 
 export function AdultAttachmentSheet({ clientId, testSlug }: AdultAttachmentSheetProps) {
+  const router = useRouter();
   const [answers, setAnswers] = useState<AnswerMap>({});
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [saveMessage, setSaveMessage] = useState("");
@@ -140,6 +142,10 @@ export function AdultAttachmentSheet({ clientId, testSlug }: AdultAttachmentShee
       if (!response.ok) throw new Error(payload?.message ?? "저장에 실패했습니다.");
       setSaveState("saved");
       setSaveMessage("검사 결과가 저장되었습니다.");
+      if (resultHref) {
+        router.push(resultHref);
+        router.refresh();
+      }
     } catch (error) {
       setSaveState("error");
       setSaveMessage(error instanceof Error ? error.message : "저장 중 오류가 발생했습니다.");

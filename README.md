@@ -48,6 +48,8 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 - `docs/supabase-setup.md`: Supabase 프로젝트 생성/키 설정/RLS 가이드
 - `docs/vercel-deploy-checklist.md`: Vercel 배포 절차 체크리스트
+- `docs/security-hardening.md`: 서비스 보안 하드닝/점검 가이드
+- `docs/security-operations-runbook.md`: 운영 반영 및 사고 대응 Runbook
 - `docs/worklog.md`: 작업일지
 
 ## 현재 포함된 구조

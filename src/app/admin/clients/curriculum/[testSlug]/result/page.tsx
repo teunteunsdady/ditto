@@ -46,25 +46,41 @@ export default async function CurriculumResultPage({ params, searchParams }: Res
 
   const backToTestHref = `/admin/clients/curriculum/${currentTest.slug}?clientId=${clientId}&name=${encodeURIComponent(clientName ?? "")}`;
   const backToCurriculumHref = `/admin/clients/curriculum?clientId=${clientId}&name=${encodeURIComponent(clientName ?? "")}`;
+  const isAttachmentResult = currentTest.slug === "attachment";
 
   return (
     <main className="mx-auto min-h-screen w-full max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:py-16">
       <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-8 lg:p-10">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <p className="rounded-full bg-[#d7e2dc] px-3 py-1 text-xs font-semibold text-[#2f4f46]">
-            검사 결과 보기
-          </p>
-          {clientName ? <p className="text-sm font-medium text-slate-500">대상자: {clientName}</p> : null}
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p
+              className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
+                isAttachmentResult
+                  ? "border border-[#ded6ff] bg-[#f3f0ff] tracking-[0.12em] text-[#6a55da]"
+                  : "bg-[#d7e2dc] text-[#2f4f46]"
+              }`}
+            >
+              {isAttachmentResult ? "COMPREHENSIVE ANALYSIS REPORT" : "검사 결과 보기"}
+            </p>
+            <h1 className="mt-4 text-2xl font-extrabold text-slate-900 sm:text-3xl">
+              {isAttachmentResult ? "애착 유형 분석 결과" : `${currentTest.title} 결과`}
+            </h1>
+            {isAttachmentResult ? (
+              <p className="mt-2 max-w-3xl text-sm leading-relaxed text-slate-500">
+                답변하신 데이터를 바탕으로 귀하의 심리적 애착 지표를 분석했습니다.
+                본 결과는 타인과의 관계에서 나타나는 고유한 패턴을 보여줍니다.
+              </p>
+            ) : null}
+          </div>
+          <div className="pt-1 text-right">
+            {clientName ? <p className="text-sm font-medium text-slate-500">대상자: {clientName}</p> : null}
+            <p className={`text-sm text-slate-500 ${clientName ? "mt-1" : ""}`}>
+              {data?.updated_at
+                ? `최종 저장: ${new Date(data.updated_at).toLocaleString("ko-KR")}`
+                : "아직 저장된 결과가 없습니다."}
+            </p>
+          </div>
         </div>
-
-        <h1 className="mt-4 text-2xl font-extrabold text-slate-900 sm:text-3xl">
-          {currentTest.title} 결과
-        </h1>
-        <p className="mt-2 text-sm text-slate-500">
-          {data?.updated_at
-            ? `최종 저장: ${new Date(data.updated_at).toLocaleString("ko-KR")}`
-            : "아직 저장된 결과가 없습니다."}
-        </p>
 
         <div className="mt-8">
           {data?.result_data ? (
