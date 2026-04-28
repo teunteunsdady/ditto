@@ -8,9 +8,9 @@ export default function TermsPage() {
         <div>
           <h2 className="text-base font-semibold text-gray-900">제1조 (목적)</h2>
           <p className="mt-2">
-            이 약관은 CoreGround(이하 &quot;회사&quot;)가 제공하는 웹사이트 및 관련 서비스(이하
-            &quot;서비스&quot;)의 이용과 관련하여 회사와 이용자 간의 권리, 의무 및 책임사항을 규정함을
-            목적으로 합니다.
+            이 약관은 CoreGround 서비스 운영자(이하 &quot;운영자&quot;)가 제공하는 웹사이트 및 관련
+            서비스(이하 &quot;서비스&quot;)의 이용과 관련하여 운영자와 이용자 간의 권리, 의무 및
+            책임사항을 규정함을 목적으로 합니다.
           </p>
         </div>
 
@@ -29,9 +29,9 @@ export default function TermsPage() {
         <div>
           <h2 className="text-base font-semibold text-gray-900">제3조 (약관의 게시 및 개정)</h2>
           <ul className="mt-2 list-disc space-y-1 pl-5">
-            <li>회사는 본 약관의 내용을 서비스 화면에 게시합니다.</li>
+            <li>운영자는 본 약관의 내용을 서비스 화면에 게시합니다.</li>
             <li>
-              회사는 관련 법령을 위배하지 않는 범위에서 본 약관을 개정할 수 있으며, 개정 시 적용일자 및
+              운영자는 관련 법령을 위배하지 않는 범위에서 본 약관을 개정할 수 있으며, 개정 시 적용일자 및
               개정사유를 명시하여 공지합니다.
             </li>
             <li>이용자가 개정 약관 시행일까지 명시적으로 거부 의사를 표시하지 않으면 동의한 것으로 봅니다.</li>
@@ -41,10 +41,10 @@ export default function TermsPage() {
         <div>
           <h2 className="text-base font-semibold text-gray-900">제4조 (서비스의 제공 및 변경)</h2>
           <ul className="mt-2 list-disc space-y-1 pl-5">
-            <li>회사는 코칭/상담 안내, 문의 접수, 회사 소개 등 관련 서비스를 제공합니다.</li>
-            <li>회사는 운영상·기술상 필요에 따라 서비스의 전부 또는 일부를 변경할 수 있습니다.</li>
+            <li>운영자는 코칭/상담 안내, 문의 접수, 서비스 소개 등 관련 서비스를 제공합니다.</li>
+            <li>운영자는 운영상·기술상 필요에 따라 서비스의 전부 또는 일부를 변경할 수 있습니다.</li>
             <li>
-              회사는 시스템 점검, 장애, 통신사유 등 불가피한 경우 서비스 제공을 일시 중단할 수 있습니다.
+              운영자는 시스템 점검, 장애, 통신사유 등 불가피한 경우 서비스 제공을 일시 중단할 수 있습니다.
             </li>
           </ul>
         </div>
@@ -73,8 +73,8 @@ export default function TermsPage() {
         <div>
           <h2 className="text-base font-semibold text-gray-900">제7조 (지식재산권)</h2>
           <p className="mt-2">
-            서비스 내 회사가 작성·제공한 콘텐츠에 대한 저작권 및 지식재산권은 회사에 귀속됩니다.
-            이용자는 회사의 사전 서면 동의 없이 이를 복제, 배포, 전송, 2차적 저작물 작성 등의 방법으로
+            서비스 내 운영자가 작성·제공한 콘텐츠에 대한 저작권 및 지식재산권은 운영자에게 귀속됩니다.
+            이용자는 운영자의 사전 서면 동의 없이 이를 복제, 배포, 전송, 2차적 저작물 작성 등의 방법으로
             이용할 수 없습니다.
           </p>
         </div>
@@ -83,11 +83,11 @@ export default function TermsPage() {
           <h2 className="text-base font-semibold text-gray-900">제8조 (면책)</h2>
           <ul className="mt-2 list-disc space-y-1 pl-5">
             <li>
-              회사는 천재지변, 불가항력, 이용자 귀책사유로 인한 서비스 이용 장애에 대하여 책임을 지지
+              운영자는 천재지변, 불가항력, 이용자 귀책사유로 인한 서비스 이용 장애에 대하여 책임을 지지
               않습니다.
             </li>
             <li>
-              회사가 제공하는 정보는 일반 안내 목적이며, 개별 사례에 대한 법률·의료·재무 자문으로
+              운영자가 제공하는 정보는 일반 안내 목적이며, 개별 사례에 대한 법률·의료·재무 자문으로
               해석되지 않습니다.
             </li>
           </ul>
@@ -96,7 +96,7 @@ export default function TermsPage() {
         <div>
           <h2 className="text-base font-semibold text-gray-900">제9조 (개인정보 보호)</h2>
           <p className="mt-2">
-            회사는 이용자의 개인정보를 관련 법령에 따라 보호하며, 구체적인 내용은
+            운영자는 이용자의 개인정보를 관련 법령에 따라 보호하며, 구체적인 내용은
             개인정보처리방침에서 정합니다.
           </p>
         </div>

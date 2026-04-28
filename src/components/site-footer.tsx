@@ -1,10 +1,10 @@
 import Link from "next/link";
 
-const footerLinks = [
-  { label: "개인정보처리방침", href: "/privacy-policy" },
-  { label: "이용약관", href: "/terms" },
-  { label: "회사 소개", href: "/company" },
-  { label: "상담 문의", href: "/contact" },
+const footerLinks: { label: string; href: string }[] = [
+  // { label: "개인정보처리방침", href: "/privacy-policy" },
+  // { label: "이용약관", href: "/terms" },
+  // { label: "회사 소개", href: "/company" },
+  // { label: "상담 문의", href: "/contact" },
 ];
 
 export function SiteFooter() {
@@ -18,7 +18,7 @@ export function SiteFooter() {
             </Link>
           ))}
         </div>
-        <p className="text-xs text-[#64726d]">
+        <p className="text-center text-xs text-[#64726d]">
           © {new Date().getFullYear()} CoreGround Inc. All rights reserved.
         </p>
       </div>

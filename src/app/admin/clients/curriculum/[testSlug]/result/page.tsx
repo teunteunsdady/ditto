@@ -84,6 +84,16 @@ export default async function CurriculumResultPage({ params, searchParams }: Res
 
         <div className="mt-8">
           {data?.result_data ? (
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-[#dce3ef] bg-[#f7f9fc] px-4 py-2.5 text-xs text-slate-600">
+              <p className="font-semibold tracking-[0.1em] text-[#54657e]">REPORT SNAPSHOT</p>
+              <p>
+                테스트 코드: <span className="font-medium text-slate-700">{currentTest.slug}</span>
+                {"  ·  "}
+                버전: <span className="font-medium text-slate-700">v1.0</span>
+              </p>
+            </div>
+          ) : null}
+          {data?.result_data ? (
             <AssessmentResultView testSlug={currentTest.slug} resultData={data.result_data} />
           ) : (
             <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-sm text-slate-600">

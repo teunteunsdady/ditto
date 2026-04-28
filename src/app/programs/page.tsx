@@ -3,7 +3,7 @@ export default function ProgramsPage() {
     {
       title: "퍼스널 코어 프로그램",
       target: "PERSONAL TRACK",
-      duration: "6~8회 (회당 90분)",
+      duration: "6~8회",
       summary:
         "요즘 마음이 자주 흔들리거나 방향이 잘 안 잡힐 때, 현재 상태를 함께 정리하고 현실적인 변화 방법을 찾는 1:1 프로그램입니다.",
       extras: ["HTP", "소셜아톰", "애니어그램"],
@@ -16,7 +16,7 @@ export default function ProgramsPage() {
     {
       title: "그룹 코어 프로그램",
       target: "TEAM TRACK",
-      duration: "4~6회 (회당 120분)",
+      duration: "4~6회",
       summary:
         "팀 분위기가 어색하거나 소통이 자꾸 꼬일 때, 서로의 차이를 이해하고 함께 일하는 방식을 맞춰가는 프로그램입니다.",
       extras: ["팀 진단", "관계 맵", "협업 원칙"],
@@ -29,7 +29,7 @@ export default function ProgramsPage() {
     {
       title: "새학기 온보딩 코칭",
       target: "ONBOARDING TRACK",
-      duration: "3~5회 (회당 90분)",
+      duration: "3~5회",
       summary:
         "새로운 학교나 조직에 들어간 초기에 느끼는 불안과 막막함을 줄이고, 첫 100일을 안정적으로 시작하도록 돕는 프로그램입니다.",
       extras: ["적응 코칭", "관계 전략", "초기 목표 설계"],
@@ -85,21 +85,21 @@ export default function ProgramsPage() {
 
   return (
     <main className="bg-white text-[#191f28]">
-      <section className="mx-auto w-full max-w-6xl px-4 pb-16 pt-12 sm:px-6 sm:pb-20 sm:pt-16 lg:pb-24 lg:pt-20">
+      <section className="cg-container pb-16 pt-12 sm:pb-20 sm:pt-16 lg:pb-24 lg:pt-20">
         <p className="text-xs font-semibold tracking-[0.16em] text-[#6b7684]">PROGRAMS</p>
         <h1 className="mt-5 text-3xl font-semibold leading-[1.18] tracking-tight sm:text-5xl lg:text-6xl">
           CoreGround는 상황에 맞는 트랙을 함께 고르고
           <br />
           실제로 달라지는 변화까지 함께 갑니다
         </h1>
-        <p className="mt-8 max-w-3xl text-base leading-relaxed text-[#4e5968] sm:text-lg">
+        <p className="cg-body mt-8 max-w-3xl">
           혼자 정리가 필요한지, 팀 소통을 맞춰야 하는지, 새 환경 적응이 필요한지에 따라
           지금 가장 필요한 프로그램을 제안합니다.
         </p>
       </section>
 
       <section className="border-y border-[#eff1f4] bg-[#fcfcfd]">
-        <div className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6 sm:py-16 lg:py-20">
+        <div className="cg-container cg-section-y">
           <p className="text-xs font-semibold tracking-[0.16em] text-[#6b7684]">PROGRAM TRACKS</p>
           <div className="mt-8">
             {programs.map((program) => (
@@ -123,7 +123,7 @@ export default function ProgramsPage() {
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6 sm:py-16 lg:py-20">
+      <section className="cg-container cg-section-y">
         <p className="text-xs font-semibold tracking-[0.16em] text-[#6b7684]">PROCESS</p>
         <ol className="mt-8 space-y-7">
           {process.map((item) => (
@@ -138,7 +138,7 @@ export default function ProgramsPage() {
         </ol>
       </section>
 
-      <section className="mx-auto w-full max-w-6xl px-4 pb-16 sm:px-6 sm:pb-20 lg:pb-24">
+      <section className="cg-container pb-16 sm:pb-20 lg:pb-24">
         <p className="text-xs font-semibold tracking-[0.16em] text-[#6b7684]">FAQ</p>
         <div className="mt-8">
           {faqs.map((faq) => (

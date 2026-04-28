@@ -53,6 +53,58 @@
   .text-balance {
     text-wrap: balance;
   }
+
+  .cg-container {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6;
+  }
+
+  .cg-section-y {
+    @apply py-14 sm:py-16;
+  }
+
+  .cg-title-main {
+    @apply text-3xl font-semibold leading-tight tracking-tight sm:text-5xl;
+  }
+
+  .cg-title-sub {
+    @apply text-2xl font-semibold leading-tight tracking-tight sm:text-4xl;
+  }
+
+  .cg-body {
+    @apply text-base leading-relaxed text-[#4e5968] sm:text-lg;
+  }
+
+  .cg-card {
+    @apply rounded-2xl border border-[#e6eaf2] bg-white shadow-[0_6px_20px_rgba(15,23,42,0.04)];
+  }
+
+  .cg-card-soft {
+    @apply rounded-2xl border border-[#e7ebf2] bg-[#f5f7fb] shadow-[0_8px_24px_rgba(15,23,42,0.05)];
+  }
+
+  .cg-card-strong {
+    @apply rounded-2xl border border-[#e4e9f2] bg-white shadow-[0_12px_28px_rgba(15,23,42,0.08)];
+  }
+
+  .cg-kicker {
+    @apply text-[11px] font-semibold uppercase tracking-[0.16em] text-[#4b5f82];
+  }
+
+  .cg-panel {
+    @apply rounded-2xl border border-[#dde3ee] bg-white;
+  }
+
+  .cg-panel-muted {
+    @apply rounded-2xl border border-[#e3e8f1] bg-[#f6f8fc];
+  }
+
+  .cg-divider {
+    @apply border-t border-[#e4e8f0];
+  }
+
+  .cg-metric {
+    @apply text-4xl font-semibold tracking-tight text-[#1f2a37] sm:text-5xl;
+  }
 }
 
 @layer base {
@@ -102,10 +154,10 @@
   transition:
     transform 460ms cubic-bezier(0.22, 0.61, 0.36, 1),
     opacity 460ms cubic-bezier(0.22, 0.61, 0.36, 1);
-  will-change: transform, opacity;
 }
 
 .route-stage-leaving {
+  will-change: transform, opacity;
   transform: translateY(-4vh) scale(0.988);
   opacity: 0.86;
 }

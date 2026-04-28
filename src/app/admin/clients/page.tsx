@@ -19,7 +19,7 @@ export default function ClientsPage() {
         <h1 className="text-2xl font-bold sm:text-3xl">코칭 대상자 목록</h1>
         <Link
           href="/admin/clients/new"
-          className="inline-flex items-center justify-center rounded-md bg-[#2f4f46] px-4 py-2 text-sm font-medium text-white hover:bg-[#223c35]"
+          className="inline-flex items-center justify-center rounded-md border border-[#2f4f46] bg-white px-4 py-2 text-sm font-medium text-black hover:bg-[#f5f7f6]"
         >
           ➕ 코칭 대상자 추가
         </Link>

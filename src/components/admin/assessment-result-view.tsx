@@ -18,6 +18,159 @@ type AssessmentResultViewProps = {
   resultData: unknown;
 };
 
+type PersonalityScorePoint = {
+  typeNo: number;
+  score: number;
+};
+
+type PersonalityTypeProfile = {
+  name: string;
+  subtitle: string;
+  core: string;
+  desire: string;
+  fear: string;
+  keywords: string[];
+  healthyState: string[];
+  unhealthyState: string[];
+  strengths: string[];
+  weaknesses: string[];
+};
+
+const PERSONALITY_PLUS_TYPE_PROFILES: Record<number, PersonalityTypeProfile> = {
+  1: {
+    name: "개혁가",
+    subtitle: "원칙주의자",
+    core: "옳고 바르게 살아야 한다는 기준이 분명합니다.",
+    desire: "완전함, 정직함, 도덕적 일관성",
+    fear: "결함이 있거나 잘못된 사람으로 보이는 것",
+    keywords: ["원칙", "개선", "책임", "정확성"],
+    healthyState: ["기준이 명확하고 공정하게 판단한다.", "실수를 개선하며 성장의 방향을 제시한다."],
+    unhealthyState: ["비판과 통제가 늘어나 관계가 경직된다.", "작은 오류에도 과도하게 예민해진다."],
+    strengths: ["높은 책임감과 성실함", "일관된 기준으로 품질을 끌어올림", "자기관리와 절제력"],
+    weaknesses: ["완벽주의로 인한 피로 누적", "융통성 부족", "타인/자기 비난 증가"],
+  },
+  2: {
+    name: "조력가",
+    subtitle: "헌신주의자",
+    core: "타인을 돌보며 관계 속에서 의미를 찾습니다.",
+    desire: "사랑받고 필요로 여겨지는 것",
+    fear: "거절당하거나 가치 없는 존재가 되는 것",
+    keywords: ["배려", "관계", "헌신", "따뜻함"],
+    healthyState: ["공감과 돌봄으로 관계를 안정시킨다.", "필요한 도움을 적절한 방식으로 제공한다."],
+    unhealthyState: ["인정 욕구가 커지며 서운함이 쌓인다.", "경계를 넘는 과도한 개입이 늘어난다."],
+    strengths: ["높은 공감 능력", "관계 형성력", "협력 분위기 조성"],
+    weaknesses: ["자기 욕구 억압", "거절의 어려움", "감정적 소진"],
+  },
+  3: {
+    name: "성취가",
+    subtitle: "성과주의자",
+    core: "목표를 달성하고 유능함을 증명하려는 동기가 큽니다.",
+    desire: "성공, 인정, 효율",
+    fear: "실패하거나 무가치하다는 평가",
+    keywords: ["목표", "성과", "효율", "추진력"],
+    healthyState: ["목표 달성을 위해 팀을 효과적으로 이끈다.", "현실적인 실행 계획을 빠르게 만든다."],
+    unhealthyState: ["성과 중심으로 관계가 도구화된다.", "실패 회피로 진짜 감정을 숨긴다."],
+    strengths: ["강한 실행력", "명확한 목표 설정", "결과 중심의 문제해결"],
+    weaknesses: ["과도한 경쟁심", "이미지 관리 스트레스", "감정 단절"],
+  },
+  4: {
+    name: "개인주의자",
+    subtitle: "낭만주의자",
+    core: "자신만의 정체성과 감정의 진정성을 중요하게 여깁니다.",
+    desire: "독특하고 진짜인 나로 살아가는 것",
+    fear: "평범하고 의미 없는 존재가 되는 것",
+    keywords: ["독창성", "감수성", "심미안", "진정성"],
+    healthyState: ["깊은 감수성과 유연함으로 타인을 이해한다.", "창조적 아이디어로 관계와 일을 풍성하게 만든다."],
+    unhealthyState: ["자의식이 강해지며 감정의 기복이 커진다.", "비교와 결핍감으로 자신을 과소평가한다."],
+    strengths: ["감정 인식 능력", "창의력과 표현력", "깊이 있는 공감"],
+    weaknesses: ["감정 기복", "관계 과해석", "실행 지연"],
+  },
+  5: {
+    name: "탐구가",
+    subtitle: "관찰주의자",
+    core: "이해와 통찰을 통해 안전을 확보하려는 경향이 있습니다.",
+    desire: "유능함, 독립성, 지식",
+    fear: "무능하거나 침해당하는 것",
+    keywords: ["분석", "탐구", "거리두기", "통찰"],
+    healthyState: ["복잡한 문제를 구조적으로 정리한다.", "핵심 정보를 기반으로 합리적 판단을 내린다."],
+    unhealthyState: ["과도한 거리두기로 협업이 약해진다.", "준비에만 머물며 실행이 느려진다."],
+    strengths: ["논리적 사고", "깊이 있는 분석", "지식 축적"],
+    weaknesses: ["정서적 표현 부족", "고립 경향", "행동 지연"],
+  },
+  6: {
+    name: "충성가",
+    subtitle: "안전추구형",
+    core: "불확실성을 관리하며 신뢰 가능한 기준을 찾습니다.",
+    desire: "안전, 신뢰, 예측 가능성",
+    fear: "버려지거나 보호받지 못하는 것",
+    keywords: ["책임", "신중함", "점검", "충성"],
+    healthyState: ["리스크를 선제적으로 점검한다.", "팀의 신뢰 체계를 견고하게 만든다."],
+    unhealthyState: ["의심과 불안이 커져 결정이 느려진다.", "확인을 반복하며 에너지가 소모된다."],
+    strengths: ["위기 대응력", "높은 책임감", "성실한 준비성"],
+    weaknesses: ["걱정 과잉", "결정 회피", "자기신뢰 저하"],
+  },
+  7: {
+    name: "열정가",
+    subtitle: "낙천주의자",
+    core: "새로운 가능성과 즐거움을 통해 활력을 얻습니다.",
+    desire: "자유, 즐거움, 다양한 경험",
+    fear: "고통에 갇히거나 선택지가 사라지는 것",
+    keywords: ["확장", "낙관", "도전", "아이디어"],
+    healthyState: ["긍정 에너지로 팀의 동력을 높인다.", "다양한 가능성을 빠르게 연결한다."],
+    unhealthyState: ["집중력이 분산되고 마무리가 약해진다.", "불편한 감정을 회피하려 한다."],
+    strengths: ["아이디어 발산", "적응력", "도전 정신"],
+    weaknesses: ["산만함", "충동적 선택", "지속성 부족"],
+  },
+  8: {
+    name: "도전가",
+    subtitle: "보호자형 리더",
+    core: "강한 의지와 영향력으로 상황을 주도하려는 경향이 있습니다.",
+    desire: "자율성, 통제감, 강인함",
+    fear: "약해 보이거나 통제당하는 것",
+    keywords: ["결단", "리더십", "직설", "보호"],
+    healthyState: ["결단력으로 문제를 빠르게 풀어낸다.", "약자를 보호하고 기준을 세운다."],
+    unhealthyState: ["통제 욕구가 강해져 관계가 거칠어진다.", "타협보다 대결을 우선한다."],
+    strengths: ["강한 추진력", "책임 있는 리더십", "위기 돌파력"],
+    weaknesses: ["직선적 소통", "과한 통제", "감정 완충 부족"],
+  },
+  9: {
+    name: "평화주의자",
+    subtitle: "중재자",
+    core: "조화와 안정 속에서 편안함을 느낍니다.",
+    desire: "평화, 연결감, 안정",
+    fear: "갈등으로 인한 단절",
+    keywords: ["조화", "수용", "안정", "중재"],
+    healthyState: ["다양한 관점을 조율해 합의를 만든다.", "갈등 상황에서도 균형을 유지한다."],
+    unhealthyState: ["회피와 미루기가 늘어나 실행이 늦어진다.", "자기 의견을 뒤로 미루며 소진된다."],
+    strengths: ["중재 능력", "포용력", "관계 안정화"],
+    weaknesses: ["우선순위 혼란", "결정 지연", "자기주장 약화"],
+  },
+};
+
+const PERSONALITY_GROWTH_MAP: Record<number, number> = {
+  1: 7,
+  2: 4,
+  3: 6,
+  4: 1,
+  5: 8,
+  6: 9,
+  7: 5,
+  8: 2,
+  9: 3,
+};
+
+const PERSONALITY_STRESS_MAP: Record<number, number> = {
+  1: 4,
+  2: 8,
+  3: 9,
+  4: 2,
+  5: 7,
+  6: 3,
+  7: 1,
+  8: 5,
+  9: 6,
+};
+
 function normalizeStrokes(resultData: unknown): Stroke[] {
   if (!resultData || typeof resultData !== "object") {
     return [];
@@ -62,11 +215,182 @@ function normalizeStrokes(resultData: unknown): Stroke[] {
     .filter((stroke): stroke is Stroke => stroke !== null);
 }
 
+function PersonalityPlusScoreChart({
+  scores,
+  primaryTypeNo,
+  chartMin,
+  chartMax,
+}: {
+  scores: PersonalityScorePoint[];
+  primaryTypeNo: number;
+  chartMin: number;
+  chartMax: number;
+}) {
+  const chartWrapRef = useRef<HTMLDivElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  const yTicks = useMemo(
+    () =>
+      Array.from({ length: 6 }, (_, idx) => {
+        const value = chartMax - ((chartMax - chartMin) * idx) / 5;
+        return { value, label: Math.round(value) };
+      }),
+    [chartMax, chartMin],
+  );
+
+  const chartHeight = 210;
+  const padding = useMemo(
+    () => ({ top: 12, right: 14, bottom: 30, left: 42 }),
+    [],
+  );
+  const plotHeight = chartHeight - padding.top - padding.bottom;
+
+  const toYPixel = useCallback(
+    (score: number) => {
+      if (chartMax === chartMin) return padding.top + plotHeight / 2;
+      const ratio = (score - chartMin) / (chartMax - chartMin);
+      return padding.top + (1 - ratio) * plotHeight;
+    },
+    [chartMax, chartMin, padding.bottom, padding.top, plotHeight],
+  );
+
+  const drawChart = useCallback(() => {
+    const wrap = chartWrapRef.current;
+    const canvas = canvasRef.current;
+    if (!wrap || !canvas) return;
+
+    const rect = wrap.getBoundingClientRect();
+    const width = Math.max(1, rect.width);
+    const height = Math.max(1, rect.height);
+    const dpr = window.devicePixelRatio || 1;
+
+    canvas.width = Math.floor(width * dpr);
+    canvas.height = Math.floor(height * dpr);
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, width, height);
+
+    const plotLeft = padding.left;
+    const plotTop = padding.top;
+    const plotWidth = width - padding.left - padding.right;
+    const localPlotHeight = height - padding.top - padding.bottom;
+
+    const points = scores.map((item, idx) => ({
+      typeNo: item.typeNo,
+      x: plotLeft + ((idx + 0.5) / Math.max(1, scores.length)) * plotWidth,
+      y: toYPixel(item.score),
+    }));
+
+    ctx.fillStyle = "#ffffff";
+    ctx.strokeStyle = "#e9edf4";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.rect(plotLeft, plotTop, plotWidth, localPlotHeight);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.strokeStyle = "#f3f5fa";
+    points.forEach((point) => {
+      ctx.beginPath();
+      ctx.moveTo(point.x, plotTop);
+      ctx.lineTo(point.x, plotTop + localPlotHeight);
+      ctx.stroke();
+    });
+
+    ctx.strokeStyle = "#ebeff6";
+    yTicks.forEach((tick, idx) => {
+      const y = plotTop + (idx / Math.max(1, yTicks.length - 1)) * localPlotHeight;
+      ctx.beginPath();
+      ctx.moveTo(plotLeft, y);
+      ctx.lineTo(plotLeft + plotWidth, y);
+      ctx.stroke();
+    });
+
+    ctx.fillStyle = "#64748b";
+    ctx.font = "11px sans-serif";
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+    yTicks.forEach((tick, idx) => {
+      const y = plotTop + (idx / Math.max(1, yTicks.length - 1)) * localPlotHeight;
+      ctx.fillText(String(tick.label), plotLeft - 8, y);
+    });
+
+    if (points.length > 1) {
+      // 유형별 점수를 꼭지점으로 지나는 곡선(Catmull-Rom -> Bezier)
+      ctx.strokeStyle = "#2b9db8";
+      ctx.lineWidth = 2.4;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.beginPath();
+      ctx.moveTo(points[0].x, points[0].y);
+      for (let i = 0; i < points.length - 1; i += 1) {
+        const p0 = i === 0 ? points[i] : points[i - 1];
+        const p1 = points[i];
+        const p2 = points[i + 1];
+        const p3 = i + 2 < points.length ? points[i + 2] : p2;
+        const cp1x = p1.x + (p2.x - p0.x) / 6;
+        const cp1y = p1.y + (p2.y - p0.y) / 6;
+        const cp2x = p2.x - (p3.x - p1.x) / 6;
+        const cp2y = p2.y - (p3.y - p1.y) / 6;
+        ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p2.x, p2.y);
+      }
+      ctx.stroke();
+    } else if (points.length === 1) {
+      ctx.strokeStyle = "#2b9db8";
+      ctx.lineWidth = 2.4;
+      ctx.beginPath();
+      ctx.moveTo(points[0].x, points[0].y);
+      ctx.lineTo(points[0].x, points[0].y);
+      ctx.stroke();
+    }
+
+    points.forEach((point) => {
+      const isPrimary = point.typeNo === primaryTypeNo;
+      ctx.fillStyle = isPrimary ? "#4f46e5" : "#2b9db8";
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      ctx.arc(point.x, point.y, isPrimary ? 4.8 : 3.8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+    });
+
+    ctx.fillStyle = "#64748b";
+    ctx.font = "11px sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    points.forEach((point) => {
+      ctx.fillText(String(point.typeNo), point.x, plotTop + localPlotHeight + 8);
+    });
+  }, [padding.bottom, padding.left, padding.right, padding.top, primaryTypeNo, scores, toYPixel, yTicks]);
+
+  useEffect(() => {
+    drawChart();
+    window.addEventListener("resize", drawChart);
+    return () => window.removeEventListener("resize", drawChart);
+  }, [drawChart]);
+
+  return (
+    <div className="mt-4">
+      <div className="overflow-hidden rounded-lg border border-[#dce3ef] bg-white px-3 pb-2 pt-3">
+        <div ref={chartWrapRef} className="relative h-[210px]">
+          <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function AssessmentResultView({ testSlug, resultData }: AssessmentResultViewProps) {
   const boardRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [showAttachmentPointTooltip, setShowAttachmentPointTooltip] = useState(false);
   const [isAttachmentDetailOpen, setIsAttachmentDetailOpen] = useState(false);
+  const [isPersonalityPlusDetailOpen, setIsPersonalityPlusDetailOpen] = useState(false);
   const strokes = useMemo(() => normalizeStrokes(resultData), [resultData]);
   const personalityAnswers = useMemo(() => {
     if (!resultData || typeof resultData !== "object") return {} as Record<number, number>;
@@ -574,18 +898,18 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
     };
 
     return (
-      <section className="space-y-6 rounded-[30px] border border-[#e7ebf2] bg-[#f5f7fb] p-5 shadow-[0_12px_36px_rgba(15,23,42,0.08)] sm:p-8">
+      <section className="space-y-6 rounded-[28px] border border-[#e4e9f4] bg-[#f5f7fc] p-5 sm:p-8">
         <div className="grid gap-4 lg:grid-cols-[1.35fr_0.95fr]">
-          <article className="rounded-3xl border border-[#e6eaf2] bg-white p-5 shadow-[0_8px_24px_rgba(15,23,42,0.04)] sm:p-6">
-            <p className="mb-4 inline-flex items-center gap-2 text-lg font-bold text-slate-800">
+          <article className="rounded-3xl border border-[#dfe5f1] bg-white p-5 shadow-[0_8px_22px_rgba(79,70,229,0.08)] sm:p-6">
+            <p className="mb-4 inline-flex items-center gap-2 text-base font-semibold text-slate-800">
               <BarChart3 className="h-5 w-5 text-[#5e4ee9]" />
               애착 사분면 그래프
             </p>
-            <div className="relative h-[360px] overflow-visible rounded-2xl bg-white">
-              <div className="absolute left-14 right-10 top-8 bottom-14 border border-[#e1e6ef] bg-white">
+            <div className="relative h-[360px] overflow-visible rounded-xl bg-white">
+              <div className="absolute left-14 right-10 top-8 bottom-14 border border-[#dfe5f3] bg-[#fcfdff]">
                 <div className="absolute inset-0 grid grid-cols-7 grid-rows-7">
                   {Array.from({ length: 49 }).map((_, index) => (
-                    <div key={index} className="border border-[#edf1f7]" />
+                    <div key={index} className="border border-[#edf1fa]" />
                   ))}
                 </div>
                 <button
@@ -599,12 +923,12 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
                   onTouchEnd={() => {
                     window.setTimeout(() => setShowAttachmentPointTooltip(false), 1600);
                   }}
-                  className="absolute h-4 w-4 -translate-x-1/2 translate-y-1/2 rounded-full bg-[#5e4ee9] shadow-[0_0_0_6px_rgba(94,78,233,0.2)] focus:outline-none"
+                  className="absolute h-4 w-4 -translate-x-1/2 translate-y-1/2 rounded-full bg-[#5a46ef] shadow-[0_0_0_7px_rgba(90,70,239,0.24)] focus:outline-none"
                   style={{ left: `${pointLeft}%`, bottom: `${pointBottom}%` }}
                 />
                 {showAttachmentPointTooltip ? (
                   <div
-                    className="absolute z-10 -translate-x-1/2 -translate-y-full rounded-md bg-[#1f2a44] px-2.5 py-1.5 text-[11px] font-medium text-white shadow-lg"
+                    className="absolute z-10 -translate-x-1/2 -translate-y-full rounded-md bg-[#2b2f84] px-2.5 py-1.5 text-[11px] font-medium text-white shadow-lg"
                     style={{ left: `${pointLeft}%`, bottom: `calc(${pointBottom}% + 18px)` }}
                   >
                     회피 {avoidanceSum} / 불안 {anxietySum}
@@ -643,38 +967,38 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
             </div>
           </article>
 
-          <article className="flex min-h-[420px] flex-col justify-between rounded-3xl bg-gradient-to-br from-[#5e44e8] via-[#5938dd] to-[#5a2fd5] px-7 py-6 text-white shadow-[0_12px_28px_rgba(77,50,180,0.28)] sm:px-8 sm:py-7">
+          <article className="flex min-h-[420px] flex-col justify-between rounded-3xl border border-[#6d5de8] bg-gradient-to-br from-[#5e44e8] via-[#5a3fe3] to-[#4e35d2] px-7 py-6 text-white shadow-[0_16px_30px_rgba(79,58,194,0.34)] sm:px-8 sm:py-7">
             <div className="pt-1">
-              <p className="text-sm text-white/80">당신의 주요 애착 유형은</p>
-              <p className="mt-2 text-[40px] font-extrabold tracking-tight leading-none">{attachmentType}</p>
+              <p className="text-xs font-semibold tracking-[0.14em] text-[#dbd7ff]">ANALYSIS RESULT</p>
+              <p className="mt-2 text-[32px] font-bold leading-none tracking-tight">{attachmentType}</p>
 
               <div className="mt-7 space-y-4">
                 <div>
-                  <div className="mb-1 flex items-center justify-between text-xs font-semibold text-white/90">
+                  <div className="mb-1 flex items-center justify-between text-[11px] font-semibold text-white/90">
                     <span>회피성 지수 (AVOIDANCE)</span>
                     <span>{avoidanceSum} / 90</span>
                   </div>
-                  <div className="h-2.5 rounded-full bg-white/30">
-                    <div className="h-2.5 rounded-full bg-[#f2f2ff]" style={{ width: progressWidth(avoidanceSum) }} />
+                  <div className="h-2 rounded-full bg-white/28">
+                    <div className="h-2 rounded-full bg-[#f2f1ff]" style={{ width: progressWidth(avoidanceSum) }} />
                   </div>
                 </div>
 
                 <div>
-                  <div className="mb-1 flex items-center justify-between text-xs font-semibold text-white/90">
+                  <div className="mb-1 flex items-center justify-between text-[11px] font-semibold text-white/90">
                     <span>불안성 지수 (ANXIETY)</span>
                     <span>{anxietySum} / 90</span>
                   </div>
-                  <div className="h-2.5 rounded-full bg-white/30">
-                    <div className="h-2.5 rounded-full bg-[#f2f2ff]" style={{ width: progressWidth(anxietySum) }} />
+                  <div className="h-2 rounded-full bg-white/28">
+                    <div className="h-2 rounded-full bg-[#f2f1ff]" style={{ width: progressWidth(anxietySum) }} />
                   </div>
                 </div>
               </div>
             </div>
             <div className="pb-1">
-              <p className="text-xs text-white/80">
+              <p className="text-[11px] text-white/75">
                 * 점수가 54점 이상일 경우 해당 경향성이 높다고 판단합니다.
               </p>
-              <p className="mt-2 text-xs text-white/85">
+              <p className="mt-2 text-[11px] text-white/85">
                 응답 완료: {answeredTotal} / {genericScaleQuestions.length} · 불안 평균{" "}
                 {anxietyAvg == null ? "-" : anxietyAvg.toFixed(2)}({toLevel(anxietyAvg)}) · 회피 평균{" "}
                 {avoidanceAvg == null ? "-" : avoidanceAvg.toFixed(2)}({toLevel(avoidanceAvg)})
@@ -683,36 +1007,36 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
           </article>
         </div>
 
-        <article className="rounded-[22px] border border-[#e7ebf2] bg-white px-6 py-5 shadow-[0_6px_20px_rgba(15,23,42,0.04)] sm:px-8 sm:py-6">
+        <article className="rounded-[22px] border border-[#dddaf9] bg-[#f6f4ff] px-6 py-5 sm:px-8 sm:py-6">
           <div className="flex items-center gap-3">
             <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#edeaff] text-[#5e4ee9]">
               <CheckCircle2 className="h-5 w-5" />
             </span>
-            <h3 className="text-2xl font-bold tracking-tight text-slate-800 sm:text-3xl">
+            <h3 className="text-xl font-semibold tracking-tight text-slate-800 sm:text-2xl">
               {attachmentType}의 특징
             </h3>
           </div>
-          <p className="mt-4 text-sm leading-relaxed text-slate-600 sm:text-base">{attachmentAnalysis.summary}</p>
+          <p className="mt-4 text-sm leading-relaxed text-[#4f4a6d]">{attachmentAnalysis.summary}</p>
         </article>
 
         <div className="grid gap-4 md:grid-cols-2">
-          <article className="rounded-[22px] border border-[#d7ebe1] bg-[#eff8f3] p-6">
-            <h4 className="inline-flex items-center gap-2 text-xl font-bold tracking-tight text-[#1f7b53] sm:text-2xl">
+          <article className="rounded-[22px] border border-[#cfe7da] bg-[#eaf7f0] p-6 shadow-[0_8px_20px_rgba(31,123,83,0.08)]">
+            <h4 className="inline-flex items-center gap-2 text-lg font-semibold tracking-tight text-[#1f7b53] sm:text-xl">
               <Heart className="h-6 w-6" />
               관계적 강점
             </h4>
-            <ul className="mt-4 space-y-2.5 text-sm text-slate-700 sm:text-base">
+            <ul className="mt-4 space-y-2.5 text-sm text-slate-700">
               {attachmentAnalysis.strengths.map((strength) => (
                 <li key={strength}>• {strength}</li>
               ))}
             </ul>
           </article>
-          <article className="rounded-[22px] border border-[#f0dce2] bg-[#fff3f6] p-6">
-            <h4 className="inline-flex items-center gap-2 text-xl font-bold tracking-tight text-[#bc3d59] sm:text-2xl">
+          <article className="rounded-[22px] border border-[#f3d8e0] bg-[#fff0f4] p-6 shadow-[0_8px_20px_rgba(188,61,89,0.08)]">
+            <h4 className="inline-flex items-center gap-2 text-lg font-semibold tracking-tight text-[#bc3d59] sm:text-xl">
               <AlertCircle className="h-6 w-6" />
               주의 및 개선점
             </h4>
-            <ul className="mt-4 space-y-2.5 text-sm text-slate-700 sm:text-base">
+            <ul className="mt-4 space-y-2.5 text-sm text-slate-700">
               {attachmentAnalysis.cautions.map((caution) => (
                 <li key={caution}>• {caution}</li>
               ))}
@@ -720,16 +1044,16 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
           </article>
         </div>
 
-        <article className="rounded-[22px] bg-gradient-to-r from-[#101b39] via-[#0d1731] to-[#101b39] px-6 py-6 text-white shadow-[0_10px_26px_rgba(15,23,42,0.22)] sm:px-8 sm:py-7">
+        <article className="rounded-[22px] border border-[#1a2e59] bg-gradient-to-r from-[#101b39] via-[#0d1731] to-[#101b39] px-6 py-6 text-white shadow-[0_10px_26px_rgba(15,23,42,0.22)] sm:px-8 sm:py-7">
           <div className="flex items-start gap-4">
-            <span className="inline-flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-[#ffd43b] text-[#18223d]">
+            <span className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-[#ffd43b] text-[#18223d]">
               <Lightbulb className="h-8 w-8" />
             </span>
             <div>
-              <h4 className="text-xl font-bold tracking-tight text-[#ffd447] sm:text-2xl">
+              <h4 className="text-lg font-semibold tracking-tight text-[#ffd447] sm:text-xl">
                 나를 위한 성장 가이드
               </h4>
-              <p className="mt-3 text-sm leading-relaxed text-slate-100 sm:text-base">{attachmentAnalysis.guide}</p>
+              <p className="mt-3 text-sm leading-relaxed text-slate-100">{attachmentAnalysis.guide}</p>
             </div>
           </div>
         </article>
@@ -739,17 +1063,14 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
             <button
               type="button"
               onClick={() => setIsAttachmentDetailOpen((prev) => !prev)}
-              className="inline-flex items-center gap-2 rounded-2xl border border-[#dfe4ec] bg-white px-6 py-4 text-sm font-semibold text-slate-700 shadow-[0_4px_12px_rgba(15,23,42,0.08)] hover:bg-slate-50"
+              className="inline-flex items-center gap-2 rounded-xl border border-[#d8dfeb] bg-white px-6 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
             >
               {isAttachmentDetailOpen ? "답변 상세 내역 숨기기" : "답변 상세 내역 보기"}
-              <span aria-hidden className="text-base leading-none">
-                {isAttachmentDetailOpen ? "⌃" : "⌄"}
-              </span>
             </button>
           </div>
 
           {isAttachmentDetailOpen ? (
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+            <div className="cg-panel p-4 sm:p-6">
               <h3 className="mb-4 text-center text-lg font-semibold text-slate-800">상세 답변 내역</h3>
               <div className="overflow-x-auto">
                 <table className="min-w-[980px] w-full border-collapse text-xs sm:text-sm">
@@ -790,7 +1111,227 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
   }
 
   if (
-    (testSlug === "core-emotion" || testSlug === "personality-plus") &&
+    testSlug === "personality-plus" &&
+    genericScaleQuestions.length > 0
+  ) {
+    const typeScores = Array.from({ length: 9 }, (_, idx) => {
+      const typeNo = idx + 1;
+      const start = idx * 11 + 1;
+      const end = start + 10;
+      const score = Array.from({ length: end - start + 1 }, (_, offset) => start + offset).reduce(
+        (acc, questionNo) => acc + (genericScaleAnswers[questionNo] ?? 0),
+        0,
+      );
+      return { typeNo, score };
+    });
+
+    const sortedScores = [...typeScores].sort((a, b) => b.score - a.score);
+    const primary = sortedScores[0] ?? { typeNo: 1, score: 0 };
+    const profile = PERSONALITY_PLUS_TYPE_PROFILES[primary.typeNo] ?? PERSONALITY_PLUS_TYPE_PROFILES[1];
+    const prevType = primary.typeNo === 1 ? 9 : primary.typeNo - 1;
+    const nextType = primary.typeNo === 9 ? 1 : primary.typeNo + 1;
+    const wingLeftScore = typeScores.find((item) => item.typeNo === prevType)?.score ?? 0;
+    const wingRightScore = typeScores.find((item) => item.typeNo === nextType)?.score ?? 0;
+    const wingType = wingLeftScore >= wingRightScore ? prevType : nextType;
+    const growthType = PERSONALITY_GROWTH_MAP[primary.typeNo];
+    const stressType = PERSONALITY_STRESS_MAP[primary.typeNo];
+    const getPersonalityPlusAnswerClass = (score?: number) => {
+      if (score === 4) return "text-emerald-700";
+      if (score === 3) return "text-green-700";
+      if (score === 2) return "text-orange-700";
+      if (score === 1) return "text-rose-700";
+      return "text-slate-500";
+    };
+
+    const minScore = Math.min(...typeScores.map((item) => item.score));
+    const maxScore = Math.max(...typeScores.map((item) => item.score));
+    const chartMin = Math.max(0, minScore - 4);
+    const chartMax = maxScore + 2;
+    return (
+      <section className="cg-panel space-y-6 p-4 sm:p-6">
+        <article className="cg-panel-muted p-4 sm:p-5">
+          <div>
+            <p className="cg-kicker">에니어그램 성격 유형 검사 결과</p>
+            <h3 className="mt-1 text-xl font-semibold text-slate-800">유형별 점수 분포</h3>
+          </div>
+          <PersonalityPlusScoreChart
+            scores={typeScores}
+            primaryTypeNo={primary.typeNo}
+            chartMin={chartMin}
+            chartMax={chartMax}
+          />
+        </article>
+
+        <article className="overflow-x-auto">
+          <table className="min-w-[760px] w-full border-collapse text-xs sm:text-sm">
+            <thead className="bg-slate-100 text-slate-900">
+              <tr>
+                {typeScores.map((item) => (
+                  <th key={item.typeNo} className="border border-slate-300 px-3 py-2 text-center font-semibold">
+                    유형 {item.typeNo}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                {typeScores.map((item) => (
+                  <td key={item.typeNo} className="border border-slate-200 px-3 py-2 text-center">
+                    {item.score}점
+                  </td>
+                ))}
+              </tr>
+            </tbody>
+          </table>
+        </article>
+
+        <article className="overflow-x-auto">
+          <table className="min-w-[640px] w-full border-collapse text-xs sm:text-sm">
+            <thead className="bg-slate-100 text-slate-900">
+              <tr>
+                <th className="border border-slate-300 px-3 py-2 text-center font-semibold">나의 유형</th>
+                <th className="border border-slate-300 px-3 py-2 text-center font-semibold">날개</th>
+                <th className="border border-slate-300 px-3 py-2 text-center font-semibold">통합 방향</th>
+                <th className="border border-slate-300 px-3 py-2 text-center font-semibold">분열 방향</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="border border-slate-200 px-3 py-2 text-center">
+                  {primary.typeNo} 유형 ({profile.name})
+                </td>
+                <td className="border border-slate-200 px-3 py-2 text-center">{wingType} 유형</td>
+                <td className="border border-slate-200 px-3 py-2 text-center">{growthType} 유형</td>
+                <td className="border border-slate-200 px-3 py-2 text-center">{stressType} 유형</td>
+              </tr>
+            </tbody>
+          </table>
+        </article>
+
+        <article className="cg-panel-muted p-5">
+          <h3 className="text-xl font-semibold text-[#2e59b5]">
+            나의 유형: {profile.name}, {profile.subtitle} ({primary.typeNo} 유형)
+          </h3>
+          <div className="mt-4 space-y-2 text-sm leading-relaxed text-slate-700">
+            <p>
+              <span className="font-semibold text-[#1f7b53]">핵심 특성</span>: {profile.core}
+            </p>
+            <p>
+              <span className="font-semibold text-[#1f7b53]">동기</span>: {profile.desire}
+            </p>
+            <p>
+              <span className="font-semibold text-[#b45309]">불안/회피</span>: {profile.fear}
+            </p>
+            <p>
+              <span className="font-semibold text-[#4f46e5]">핵심 키워드</span>: {profile.keywords.join(", ")}
+            </p>
+          </div>
+        </article>
+
+        <div className="grid gap-4 lg:grid-cols-2">
+          <article className="cg-panel border-[#d7ebe1] bg-[#eff8f3] p-5">
+            <h4 className="text-lg font-semibold text-[#1f7b53]">상태별 성장 (긍정적 상태)</h4>
+            <ul className="mt-3 space-y-2 text-sm text-slate-700">
+              {profile.healthyState.map((item) => (
+                <li key={item}>• {item}</li>
+              ))}
+            </ul>
+          </article>
+          <article className="cg-panel border-[#f0dce2] bg-[#fff3f6] p-5">
+            <h4 className="text-lg font-semibold text-[#bc3d59]">상태별 성장 (부정적 상태)</h4>
+            <ul className="mt-3 space-y-2 text-sm text-slate-700">
+              {profile.unhealthyState.map((item) => (
+                <li key={item}>• {item}</li>
+              ))}
+            </ul>
+          </article>
+        </div>
+
+        <div className="grid gap-4 lg:grid-cols-2">
+          <article className="cg-panel p-5">
+            <h4 className="text-base font-semibold text-[#1f2a37]">강점</h4>
+            <ul className="mt-3 space-y-2 text-sm text-slate-700">
+              {profile.strengths.map((item) => (
+                <li key={item}>• {item}</li>
+              ))}
+            </ul>
+          </article>
+          <article className="cg-panel p-5">
+            <h4 className="text-base font-semibold text-[#6d28d9]">약점</h4>
+            <ul className="mt-3 space-y-2 text-sm text-slate-700">
+              {profile.weaknesses.map((item) => (
+                <li key={item}>• {item}</li>
+              ))}
+            </ul>
+          </article>
+        </div>
+
+        <div>
+          <div className="mb-4 flex justify-center">
+            <button
+              type="button"
+              onClick={() => setIsPersonalityPlusDetailOpen((prev) => !prev)}
+              className="inline-flex items-center gap-2 rounded-xl border border-[#d8dfeb] bg-white px-6 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+            >
+              {isPersonalityPlusDetailOpen ? "답변 상세 숨기기" : "답변 상세 보기"}
+            </button>
+          </div>
+
+          {isPersonalityPlusDetailOpen ? (
+            <div className="cg-panel p-4 sm:p-6">
+              <h3 className="mb-4 text-center text-lg font-semibold text-slate-800">내가 선택한 모든 답변</h3>
+              <div className="overflow-x-auto">
+                <table className="min-w-[980px] w-full border-collapse text-xs sm:text-sm">
+                  <thead className="bg-slate-50 text-slate-800">
+                    <tr>
+                      <th className="border border-slate-200 px-3 py-2 text-center font-semibold">번호</th>
+                      <th className="border border-slate-200 px-3 py-2 text-left font-semibold">문항</th>
+                      <th className="border border-slate-200 px-3 py-2 text-center font-semibold">나의 선택</th>
+                      <th className="border border-slate-200 px-3 py-2 text-center font-semibold">채점 포함</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {genericScaleQuestions.map((question, index) => {
+                      const no = index + 1;
+                      const score = genericScaleAnswers[no];
+                      const label = score != null ? genericScaleLabelByValue.get(score) ?? "-" : "-";
+                      const isScored = index % 11 !== 10;
+                      const displayNo = isScored ? String((index % 11) + 1) : "※";
+                      const questionText = question.replace(/^(※|\d+)\s+/, "");
+                      return (
+                        <tr key={no} className="odd:bg-white even:bg-slate-50/50">
+                          <td className="border border-slate-200 px-3 py-2 text-center">{displayNo}</td>
+                          <td className="border border-slate-200 px-3 py-2 text-slate-700">{questionText}</td>
+                          <td className={`border border-slate-200 px-3 py-2 text-center font-medium ${getPersonalityPlusAnswerClass(score)}`}>
+                            {label}
+                            {score != null ? <span className="ml-1 text-xs text-slate-500">({score}점)</span> : null}
+                          </td>
+                          <td className="border border-slate-200 px-3 py-2 text-center">
+                            <span
+                              className={`inline-flex min-w-12 items-center justify-center rounded-full px-2 py-0.5 text-xs font-semibold ${
+                                isScored
+                                  ? "bg-[#eaf2ff] text-[#2b5fb3]"
+                                  : "bg-slate-100 text-slate-500"
+                              }`}
+                            >
+                              {isScored ? "포함" : "제외"}
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ) : null}
+        </div>
+      </section>
+    );
+  }
+
+  if (
+    testSlug === "core-emotion" &&
     genericScaleQuestions.length > 0
   ) {
     return (

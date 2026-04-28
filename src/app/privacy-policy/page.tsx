@@ -8,8 +8,9 @@ export default function PrivacyPolicyPage() {
         <div>
           <h2 className="text-base font-semibold text-gray-900">1. 총칙</h2>
           <p className="mt-2">
-            CoreGround(이하 &quot;회사&quot;)는 이용자의 개인정보를 중요하게 생각하며, 「개인정보 보호법」,
-            「정보통신망 이용촉진 및 정보보호 등에 관한 법률」 등 관련 법령을 준수합니다. 회사는 본
+            CoreGround 서비스 운영자(이하 &quot;운영자&quot;)는 이용자의 개인정보를 중요하게 생각하며,
+            「개인정보 보호법」, 「정보통신망 이용촉진 및 정보보호 등에 관한 법률」 등 관련 법령을
+            준수합니다. 운영자는 본
             개인정보처리방침을 통해 이용자의 개인정보가 어떠한 목적과 방식으로 이용되고, 어떠한 조치가
             취해지고 있는지 알려드립니다.
           </p>
@@ -27,7 +28,7 @@ export default function PrivacyPolicyPage() {
         <div>
           <h2 className="text-base font-semibold text-gray-900">3. 처리하는 개인정보 항목</h2>
           <p className="mt-2">
-            회사는 상담 문의 과정에서 아래 정보를 수집할 수 있습니다.
+            운영자는 상담 문의 과정에서 아래 정보를 수집할 수 있습니다.
           </p>
           <ul className="mt-2 list-disc space-y-1 pl-5">
             <li>필수: 이름, 연락처, 문의내용</li>
@@ -52,7 +53,7 @@ export default function PrivacyPolicyPage() {
         <div>
           <h2 className="text-base font-semibold text-gray-900">5. 개인정보의 제3자 제공</h2>
           <p className="mt-2">
-            회사는 원칙적으로 이용자의 개인정보를 외부에 제공하지 않습니다. 다만, 이용자의 별도 동의가
+            운영자는 원칙적으로 이용자의 개인정보를 외부에 제공하지 않습니다. 다만, 이용자의 별도 동의가
             있거나 법령에 근거한 경우에는 예외로 합니다.
           </p>
         </div>
@@ -60,13 +61,13 @@ export default function PrivacyPolicyPage() {
         <div>
           <h2 className="text-base font-semibold text-gray-900">6. 개인정보 처리의 위탁</h2>
           <p className="mt-2">
-            회사는 원활한 서비스 운영을 위해 아래와 같이 개인정보 처리 업무를 위탁할 수 있습니다.
+            운영자는 원활한 서비스 운영을 위해 아래와 같이 개인정보 처리 업무를 위탁할 수 있습니다.
           </p>
           <ul className="mt-2 list-disc space-y-1 pl-5">
             <li>클라우드/DB 인프라 제공자: 데이터 저장 및 시스템 운영</li>
           </ul>
           <p className="mt-2">
-            회사는 위탁계약 체결 시 관련 법령에 따라 개인정보가 안전하게 관리되도록 필요한 사항을
+            운영자는 위탁계약 체결 시 관련 법령에 따라 개인정보가 안전하게 관리되도록 필요한 사항을
             규정하고 감독합니다.
           </p>
         </div>
@@ -74,8 +75,8 @@ export default function PrivacyPolicyPage() {
         <div>
           <h2 className="text-base font-semibold text-gray-900">7. 정보주체의 권리와 행사 방법</h2>
           <p className="mt-2">
-            이용자는 언제든지 회사에 대해 개인정보 열람, 정정, 삭제, 처리정지 요구 등 권리를 행사할 수
-            있습니다. 권리 행사는 아래 연락처를 통해 요청할 수 있으며, 회사는 관련 법령에 따라 지체 없이
+            이용자는 언제든지 운영자에 대해 개인정보 열람, 정정, 삭제, 처리정지 요구 등 권리를 행사할 수
+            있습니다. 권리 행사는 아래 연락처를 통해 요청할 수 있으며, 운영자는 관련 법령에 따라 지체 없이
             조치합니다.
           </p>
         </div>
@@ -101,7 +102,7 @@ export default function PrivacyPolicyPage() {
         <div>
           <h2 className="text-base font-semibold text-gray-900">10. 쿠키 등 자동 수집 장치의 운영</h2>
           <p className="mt-2">
-            회사는 서비스 품질 개선 및 보안 목적을 위해 쿠키 또는 유사 기술을 사용할 수 있습니다.
+            운영자는 서비스 품질 개선 및 보안 목적을 위해 쿠키 또는 유사 기술을 사용할 수 있습니다.
             이용자는 브라우저 설정을 통해 쿠키 저장을 거부할 수 있으나, 일부 기능 이용에 제한이 있을 수
             있습니다.
           </p>
@@ -110,7 +111,7 @@ export default function PrivacyPolicyPage() {
         <div>
           <h2 className="text-base font-semibold text-gray-900">11. 개인정보 보호책임자</h2>
           <ul className="mt-2 list-disc space-y-1 pl-5">
-            <li>성명/직책: [입력 필요]</li>
+            <li>성명/표시명: [입력 필요]</li>
             <li>이메일: [입력 필요]</li>
             <li>연락처: [입력 필요]</li>
           </ul>
