@@ -40,110 +40,110 @@ const PERSONALITY_PLUS_TYPE_PROFILES: Record<number, PersonalityTypeProfile> = {
   1: {
     name: "개혁가",
     subtitle: "원칙주의자",
-    core: "옳고 바르게 살아야 한다는 기준이 분명합니다.",
-    desire: "완전함, 정직함, 도덕적 일관성",
-    fear: "결함이 있거나 잘못된 사람으로 보이는 것",
-    keywords: ["원칙", "개선", "책임", "정확성"],
-    healthyState: ["기준이 명확하고 공정하게 판단한다.", "실수를 개선하며 성장의 방향을 제시한다."],
-    unhealthyState: ["비판과 통제가 늘어나 관계가 경직된다.", "작은 오류에도 과도하게 예민해진다."],
-    strengths: ["높은 책임감과 성실함", "일관된 기준으로 품질을 끌어올림", "자기관리와 절제력"],
-    weaknesses: ["완벽주의로 인한 피로 누적", "융통성 부족", "타인/자기 비난 증가"],
+    core: "완전함과 올바름을 추구하며 더 나은 기준을 세우고 실천합니다.",
+    desire: "완전함, 공정함, 윤리적 일관성",
+    fear: "결함이 드러나거나 잘못된 사람으로 보이는 것",
+    keywords: ["완벽", "원칙", "정의", "자기단련"],
+    healthyState: ["원칙을 공정하게 적용하며 시스템을 개선한다.", "성실한 실행력으로 신뢰와 품질을 높인다."],
+    unhealthyState: ["자기/타인 비판이 강해지고 경직된다.", "분노를 억누르다 한 번에 폭발하기 쉽다."],
+    strengths: ["강한 책임감과 실천력", "높은 윤리의식과 공정성", "꾸준한 자기관리와 개선 능력"],
+    weaknesses: ["완벽주의로 인한 피로", "융통성 저하와 고집", "내면의 분노 누적"],
   },
   2: {
     name: "조력가",
     subtitle: "헌신주의자",
-    core: "타인을 돌보며 관계 속에서 의미를 찾습니다.",
-    desire: "사랑받고 필요로 여겨지는 것",
-    fear: "거절당하거나 가치 없는 존재가 되는 것",
-    keywords: ["배려", "관계", "헌신", "따뜻함"],
-    healthyState: ["공감과 돌봄으로 관계를 안정시킨다.", "필요한 도움을 적절한 방식으로 제공한다."],
-    unhealthyState: ["인정 욕구가 커지며 서운함이 쌓인다.", "경계를 넘는 과도한 개입이 늘어난다."],
-    strengths: ["높은 공감 능력", "관계 형성력", "협력 분위기 조성"],
-    weaknesses: ["자기 욕구 억압", "거절의 어려움", "감정적 소진"],
+    core: "타인을 돕고 돌보며 관계 속에서 자신의 가치를 확인합니다.",
+    desire: "사랑받고 필요한 존재로 인정받는 것",
+    fear: "거절당하거나 쓸모없는 사람으로 보이는 것",
+    keywords: ["헌신", "배려", "관계", "인정욕구"],
+    healthyState: ["공감과 친절로 사람들을 연결하고 분위기를 살린다.", "요청에 맞는 도움을 세심하고 따뜻하게 제공한다."],
+    unhealthyState: ["보상심리가 커져 서운함과 분노가 쌓인다.", "경계를 넘는 간섭/통제로 관계가 소모된다."],
+    strengths: ["탁월한 공감과 대인 적응력", "사람을 잇는 관계 조율 능력", "칭찬과 격려로 팀 동력 강화"],
+    weaknesses: ["자기욕구 인식 부족", "거절 어려움과 과잉헌신", "인정받지 못할 때 감정 소진"],
   },
   3: {
     name: "성취가",
     subtitle: "성과주의자",
-    core: "목표를 달성하고 유능함을 증명하려는 동기가 큽니다.",
-    desire: "성공, 인정, 효율",
-    fear: "실패하거나 무가치하다는 평가",
-    keywords: ["목표", "성과", "효율", "추진력"],
-    healthyState: ["목표 달성을 위해 팀을 효과적으로 이끈다.", "현실적인 실행 계획을 빠르게 만든다."],
-    unhealthyState: ["성과 중심으로 관계가 도구화된다.", "실패 회피로 진짜 감정을 숨긴다."],
-    strengths: ["강한 실행력", "명확한 목표 설정", "결과 중심의 문제해결"],
-    weaknesses: ["과도한 경쟁심", "이미지 관리 스트레스", "감정 단절"],
+    core: "성공과 효율을 통해 자신의 유능함을 증명하고자 합니다.",
+    desire: "성취, 인정, 영향력",
+    fear: "실패자로 보이거나 무가치하게 평가받는 것",
+    keywords: ["목표", "성과", "속도", "경쟁"],
+    healthyState: ["명확한 목표와 실행 계획으로 성과를 만든다.", "사람들의 장점을 파악해 동기를 높인다."],
+    unhealthyState: ["과도한 경쟁과 이미지 집착으로 소진된다.", "감정을 숨기고 결과 중심으로 관계를 도구화한다."],
+    strengths: ["강한 추진력과 회복탄력성", "목표관리와 시간관리 능력", "실행 중심 문제해결 역량"],
+    weaknesses: ["성과집착과 일중독", "비교/경쟁 심화", "실패 회피로 인한 정서 단절"],
   },
   4: {
     name: "개인주의자",
     subtitle: "낭만주의자",
-    core: "자신만의 정체성과 감정의 진정성을 중요하게 여깁니다.",
-    desire: "독특하고 진짜인 나로 살아가는 것",
-    fear: "평범하고 의미 없는 존재가 되는 것",
+    core: "독특한 정체성과 진정한 감정을 통해 의미를 찾습니다.",
+    desire: "특별함, 진정성, 깊이 있는 관계",
+    fear: "평범하고 가치 없는 존재가 되는 것",
     keywords: ["독창성", "감수성", "심미안", "진정성"],
-    healthyState: ["깊은 감수성과 유연함으로 타인을 이해한다.", "창조적 아이디어로 관계와 일을 풍성하게 만든다."],
-    unhealthyState: ["자의식이 강해지며 감정의 기복이 커진다.", "비교와 결핍감으로 자신을 과소평가한다."],
-    strengths: ["감정 인식 능력", "창의력과 표현력", "깊이 있는 공감"],
-    weaknesses: ["감정 기복", "관계 과해석", "실행 지연"],
+    healthyState: ["깊은 공감과 감성으로 타인을 이해하고 지지한다.", "창의적 표현으로 새로운 관점을 제시한다."],
+    unhealthyState: ["비교와 결핍감으로 우울/질투가 커진다.", "감정 과해석과 기복으로 관계가 흔들린다."],
+    strengths: ["풍부한 창조성과 표현력", "타인의 감정을 읽는 공감력", "의미와 품격을 살리는 감각"],
+    weaknesses: ["시기심과 자기비하", "감정기복 및 과민 반응", "현실 실행 지연과 고립 경향"],
   },
   5: {
     name: "탐구가",
     subtitle: "관찰주의자",
-    core: "이해와 통찰을 통해 안전을 확보하려는 경향이 있습니다.",
-    desire: "유능함, 독립성, 지식",
-    fear: "무능하거나 침해당하는 것",
-    keywords: ["분석", "탐구", "거리두기", "통찰"],
-    healthyState: ["복잡한 문제를 구조적으로 정리한다.", "핵심 정보를 기반으로 합리적 판단을 내린다."],
-    unhealthyState: ["과도한 거리두기로 협업이 약해진다.", "준비에만 머물며 실행이 느려진다."],
-    strengths: ["논리적 사고", "깊이 있는 분석", "지식 축적"],
-    weaknesses: ["정서적 표현 부족", "고립 경향", "행동 지연"],
+    core: "지식과 통찰을 통해 세상을 이해하고 안전을 확보합니다.",
+    desire: "유능함, 독립성, 지적 명료성",
+    fear: "무능해 보이거나 침해당하는 것",
+    keywords: ["분석", "관찰", "지식", "독립"],
+    healthyState: ["복잡한 문제의 핵심 원리를 구조화한다.", "객관적 판단으로 위기 상황을 침착하게 정리한다."],
+    unhealthyState: ["감정/관계에서 멀어져 고립되기 쉽다.", "준비와 분석에 머물러 실행이 늦어진다."],
+    strengths: ["예리한 분석력과 통찰", "집중력 있는 전문성 축적", "위기 상황의 냉정한 판단"],
+    weaknesses: ["정서적 거리두기", "행동 지연과 회피", "정보/에너지 인색성"],
   },
   6: {
     name: "충성가",
     subtitle: "안전추구형",
-    core: "불확실성을 관리하며 신뢰 가능한 기준을 찾습니다.",
+    core: "불확실한 상황에서 신뢰할 기준과 안전한 구조를 찾습니다.",
     desire: "안전, 신뢰, 예측 가능성",
     fear: "버려지거나 보호받지 못하는 것",
-    keywords: ["책임", "신중함", "점검", "충성"],
-    healthyState: ["리스크를 선제적으로 점검한다.", "팀의 신뢰 체계를 견고하게 만든다."],
-    unhealthyState: ["의심과 불안이 커져 결정이 느려진다.", "확인을 반복하며 에너지가 소모된다."],
-    strengths: ["위기 대응력", "높은 책임감", "성실한 준비성"],
-    weaknesses: ["걱정 과잉", "결정 회피", "자기신뢰 저하"],
+    keywords: ["충성", "점검", "책임", "경계"],
+    healthyState: ["리스크를 촘촘히 점검해 팀을 보호한다.", "책임감 있게 역할을 완수하며 신뢰를 만든다."],
+    unhealthyState: ["과도한 의심과 확인으로 결정이 늦어진다.", "불안이 커지면 반항/회피가 교차한다."],
+    strengths: ["높은 책임감과 충성심", "위기 대비와 준비성", "현실적 점검 능력"],
+    weaknesses: ["걱정/의심 과잉", "결정 유보", "자기확신 부족"],
   },
   7: {
     name: "열정가",
     subtitle: "낙천주의자",
-    core: "새로운 가능성과 즐거움을 통해 활력을 얻습니다.",
-    desire: "자유, 즐거움, 다양한 경험",
+    core: "즐거움과 가능성을 확장하며 활력 있게 살아가려 합니다.",
+    desire: "자유, 즐거움, 다양한 선택지",
     fear: "고통에 갇히거나 선택지가 사라지는 것",
-    keywords: ["확장", "낙관", "도전", "아이디어"],
-    healthyState: ["긍정 에너지로 팀의 동력을 높인다.", "다양한 가능성을 빠르게 연결한다."],
-    unhealthyState: ["집중력이 분산되고 마무리가 약해진다.", "불편한 감정을 회피하려 한다."],
-    strengths: ["아이디어 발산", "적응력", "도전 정신"],
-    weaknesses: ["산만함", "충동적 선택", "지속성 부족"],
+    keywords: ["낙관", "아이디어", "속도", "확장"],
+    healthyState: ["밝은 에너지로 분위기와 동기를 끌어올린다.", "새로운 아이디어를 빠르게 기획으로 연결한다."],
+    unhealthyState: ["고통 회피로 산만해지고 마무리가 약해진다.", "충동적 선택과 과도한 낙관으로 현실성이 떨어진다."],
+    strengths: ["풍부한 아이디어와 기획력", "빠른 적응과 멀티플레이", "도전적 실행 에너지"],
+    weaknesses: ["지속성 부족", "충동/산만 경향", "불편한 감정 회피"],
   },
   8: {
     name: "도전가",
     subtitle: "보호자형 리더",
-    core: "강한 의지와 영향력으로 상황을 주도하려는 경향이 있습니다.",
+    core: "강한 의지와 영향력으로 상황을 주도하고 약자를 보호합니다.",
     desire: "자율성, 통제감, 강인함",
-    fear: "약해 보이거나 통제당하는 것",
-    keywords: ["결단", "리더십", "직설", "보호"],
-    healthyState: ["결단력으로 문제를 빠르게 풀어낸다.", "약자를 보호하고 기준을 세운다."],
-    unhealthyState: ["통제 욕구가 강해져 관계가 거칠어진다.", "타협보다 대결을 우선한다."],
-    strengths: ["강한 추진력", "책임 있는 리더십", "위기 돌파력"],
-    weaknesses: ["직선적 소통", "과한 통제", "감정 완충 부족"],
+    fear: "약해 보이거나 지배당하는 것",
+    keywords: ["힘", "결단", "정의", "보호"],
+    healthyState: ["과감한 결단으로 위기를 돌파하고 책임진다.", "불의에 맞서고 사람들을 보호한다."],
+    unhealthyState: ["통제와 대결이 과해져 관계가 거칠어진다.", "분노와 흑백논리로 타협이 어려워진다."],
+    strengths: ["강한 추진력과 결단력", "보호 본능과 책임 리더십", "위기 상황의 실행력"],
+    weaknesses: ["과도한 통제 욕구", "직선적 표현으로 인한 충돌", "연약함 표현의 어려움"],
   },
   9: {
     name: "평화주의자",
     subtitle: "중재자",
-    core: "조화와 안정 속에서 편안함을 느낍니다.",
+    core: "갈등을 낮추고 조화를 유지하며 안정적인 흐름을 만듭니다.",
     desire: "평화, 연결감, 안정",
-    fear: "갈등으로 인한 단절",
-    keywords: ["조화", "수용", "안정", "중재"],
-    healthyState: ["다양한 관점을 조율해 합의를 만든다.", "갈등 상황에서도 균형을 유지한다."],
-    unhealthyState: ["회피와 미루기가 늘어나 실행이 늦어진다.", "자기 의견을 뒤로 미루며 소진된다."],
-    strengths: ["중재 능력", "포용력", "관계 안정화"],
-    weaknesses: ["우선순위 혼란", "결정 지연", "자기주장 약화"],
+    fear: "갈등으로 인한 단절과 고립",
+    keywords: ["조화", "수용", "인내", "중재"],
+    healthyState: ["상반된 관점을 조율해 합의를 이끈다.", "편안한 분위기 속에서 팀을 안정시킨다."],
+    unhealthyState: ["갈등 회피로 우선순위와 결정을 미룬다.", "자기의견을 뒤로 두고 수동적 저항이 늘어난다."],
+    strengths: ["넓은 포용력과 공감", "갈등 중재와 균형감각", "꾸준함과 안정적 협업"],
+    weaknesses: ["결정 지연", "자기주장 약화", "타성/회피로 인한 실행 저하"],
   },
 };
 
@@ -1147,11 +1147,84 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
     const maxScore = Math.max(...typeScores.map((item) => item.score));
     const chartMin = Math.max(0, minScore - 4);
     const chartMax = maxScore + 2;
+    const topThree = sortedScores.slice(0, 3);
+    const scoreAverage = Math.round((typeScores.reduce((acc, item) => acc + item.score, 0) / typeScores.length) * 10) / 10;
+    const wingProfile = PERSONALITY_PLUS_TYPE_PROFILES[wingType] ?? PERSONALITY_PLUS_TYPE_PROFILES[1];
+    const growthProfile = PERSONALITY_PLUS_TYPE_PROFILES[growthType] ?? PERSONALITY_PLUS_TYPE_PROFILES[1];
+    const stressProfile = PERSONALITY_PLUS_TYPE_PROFILES[stressType] ?? PERSONALITY_PLUS_TYPE_PROFILES[1];
     return (
-      <section className="cg-panel space-y-6 p-4 sm:p-6">
+      <section className="cg-panel space-y-6 bg-gradient-to-b from-[#f7f9ff] to-white p-4 sm:p-6">
+        <article className="rounded-2xl border border-[#dbe4f3] bg-white px-4 py-5 sm:px-6">
+          <p className="cg-kicker">에니어그램 성격 유형 검사 결과</p>
+          <div className="mt-2">
+            <h3 className="text-xl font-semibold text-slate-800 sm:text-2xl">
+              {primary.typeNo}유형 {profile.name}
+            </h3>
+            <p className="mt-1 text-sm text-slate-600">{profile.subtitle}</p>
+          </div>
+          <div className="mt-4 grid gap-3 sm:grid-cols-3">
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+              <p className="text-xs text-slate-500">주 유형 점수</p>
+              <p className="mt-1 text-lg font-semibold text-slate-800">{primary.score}점</p>
+            </div>
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+              <p className="text-xs text-slate-500">평균 점수</p>
+              <p className="mt-1 text-lg font-semibold text-slate-800">{scoreAverage}점</p>
+            </div>
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+              <p className="text-xs text-slate-500">상위 3유형</p>
+              <p className="mt-1 text-sm font-semibold text-slate-800">
+                {topThree.map((item) => `${item.typeNo}유형(${item.score})`).join(" · ")}
+              </p>
+            </div>
+          </div>
+        </article>
+
+        <article className="rounded-2xl border border-[#dbe4f3] bg-white p-4 sm:p-5">
+          <h4 className="text-base font-semibold text-slate-800 sm:text-lg">핵심 방향 해석</h4>
+          <div className="mt-3 grid gap-3 lg:grid-cols-3">
+            <div className="rounded-xl border border-[#d6e3fb] bg-[#eef4ff] p-4">
+              <div className="flex items-center gap-2">
+                <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-white text-[#2e59b5] shadow-sm">
+                  <BarChart3 className="h-4 w-4" />
+                </span>
+                <p className="text-xs font-semibold tracking-[0.08em] text-[#2e59b5]">날개 유형</p>
+              </div>
+              <p className="mt-1 text-base font-semibold text-slate-900">
+                {wingType}유형 {wingProfile.name}
+              </p>
+              <p className="mt-1 text-xs text-slate-600">주유형의 표현 스타일을 보완하는 경향</p>
+            </div>
+            <div className="rounded-xl border border-[#cfead9] bg-[#edfbf3] p-4">
+              <div className="flex items-center gap-2">
+                <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-white text-[#1f7b53] shadow-sm">
+                  <CheckCircle2 className="h-4 w-4" />
+                </span>
+                <p className="text-xs font-semibold tracking-[0.08em] text-[#1f7b53]">통합 방향</p>
+              </div>
+              <p className="mt-1 text-base font-semibold text-slate-900">
+                {growthType}유형 {growthProfile.name}
+              </p>
+              <p className="mt-1 text-xs text-slate-600">안정적일 때 강화되는 성장 방향</p>
+            </div>
+            <div className="rounded-xl border border-[#f3d7de] bg-[#fff3f6] p-4">
+              <div className="flex items-center gap-2">
+                <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-white text-[#bc3d59] shadow-sm">
+                  <AlertCircle className="h-4 w-4" />
+                </span>
+                <p className="text-xs font-semibold tracking-[0.08em] text-[#bc3d59]">분열 방향</p>
+              </div>
+              <p className="mt-1 text-base font-semibold text-slate-900">
+                {stressType}유형 {stressProfile.name}
+              </p>
+              <p className="mt-1 text-xs text-slate-600">스트레스 시 나타나기 쉬운 반응 방향</p>
+            </div>
+          </div>
+        </article>
+
         <article className="cg-panel-muted p-4 sm:p-5">
           <div>
-            <p className="cg-kicker">에니어그램 성격 유형 검사 결과</p>
+            <p className="cg-kicker">점수 시각화</p>
             <h3 className="mt-1 text-xl font-semibold text-slate-800">유형별 점수 분포</h3>
           </div>
           <PersonalityPlusScoreChart
@@ -1162,50 +1235,26 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
           />
         </article>
 
-        <article className="overflow-x-auto">
-          <table className="min-w-[760px] w-full border-collapse text-xs sm:text-sm">
-            <thead className="bg-slate-100 text-slate-900">
-              <tr>
-                {typeScores.map((item) => (
-                  <th key={item.typeNo} className="border border-slate-300 px-3 py-2 text-center font-semibold">
-                    유형 {item.typeNo}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                {typeScores.map((item) => (
-                  <td key={item.typeNo} className="border border-slate-200 px-3 py-2 text-center">
+        <article className="rounded-2xl border border-[#dbe4f3] bg-white p-4 sm:p-5">
+          <h4 className="text-sm font-semibold text-slate-700">유형별 점수</h4>
+          <div className="mt-3 grid gap-2 sm:grid-cols-3 lg:grid-cols-9">
+            {typeScores.map((item) => {
+              const isPrimary = item.typeNo === primary.typeNo;
+              return (
+                <div
+                  key={item.typeNo}
+                  className={`rounded-xl border px-3 py-2 text-center ${
+                    isPrimary ? "border-[#b9ccf0] bg-[#edf4ff]" : "border-slate-200 bg-slate-50"
+                  }`}
+                >
+                  <p className="text-[11px] font-semibold text-slate-500">유형 {item.typeNo}</p>
+                  <p className={`mt-1 text-base font-semibold ${isPrimary ? "text-[#2e59b5]" : "text-slate-800"}`}>
                     {item.score}점
-                  </td>
-                ))}
-              </tr>
-            </tbody>
-          </table>
-        </article>
-
-        <article className="overflow-x-auto">
-          <table className="min-w-[640px] w-full border-collapse text-xs sm:text-sm">
-            <thead className="bg-slate-100 text-slate-900">
-              <tr>
-                <th className="border border-slate-300 px-3 py-2 text-center font-semibold">나의 유형</th>
-                <th className="border border-slate-300 px-3 py-2 text-center font-semibold">날개</th>
-                <th className="border border-slate-300 px-3 py-2 text-center font-semibold">통합 방향</th>
-                <th className="border border-slate-300 px-3 py-2 text-center font-semibold">분열 방향</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="border border-slate-200 px-3 py-2 text-center">
-                  {primary.typeNo} 유형 ({profile.name})
-                </td>
-                <td className="border border-slate-200 px-3 py-2 text-center">{wingType} 유형</td>
-                <td className="border border-slate-200 px-3 py-2 text-center">{growthType} 유형</td>
-                <td className="border border-slate-200 px-3 py-2 text-center">{stressType} 유형</td>
-              </tr>
-            </tbody>
-          </table>
+                  </p>
+                </div>
+              );
+            })}
+          </div>
         </article>
 
         <article className="cg-panel-muted p-5">
@@ -1217,7 +1266,7 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
               <span className="font-semibold text-[#1f7b53]">핵심 특성</span>: {profile.core}
             </p>
             <p>
-              <span className="font-semibold text-[#1f7b53]">동기</span>: {profile.desire}
+              <span className="font-semibold text-[#1f7b53]">핵심 동기</span>: {profile.desire}
             </p>
             <p>
               <span className="font-semibold text-[#b45309]">불안/회피</span>: {profile.fear}
@@ -1230,7 +1279,7 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
 
         <div className="grid gap-4 lg:grid-cols-2">
           <article className="cg-panel border-[#d7ebe1] bg-[#eff8f3] p-5">
-            <h4 className="text-lg font-semibold text-[#1f7b53]">상태별 성장 (긍정적 상태)</h4>
+            <h4 className="text-lg font-semibold text-[#1f7b53]">긍정적 상태</h4>
             <ul className="mt-3 space-y-2 text-sm text-slate-700">
               {profile.healthyState.map((item) => (
                 <li key={item}>• {item}</li>
@@ -1238,7 +1287,7 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
             </ul>
           </article>
           <article className="cg-panel border-[#f0dce2] bg-[#fff3f6] p-5">
-            <h4 className="text-lg font-semibold text-[#bc3d59]">상태별 성장 (부정적 상태)</h4>
+            <h4 className="text-lg font-semibold text-[#bc3d59]">주의 상태</h4>
             <ul className="mt-3 space-y-2 text-sm text-slate-700">
               {profile.unhealthyState.map((item) => (
                 <li key={item}>• {item}</li>
@@ -1249,7 +1298,7 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
 
         <div className="grid gap-4 lg:grid-cols-2">
           <article className="cg-panel p-5">
-            <h4 className="text-base font-semibold text-[#1f2a37]">강점</h4>
+            <h4 className="text-base font-semibold text-[#1f2a37]">대표 강점</h4>
             <ul className="mt-3 space-y-2 text-sm text-slate-700">
               {profile.strengths.map((item) => (
                 <li key={item}>• {item}</li>
@@ -1257,7 +1306,7 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
             </ul>
           </article>
           <article className="cg-panel p-5">
-            <h4 className="text-base font-semibold text-[#6d28d9]">약점</h4>
+            <h4 className="text-base font-semibold text-[#6d28d9]">주의 포인트</h4>
             <ul className="mt-3 space-y-2 text-sm text-slate-700">
               {profile.weaknesses.map((item) => (
                 <li key={item}>• {item}</li>
