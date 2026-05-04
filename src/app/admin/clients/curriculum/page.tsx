@@ -22,16 +22,23 @@ export default async function CurriculumPage({ searchParams }: CurriculumPagePro
     redirect("/login");
   }
 
-  const clientName = searchParams?.name?.trim();
+  let clientName = searchParams?.name?.trim();
   const clientId = searchParams?.clientId?.trim();
-  const title = clientName
-    ? `${clientName} 대상자 검사 커리큘럼`
-    : "코칭 대상자 검사 커리큘럼";
   const isNewFlow = searchParams?.mode === "new";
   const savedTestSet = new Set<string>();
+  const supabase = createServiceClient();
 
   if (clientId) {
-    const supabase = createServiceClient();
+    if (!clientName) {
+      const { data: client } = await supabase
+        .from("clients")
+        .select("name")
+        .eq("id", clientId)
+        .is("deleted_at", null)
+        .maybeSingle();
+      clientName = client?.name ?? undefined;
+    }
+
     const { data } = await supabase
       .from("client_assessments")
       .select("test_slug")
@@ -42,6 +49,9 @@ export default async function CurriculumPage({ searchParams }: CurriculumPagePro
       }
     });
   }
+  const title = clientName
+    ? `${clientName} 대상자 검사 커리큘럼`
+    : "코칭 대상자 검사 커리큘럼";
 
   return (
     <main className="mx-auto min-h-screen w-full max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:py-16">

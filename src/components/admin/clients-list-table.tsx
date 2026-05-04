@@ -1,21 +1,47 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 type ClientRow = {
   id: string;
   name: string;
-  birthDate: string;
   stressFactor: string;
   location: string;
   createdAt: string;
   deletedAt?: string | null;
 };
 
+type ClientProfile = {
+  id: string;
+  name: string;
+  birthDate: string;
+  phone: string;
+  stressFactor: string;
+  location: string;
+  privacyConsent: boolean;
+  privacyConsentedAt?: string | null;
+  createdAt: string;
+};
+
+type AccessLogMeta = {
+  viewedBy: string;
+  reason: string;
+  viewedAt: string;
+};
+
 const DEFAULT_PAGE_SIZE = 10;
 const PAGE_SIZE_OPTIONS = [10, 20, 30];
 type ViewMode = "active" | "deleted";
+type AccessAction = "details_view";
 
 function maskName(name: string) {
   if (name.length <= 1) {
@@ -46,11 +72,23 @@ export function ClientsListTable() {
   const [showDateFilter, setShowDateFilter] = useState(false);
   const [filterYear, setFilterYear] = useState("");
   const [filterMonth, setFilterMonth] = useState("");
-  const [revealedNames, setRevealedNames] = useState<Record<string, boolean>>({});
   const [clients, setClients] = useState<ClientRow[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [isAccessDialogOpen, setIsAccessDialogOpen] = useState(false);
+  const [isAccessSubmitting, setIsAccessSubmitting] = useState(false);
+  const [viewerName, setViewerName] = useState("");
+  const [accessReason, setAccessReason] = useState("");
+  const [accessError, setAccessError] = useState("");
+  const [pendingAccess, setPendingAccess] = useState<{
+    clientId: string;
+    action: AccessAction;
+  } | null>(null);
+  const [isProfileDialogOpen, setIsProfileDialogOpen] = useState(false);
+  const [selectedProfile, setSelectedProfile] = useState<ClientProfile | null>(null);
+  const [lastAccessLog, setLastAccessLog] = useState<AccessLogMeta | null>(null);
+  const [profileError, setProfileError] = useState("");
   const [reloadKey, setReloadKey] = useState(0);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -120,11 +158,92 @@ export function ClientsListTable() {
     }
   }, [filterMonth, filterYear]);
 
-  const toggleName = (clientId: string) => {
-    setRevealedNames((prev) => ({
-      ...prev,
-      [clientId]: !prev[clientId],
-    }));
+  const openAccessDialog = (clientId: string, action: AccessAction) => {
+    setViewerName("");
+    setAccessReason("");
+    setAccessError("");
+    setProfileError("");
+    setLastAccessLog(null);
+    setPendingAccess({ clientId, action });
+    setIsAccessDialogOpen(true);
+  };
+
+  const logAndProceedAccess = async () => {
+    if (!pendingAccess) {
+      return;
+    }
+
+    const normalizedViewerName = viewerName.trim();
+    if (normalizedViewerName.length < 2) {
+      setAccessError("열람자 이름은 2자 이상 입력해주세요.");
+      return;
+    }
+
+    const reason = accessReason.trim();
+    if (reason.length < 5) {
+      setAccessError("열람 사유는 5자 이상 입력해주세요.");
+      return;
+    }
+
+    setAccessError("");
+    setIsAccessSubmitting(true);
+    try {
+      const viewedFields = ["name", "birth_date", "phone", "stress_factor", "location"];
+      const response = await fetch(`/api/clients/${pendingAccess.clientId}/access-logs`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          viewerName: normalizedViewerName,
+          reason,
+          action: pendingAccess.action,
+          viewedFields,
+        }),
+      });
+
+      const result = (await response.json()) as {
+        message?: string;
+        log?: {
+          viewedBy?: string;
+          reason?: string;
+          viewedAt?: string;
+        };
+      };
+      if (!response.ok) {
+        setAccessError(result.message ?? "접근 로그 저장에 실패했습니다.");
+        return;
+      }
+
+      const profileResponse = await fetch(`/api/clients/${pendingAccess.clientId}/profile`, {
+        method: "GET",
+        cache: "no-store",
+      });
+      const profileResult = (await profileResponse.json()) as {
+        message?: string;
+        item?: ClientProfile;
+      };
+      if (!profileResponse.ok || !profileResult.item) {
+        setAccessError(profileResult.message ?? "개인정보를 불러오지 못했습니다.");
+        return;
+      }
+
+      setIsAccessDialogOpen(false);
+      setLastAccessLog({
+        viewedBy: result.log?.viewedBy ?? "unknown",
+        reason: result.log?.reason ?? reason,
+        viewedAt: result.log?.viewedAt ?? new Date().toISOString(),
+      });
+      setSelectedProfile(profileResult.item);
+      setIsProfileDialogOpen(true);
+      setPendingAccess(null);
+      setViewerName("");
+      setAccessReason("");
+    } catch {
+      setAccessError("접근 로그 저장 중 오류가 발생했습니다.");
+    } finally {
+      setIsAccessSubmitting(false);
+    }
   };
 
   const handleDelete = async (clientId: string, permanent = false) => {
@@ -151,12 +270,6 @@ export function ClientsListTable() {
         setErrorMessage(result.message ?? "대상자 삭제에 실패했습니다.");
         return;
       }
-
-      setRevealedNames((prev) => {
-        const next = { ...prev };
-        delete next[clientId];
-        return next;
-      });
       setReloadKey((prev) => prev + 1);
     } catch {
       setErrorMessage("대상자 삭제 중 오류가 발생했습니다.");
@@ -318,7 +431,7 @@ export function ClientsListTable() {
           </div>
         </div>
         <p className="mt-2 text-xs text-gray-500">
-          이름을 클릭하면 해당 행만 마스킹이 해제되며, 다시 클릭하면 마스킹됩니다.
+          목록에서는 이름만 마스킹해 표시하고, 상세 버튼에서 사유 입력 후 개인정보를 열람할 수 있습니다.
         </p>
         {errorMessage ? <p className="mt-2 text-xs text-rose-600">{errorMessage}</p> : null}
       </div>
@@ -329,49 +442,37 @@ export function ClientsListTable() {
           <thead className="bg-slate-100 text-left text-slate-900">
             <tr>
               <th className="px-4 py-3 font-semibold">이름</th>
-              <th className="px-4 py-3 font-semibold">생년월일</th>
               <th className="px-4 py-3 font-semibold">스트레스 요인</th>
-              <th className="px-4 py-3 font-semibold">사는곳(동)</th>
-              <th className="px-4 py-3 font-semibold">
-                {displayMode === "active" ? "등록일" : "삭제일"}
-              </th>
+              <th className="px-4 py-3 font-semibold">사는 곳</th>
+              <th className="px-4 py-3 font-semibold">등록일</th>
               <th className="px-4 py-3 font-semibold">관리</th>
             </tr>
           </thead>
           <tbody>
             {clients.map((client) => {
-              const isRevealed = Boolean(revealedNames[client.id]);
               return (
                 <tr key={client.id} className="border-t border-gray-200">
-                  <td className="px-4 py-3">
-                    <button
-                      type="button"
-                      onClick={() => toggleName(client.id)}
-                      className="font-semibold text-gray-800 hover:text-[#1f3a33]"
-                    >
-                      {isRevealed ? client.name : maskName(client.name)}
-                    </button>
-                  </td>
-                  <td className="px-4 py-3">{client.birthDate}</td>
-                  <td className="px-4 py-3">{client.stressFactor}</td>
-                  <td className="px-4 py-3">{client.location}</td>
-                  <td className="px-4 py-3">
-                    {formatKoreanDate(
-                      displayMode === "active"
-                        ? client.createdAt
-                        : client.deletedAt ?? client.createdAt,
-                    )}
-                  </td>
+                  <td className="px-4 py-3 font-semibold text-gray-800">{maskName(client.name)}</td>
+                  <td className="px-4 py-3">{client.stressFactor || "-"}</td>
+                  <td className="px-4 py-3">{client.location || "-"}</td>
+                  <td className="px-4 py-3">{formatKoreanDate(client.createdAt)}</td>
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap items-center gap-2">
                       {displayMode === "active" ? (
                         <>
                           <Link
-                            href={`/admin/clients/curriculum?clientId=${client.id}&name=${encodeURIComponent(client.name)}`}
+                            href={`/admin/clients/curriculum?clientId=${client.id}`}
+                            className="rounded-md border border-[#2f4f46] px-3 py-1.5 text-xs font-semibold text-[#2f4f46] hover:bg-[#eef4f1]"
+                          >
+                            커리큘럼
+                          </Link>
+                          <button
+                            type="button"
+                            onClick={() => openAccessDialog(client.id, "details_view")}
                             className="rounded-md bg-[#2f4f46] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#223c35]"
                           >
-                            상세 보기
-                          </Link>
+                            상세
+                          </button>
                           <button
                             type="button"
                             onClick={() => handleDelete(client.id)}
@@ -408,7 +509,7 @@ export function ClientsListTable() {
             })}
             {!isLoading && clients.length === 0 ? (
               <tr className="border-t border-gray-200">
-                <td colSpan={6} className="px-4 py-8 text-center text-sm text-gray-500">
+                <td colSpan={5} className="px-4 py-8 text-center text-sm text-gray-500">
                   검색 결과가 없습니다.
                 </td>
               </tr>
@@ -464,6 +565,146 @@ export function ClientsListTable() {
           </button>
         </div>
       </div>
+
+      <Dialog
+        open={isAccessDialogOpen}
+        onOpenChange={(open) => {
+          setIsAccessDialogOpen(open);
+          if (!open) {
+            setViewerName("");
+            setAccessReason("");
+            setAccessError("");
+            setPendingAccess(null);
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>개인정보 열람 사유 입력</DialogTitle>
+            <DialogDescription>
+              개인정보 접근 로그에 열람자, 시각, 사유가 함께 저장됩니다.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-slate-800">
+              열람자 이름
+              <input
+                type="text"
+                value={viewerName}
+                onChange={(event) => setViewerName(event.target.value)}
+                placeholder="예: 홍길동 상담사"
+                className="mt-2 w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-[#2f4f46] focus:outline-none"
+              />
+            </label>
+            <label className="block text-sm font-medium text-slate-800">
+              열람 사유
+              <textarea
+                value={accessReason}
+                onChange={(event) => setAccessReason(event.target.value)}
+                rows={3}
+                placeholder="예: 상담 일정 확인을 위한 대상자 정보 확인"
+                className="mt-2 w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-[#2f4f46] focus:outline-none"
+              />
+            </label>
+            {accessError ? <p className="text-xs text-rose-600">{accessError}</p> : null}
+          </div>
+          <DialogFooter>
+            <button
+              type="button"
+              onClick={() => setIsAccessDialogOpen(false)}
+              className="rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            >
+              취소
+            </button>
+            <button
+              type="button"
+              onClick={logAndProceedAccess}
+              disabled={isAccessSubmitting}
+              className="rounded-md bg-[#2f4f46] px-3 py-2 text-sm font-semibold text-white hover:bg-[#223c35] disabled:cursor-not-allowed disabled:bg-[#9aa9a3]"
+            >
+              {isAccessSubmitting ? "기록 중..." : "기록 후 열람"}
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={isProfileDialogOpen}
+        onOpenChange={(open) => {
+          setIsProfileDialogOpen(open);
+          if (!open) {
+            setSelectedProfile(null);
+            setLastAccessLog(null);
+            setProfileError("");
+          }
+        }}
+      >
+        <DialogContent className="max-w-xl">
+          <DialogHeader>
+            <DialogTitle>수강생 개인정보 상세</DialogTitle>
+            <DialogDescription>
+              접근 로그가 기록된 후 조회된 상세 정보입니다.
+            </DialogDescription>
+          </DialogHeader>
+          {selectedProfile ? (
+            <div className="space-y-2 text-sm text-slate-700">
+              {lastAccessLog ? (
+                <div className="mb-3 rounded-md border border-slate-200 bg-slate-50 p-3 text-xs leading-5 text-slate-700">
+                  <p>
+                    <span className="font-semibold text-slate-900">열람자:</span> {lastAccessLog.viewedBy}
+                  </p>
+                  <p>
+                    <span className="font-semibold text-slate-900">열람 시각:</span>{" "}
+                    {new Date(lastAccessLog.viewedAt).toLocaleString("ko-KR")}
+                  </p>
+                  <p>
+                    <span className="font-semibold text-slate-900">열람 사유:</span> {lastAccessLog.reason}
+                  </p>
+                </div>
+              ) : null}
+              <p>
+                <span className="font-semibold text-slate-900">이름:</span> {selectedProfile.name}
+              </p>
+              <p>
+                <span className="font-semibold text-slate-900">생년월일:</span> {selectedProfile.birthDate}
+              </p>
+              <p>
+                <span className="font-semibold text-slate-900">휴대번호:</span> {selectedProfile.phone}
+              </p>
+              <p>
+                <span className="font-semibold text-slate-900">스트레스 요인:</span>{" "}
+                {selectedProfile.stressFactor}
+              </p>
+              <p>
+                <span className="font-semibold text-slate-900">사는곳(동):</span> {selectedProfile.location}
+              </p>
+              <p>
+                <span className="font-semibold text-slate-900">개인정보 동의:</span>{" "}
+                {selectedProfile.privacyConsent ? "동의" : "미동의"}
+              </p>
+              <p>
+                <span className="font-semibold text-slate-900">동의 시각:</span>{" "}
+                {selectedProfile.privacyConsentedAt
+                  ? new Date(selectedProfile.privacyConsentedAt).toLocaleString("ko-KR")
+                  : "-"}
+              </p>
+            </div>
+          ) : (
+            <p className="text-sm text-rose-600">
+              {profileError || "상세 정보를 불러오지 못했습니다."}
+            </p>
+          )}
+          <DialogFooter>
+            <button
+              type="button"
+              onClick={() => setIsProfileDialogOpen(false)}
+              className="rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            >
+              닫기
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

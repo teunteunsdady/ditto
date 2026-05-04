@@ -2,7 +2,7 @@ export default function PrivacyPolicyPage() {
   return (
     <main className="mx-auto min-h-screen w-full max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
       <h1 className="text-2xl font-bold sm:text-3xl">개인정보처리방침</h1>
-      <p className="mt-3 text-sm text-gray-500">시행일: 2026-04-23</p>
+      <p className="mt-3 text-sm text-gray-500">시행일: 2026-05-04</p>
 
       <section className="mt-8 space-y-6 text-sm leading-7 text-gray-700">
         <div>
@@ -20,6 +20,7 @@ export default function PrivacyPolicyPage() {
           <h2 className="text-base font-semibold text-gray-900">2. 개인정보의 처리 목적</h2>
           <ul className="mt-2 list-disc space-y-1 pl-5">
             <li>상담 문의 접수 및 회신</li>
+            <li>대상자 등록, 상담/검사 운영 및 결과 관리</li>
             <li>서비스 안내, 고객 문의 응대, 민원 처리</li>
             <li>서비스 운영 및 보안 관리(비정상 이용 탐지, 기록 보관)</li>
           </ul>
@@ -27,26 +28,35 @@ export default function PrivacyPolicyPage() {
 
         <div>
           <h2 className="text-base font-semibold text-gray-900">3. 처리하는 개인정보 항목</h2>
-          <p className="mt-2">
-            운영자는 상담 문의 과정에서 아래 정보를 수집할 수 있습니다.
-          </p>
+          <p className="mt-2">운영자는 서비스 제공을 위해 아래 정보를 수집할 수 있습니다.</p>
           <ul className="mt-2 list-disc space-y-1 pl-5">
-            <li>필수: 이름, 연락처, 문의내용</li>
-            <li>선택: 이메일, 문의유형</li>
+            <li>상담 문의(웹 문의 폼) - 필수: 이름, 연락처, 문의내용 / 선택: 이메일, 문의유형</li>
+            <li>
+              대상자 등록(관리자 입력) - 필수: 이름, 생년월일, 휴대번호, 스트레스 요인, 사는곳(동),
+              개인정보 수집·이용 동의 여부 및 동의 시각
+            </li>
             <li>자동 생성: 접속 로그, IP, 이용기록(보안/운영 목적)</li>
           </ul>
+          <p className="mt-2">
+            휴대번호는 서버에서 암호화 처리 후 저장하며, 운영·보안 목적 범위 내에서만 이용합니다.
+          </p>
         </div>
 
         <div>
           <h2 className="text-base font-semibold text-gray-900">4. 개인정보의 처리 및 보유 기간</h2>
           <ul className="mt-2 list-disc space-y-1 pl-5">
-            <li>상담 문의 정보: 수집일로부터 최대 3년 보관 후 파기</li>
+            <li>상담 문의 정보: 수집일로부터 최대 1년 보관 후 파기</li>
+            <li>대상자 등록 정보: 등록일로부터 최대 1년 보관 후 파기(법령상 보존 의무가 있는 경우 제외)</li>
             <li>
               관계 법령에 따라 보존이 필요한 경우에는 해당 법령에서 정한 기간 동안 별도 보관
             </li>
           </ul>
           <p className="mt-2">
             단, 이용자가 삭제를 요청하거나 처리 목적이 달성된 경우 지체 없이 파기합니다.
+          </p>
+          <p className="mt-2">
+            이용자는 개인정보 수집·이용 동의를 거부할 권리가 있으나, 필수 항목 동의가 없을 경우 대상자
+            등록 및 관련 서비스 제공이 제한될 수 있습니다.
           </p>
         </div>
 

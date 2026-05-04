@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 import { AUTH_COOKIE_NAME, isMasterSession } from "@/lib/auth/master-session";
+import { encryptPhone } from "@/lib/security/field-encryption";
 import { logServerError } from "@/lib/security/api-error";
 import { requireSameOrigin } from "@/lib/security/request-guards";
 import { createServiceClient } from "@/lib/supabase/service";
@@ -9,9 +10,15 @@ import { createServiceClient } from "@/lib/supabase/service";
 type CreateClientBody = {
   name?: string;
   birthDate?: string;
+  phone?: string;
   stressFactor?: string;
   location?: string;
+  privacyConsent?: boolean;
 };
+
+function normalizePhone(value: string) {
+  return value.replace(/\s+/g, "").trim();
+}
 
 async function getCurrentAdminId() {
   const masterEmail = process.env.MASTER_LOGIN_EMAIL?.trim().toLowerCase();
@@ -57,7 +64,7 @@ export async function GET(request: Request) {
     const supabase = createServiceClient();
     let query = supabase
       .from("clients")
-      .select("id, name, birth_date, stress_factor, location, created_at, deleted_at", {
+      .select("id, name, stress_factor, location, created_at, deleted_at", {
         count: "exact",
       })
       .range(from, to);
@@ -96,7 +103,6 @@ export async function GET(request: Request) {
       items: (data ?? []).map((row) => ({
         id: row.id,
         name: row.name,
-        birthDate: row.birth_date,
         stressFactor: row.stress_factor,
         location: row.location,
         createdAt: row.created_at,
@@ -129,16 +135,33 @@ export async function POST(request: Request) {
     const body = (await request.json()) as CreateClientBody;
     const name = body.name?.trim();
     const birthDate = body.birthDate?.trim();
+    const phone = normalizePhone(body.phone ?? "");
     const stressFactor = body.stressFactor?.trim();
     const location = body.location?.trim();
+    const privacyConsent = body.privacyConsent === true;
 
-    if (!name || !birthDate || !stressFactor || !location) {
+    if (!name || !birthDate || !phone || !stressFactor || !location) {
       return NextResponse.json(
-        { message: "필수값(name, birthDate, stressFactor, location)을 입력해주세요." },
+        { message: "필수값(name, birthDate, phone, stressFactor, location)을 입력해주세요." },
         { status: 400 },
       );
     }
 
+    if (!/^[0-9-]{9,15}$/.test(phone)) {
+      return NextResponse.json(
+        { message: "휴대번호 형식을 확인해주세요. (숫자/하이픈 9~15자)" },
+        { status: 400 },
+      );
+    }
+
+    if (!privacyConsent) {
+      return NextResponse.json(
+        { message: "개인정보 수집·이용 동의가 필요합니다." },
+        { status: 400 },
+      );
+    }
+
+    const encryptedPhone = encryptPhone(phone);
     const adminId = await getCurrentAdminId();
     const supabase = createServiceClient();
 
@@ -147,8 +170,11 @@ export async function POST(request: Request) {
       .insert({
         name,
         birth_date: birthDate,
+        phone: encryptedPhone,
         stress_factor: stressFactor,
         location,
+        privacy_consent: true,
+        privacy_consented_at: new Date().toISOString(),
         created_id: adminId,
         updated_id: adminId,
       })

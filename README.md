@@ -24,6 +24,7 @@ SUPABASE_SERVICE_ROLE_KEY=...
 MASTER_LOGIN_EMAIL=...
 MASTER_LOGIN_PASSWORD=...
 MASTER_SESSION_SECRET=... # 권장(세션 토큰 서명키)
+CLIENT_PHONE_ENCRYPTION_KEY=... # 필수(32바이트 base64, 대상자 휴대번호 암호화)
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
@@ -49,6 +50,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - `docs/supabase-setup.md`: Supabase 프로젝트 생성/키 설정/RLS 가이드
 - `docs/vercel-deploy-checklist.md`: Vercel 배포 절차 체크리스트
 - `docs/security-hardening.md`: 서비스 보안 하드닝/점검 가이드
+- `docs/privacy-compliance-checklist.md`: 개인정보 수집/보관/파기 운영 체크리스트
 - `docs/security-operations-runbook.md`: 운영 반영 및 사고 대응 Runbook
 - `docs/worklog.md`: 작업일지
 

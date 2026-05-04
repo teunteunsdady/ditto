@@ -78,6 +78,10 @@ SUPABASE_SERVICE_ROLE_KEY=...
 1. SQL Editor에서 `docs/sql/004_add_inquiries.sql` 실행
 2. `inquiries` 테이블이 생성되고, 문의 데이터가 저장됩니다.
 
+개인정보 열람 로그를 쓰려면 아래도 실행해주세요:
+1. SQL Editor에서 `docs/sql/007_add_client_access_logs.sql` 실행
+2. `client_access_logs` 테이블이 생성되고, 열람 사유 로그가 저장됩니다.
+
 ## 3-1) 앱 연동 시 필요한 환경변수
 
 관리자 전용 대상자 등록/조회 API를 사용할 때는 아래도 필요합니다.

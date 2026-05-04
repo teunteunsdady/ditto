@@ -70,7 +70,7 @@ export function SiteHeader() {
   };
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-[#e5e8ee] bg-white/92 backdrop-blur supports-[backdrop-filter]:bg-white/78">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-[#e5e8ee] bg-white">
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
         <Link href="/" className="flex items-center gap-3">
           <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl bg-[#f2f4f8]">
