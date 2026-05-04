@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 import { AUTH_COOKIE_NAME, isMasterSession } from "@/lib/auth/master-session";
+import { formatKoreanMobilePhone, isValidKoreanMobilePhone } from "@/lib/phone";
 import { decryptPhone } from "@/lib/security/field-encryption";
 import { logServerError } from "@/lib/security/api-error";
 import { createServiceClient } from "@/lib/supabase/service";
@@ -45,10 +46,12 @@ export async function GET(_request: Request, { params }: RouteParams) {
 
     let phone = "";
     try {
-      phone = decryptPhone(String(data.phone ?? ""));
+      const decryptedPhone = decryptPhone(String(data.phone ?? ""));
+      const formattedPhone = formatKoreanMobilePhone(decryptedPhone);
+      phone = isValidKoreanMobilePhone(formattedPhone) ? formattedPhone : "-";
     } catch (decryptError) {
       logServerError("api/clients/[id]/profile.decrypt_phone", decryptError, { clientId });
-      phone = "복호화 실패";
+      phone = "전화번호 확인 필요";
     }
 
     return NextResponse.json({

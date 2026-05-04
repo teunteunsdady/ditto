@@ -11,6 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { formatKoreanMobilePhone, isValidKoreanMobilePhone } from "@/lib/phone";
 
 export function NewClientDetailsForm() {
   const router = useRouter();
@@ -24,8 +25,8 @@ export function NewClientDetailsForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const normalizedPhone = phone.replace(/\s+/g, "").trim();
-  const hasValidPhone = /^[0-9-]{9,15}$/.test(normalizedPhone);
+  const normalizedPhone = formatKoreanMobilePhone(phone);
+  const hasValidPhone = isValidKoreanMobilePhone(normalizedPhone);
   const isDisabled =
     name.trim().length < 2 ||
     !birthDate ||
@@ -131,13 +132,16 @@ export function NewClientDetailsForm() {
           <input
             type="tel"
             value={phone}
-            onChange={(event) => setPhone(event.target.value)}
+            onChange={(event) => setPhone(formatKoreanMobilePhone(event.target.value))}
             className="h-12 w-full max-w-full rounded-md border border-gray-300 px-4 text-base text-gray-900 placeholder:text-gray-400 focus:border-[#2f4f46] focus:outline-none"
             placeholder="예: 010-1234-5678"
             inputMode="numeric"
+            maxLength={13}
           />
           {!hasValidPhone && normalizedPhone ? (
-            <p className="mt-2 text-sm text-rose-600">휴대번호 형식을 확인해주세요. (숫자/하이픈 9~15자)</p>
+            <p className="mt-2 text-sm text-rose-600">
+              휴대번호 형식을 확인해주세요. (예: 010-1234-5678)
+            </p>
           ) : null}
         </label>
       </div>

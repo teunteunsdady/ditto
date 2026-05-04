@@ -34,12 +34,23 @@ export function encryptPhone(value: string) {
 }
 
 export function decryptPhone(value: string) {
-  if (!value.startsWith(`${PREFIX}:`)) {
-    // 레거시 평문 데이터 호환
-    return value;
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return "";
   }
 
-  const [, version, ivBase64, authTagBase64, encryptedBase64] = value.split(":");
+  if (!trimmed.startsWith(`${PREFIX}:`)) {
+    // 레거시 평문 데이터 호환
+    return trimmed;
+  }
+
+  const parts = trimmed.split(":");
+  if (parts.length !== 5) {
+    // 이전 운영 데이터의 임시값/비표준값은 앱 레벨에서 안전하게 무시
+    return "";
+  }
+
+  const [, version, ivBase64, authTagBase64, encryptedBase64] = parts;
   if (!version || !ivBase64 || !authTagBase64 || !encryptedBase64) {
     throw new Error("Invalid encrypted phone payload.");
   }

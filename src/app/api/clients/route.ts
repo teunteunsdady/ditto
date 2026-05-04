@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 import { AUTH_COOKIE_NAME, isMasterSession } from "@/lib/auth/master-session";
+import { isValidKoreanMobilePhone, normalizeKoreanMobilePhone } from "@/lib/phone";
 import { encryptPhone } from "@/lib/security/field-encryption";
 import { logServerError } from "@/lib/security/api-error";
 import { requireSameOrigin } from "@/lib/security/request-guards";
@@ -15,10 +16,6 @@ type CreateClientBody = {
   location?: string;
   privacyConsent?: boolean;
 };
-
-function normalizePhone(value: string) {
-  return value.replace(/\s+/g, "").trim();
-}
 
 async function getCurrentAdminId() {
   const masterEmail = process.env.MASTER_LOGIN_EMAIL?.trim().toLowerCase();
@@ -135,7 +132,7 @@ export async function POST(request: Request) {
     const body = (await request.json()) as CreateClientBody;
     const name = body.name?.trim();
     const birthDate = body.birthDate?.trim();
-    const phone = normalizePhone(body.phone ?? "");
+    const phone = normalizeKoreanMobilePhone(body.phone ?? "");
     const stressFactor = body.stressFactor?.trim();
     const location = body.location?.trim();
     const privacyConsent = body.privacyConsent === true;
@@ -147,9 +144,9 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!/^[0-9-]{9,15}$/.test(phone)) {
+    if (!isValidKoreanMobilePhone(phone)) {
       return NextResponse.json(
-        { message: "휴대번호 형식을 확인해주세요. (숫자/하이픈 9~15자)" },
+        { message: "휴대번호 형식을 확인해주세요. (예: 010-1234-5678)" },
         { status: 400 },
       );
     }

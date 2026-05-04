@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { type KeyboardEvent, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   Dialog,
@@ -168,6 +168,19 @@ export function ClientsListTable() {
     setIsAccessDialogOpen(true);
   };
 
+  const handleAccessEnterSubmit = (
+    event: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing) {
+      return;
+    }
+    event.preventDefault();
+    if (isAccessSubmitting) {
+      return;
+    }
+    void logAndProceedAccess();
+  };
+
   const logAndProceedAccess = async () => {
     if (!pendingAccess) {
       return;
@@ -180,8 +193,8 @@ export function ClientsListTable() {
     }
 
     const reason = accessReason.trim();
-    if (reason.length < 5) {
-      setAccessError("열람 사유는 5자 이상 입력해주세요.");
+    if (reason.length < 3) {
+      setAccessError("열람 사유는 3자 이상 입력해주세요.");
       return;
     }
 
@@ -585,14 +598,21 @@ export function ClientsListTable() {
               개인정보 접근 로그에 열람자, 시각, 사유가 함께 저장됩니다.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-2">
+          <form
+            className="space-y-2"
+            onSubmit={(event) => {
+              event.preventDefault();
+              void logAndProceedAccess();
+            }}
+          >
             <label className="block text-sm font-medium text-slate-800">
               열람자 이름
               <input
                 type="text"
                 value={viewerName}
                 onChange={(event) => setViewerName(event.target.value)}
-                placeholder="예: 홍길동 상담사"
+                onKeyDown={handleAccessEnterSubmit}
+                placeholder="예: 홍길동"
                 className="mt-2 w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-[#2f4f46] focus:outline-none"
               />
             </label>
@@ -601,30 +621,30 @@ export function ClientsListTable() {
               <textarea
                 value={accessReason}
                 onChange={(event) => setAccessReason(event.target.value)}
+                onKeyDown={handleAccessEnterSubmit}
                 rows={3}
                 placeholder="예: 상담 일정 확인을 위한 대상자 정보 확인"
                 className="mt-2 w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-[#2f4f46] focus:outline-none"
               />
             </label>
             {accessError ? <p className="text-xs text-rose-600">{accessError}</p> : null}
-          </div>
-          <DialogFooter>
-            <button
-              type="button"
-              onClick={() => setIsAccessDialogOpen(false)}
-              className="rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-            >
-              취소
-            </button>
-            <button
-              type="button"
-              onClick={logAndProceedAccess}
-              disabled={isAccessSubmitting}
-              className="rounded-md bg-[#2f4f46] px-3 py-2 text-sm font-semibold text-white hover:bg-[#223c35] disabled:cursor-not-allowed disabled:bg-[#9aa9a3]"
-            >
-              {isAccessSubmitting ? "기록 중..." : "기록 후 열람"}
-            </button>
-          </DialogFooter>
+            <DialogFooter>
+              <button
+                type="button"
+                onClick={() => setIsAccessDialogOpen(false)}
+                className="rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                취소
+              </button>
+              <button
+                type="submit"
+                disabled={isAccessSubmitting}
+                className="rounded-md bg-[#2f4f46] px-3 py-2 text-sm font-semibold text-white hover:bg-[#223c35] disabled:cursor-not-allowed disabled:bg-[#9aa9a3]"
+              >
+                {isAccessSubmitting ? "기록 중..." : "기록 후 열람"}
+              </button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
 

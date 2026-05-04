@@ -77,9 +77,9 @@ export async function POST(request: Request, { params }: RouteParams) {
       );
     }
 
-    if (!reason || reason.length < 5) {
+    if (!reason || reason.length < 3) {
       return NextResponse.json(
-        { message: "열람 사유는 5자 이상 입력해주세요." },
+        { message: "열람 사유는 3자 이상 입력해주세요." },
         { status: 400 },
       );
     }
