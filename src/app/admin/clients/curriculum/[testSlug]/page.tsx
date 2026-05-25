@@ -38,10 +38,6 @@ export default function CurriculumTestPage({ params, searchParams }: TestPagePro
   const clientName = searchParams?.name?.trim();
   const clientId = searchParams?.clientId?.trim();
 
-  if (params.testSlug === "mind-map") {
-    redirect(`/admin/clients/curriculum?clientId=${clientId ?? ""}&name=${encodeURIComponent(clientName ?? "")}`);
-  }
-
   const backHref = `/admin/clients/curriculum?clientId=${clientId ?? ""}&name=${encodeURIComponent(clientName ?? "")}`;
 
   return (

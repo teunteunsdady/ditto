@@ -35,9 +35,6 @@ export default async function CurriculumResultPage({ params, searchParams }: Res
   if (!clientId) {
     redirect("/admin/clients");
   }
-  if (params.testSlug === "mind-map") {
-    redirect(`/admin/clients/curriculum?clientId=${clientId}&name=${encodeURIComponent(clientName ?? "")}`);
-  }
 
   const supabase = createServiceClient();
   const { data } = await supabase

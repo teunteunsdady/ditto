@@ -2,7 +2,6 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-import { CurriculumBlockedButton } from "@/components/admin/curriculum-blocked-button";
 import { AUTH_COOKIE_NAME, isMasterSession } from "@/lib/auth/master-session";
 import { CURRICULUM_TESTS } from "@/lib/curriculum-tests";
 import { createServiceClient } from "@/lib/supabase/service";
@@ -92,16 +91,7 @@ export default async function CurriculumPage({ searchParams }: CurriculumPagePro
                 {isSaved ? "저장됨" : "진행 전"}
               </p>
               <div className="w-full sm:w-auto">
-                {item.slug === "mind-map" ? (
-                  <CurriculumBlockedButton
-                    label={isSaved ? "결과 보기" : "검사 시작"}
-                    className={`inline-flex w-full items-center justify-center rounded-lg px-5 py-2.5 text-sm font-semibold sm:w-auto ${
-                      isSaved
-                        ? "border border-[#cdd6d1] bg-white text-[#2f4f46] hover:bg-[#f5f7f6]"
-                        : "bg-[#2f4f46] text-white hover:bg-[#223c35]"
-                    }`}
-                  />
-                ) : isSaved ? (
+                {isSaved ? (
                   <Link
                     href={`/admin/clients/curriculum/${item.slug}/result?clientId=${clientId ?? ""}&name=${encodeURIComponent(clientName ?? "")}`}
                     className="inline-flex w-full items-center justify-center rounded-lg border border-[#cdd6d1] bg-white px-5 py-2.5 text-sm font-semibold text-[#2f4f46] hover:bg-[#f5f7f6] sm:w-auto"

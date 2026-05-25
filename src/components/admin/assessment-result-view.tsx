@@ -712,65 +712,95 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
     ctx.fillRect(0, 0, width, height);
 
     const color = "#3f409f";
-    const centerX = width * 0.52;
+    // 작성 화면(`mind-map-board.tsx`)과 동일한 템플릿 좌표를 유지해야
+    // 저장된 필기(strokes)와 배경 템플릿이 정확히 겹칩니다.
+    const centerX = width * 0.5;
     const centerY = height * 0.5;
-    const radius = Math.min(width, height) * 0.145;
-    const lineLen = Math.min(width, height) * 0.2;
-    const spokeCount = 18;
+    const radius = Math.min(width, height) * 0.14;
+    const lineLen = Math.min(width, height) * 0.19;
+    const labelGap = 22 * scale;
+
+    // 12시(-90도)를 기준으로 19도씩 균등 분할해 19개 항목을 배치합니다.
+    const labels = [
+      "가족",
+      "필요요소",
+      "목표",
+      "가치관",
+      "비전",
+      "꿈",
+      "종교",
+      "사랑",
+      "특기",
+      "취미",
+      "두려움",
+      "불행",
+      "행복",
+      "단점",
+      "장점",
+      "내가보는 나",
+      "남이보는 나",
+      "친구",
+      "학교",
+    ] as const;
+    const baseAngleDeg = -90;
+    const stepAngleDeg = 19;
+    const nodes = labels.map((text, index) => ({
+      text,
+      angleDeg: baseAngleDeg + index * stepAngleDeg,
+    }));
 
     ctx.strokeStyle = color;
     ctx.lineWidth = 1.8 * scale;
+    ctx.fillStyle = color;
+    ctx.font = `700 ${Math.max(14, 26 * scale)}px sans-serif`;
+    ctx.textBaseline = "middle";
 
-    for (let i = 0; i < spokeCount; i += 1) {
-      const angle = (-Math.PI * 0.9) + (i * (Math.PI * 1.8)) / (spokeCount - 1);
-      const sx = centerX + Math.cos(angle) * radius;
-      const sy = centerY + Math.sin(angle) * radius;
-      const ex = centerX + Math.cos(angle) * (radius + lineLen);
-      const ey = centerY + Math.sin(angle) * (radius + lineLen);
+    // 1) 선 + 끝 점 렌더링
+    nodes.forEach((node) => {
+      const angle = (node.angleDeg * Math.PI) / 180;
+      const ux = Math.cos(angle);
+      const uy = Math.sin(angle);
+      const sx = centerX + ux * radius;
+      const sy = centerY + uy * radius;
+      const ex = centerX + ux * (radius + lineLen);
+      const ey = centerY + uy * (radius + lineLen);
       ctx.beginPath();
       ctx.moveTo(sx, sy);
       ctx.lineTo(ex, ey);
       ctx.stroke();
 
-      ctx.fillStyle = color;
       ctx.beginPath();
       ctx.arc(ex, ey, 3.2 * scale, 0, Math.PI * 2);
       ctx.fill();
-    }
+    });
 
+    // 2) 선 방향으로 라벨을 바깥쪽에 배치
+    const extraLabelGapByText = new Set(["불행", "두려움", "취미"]);
+    nodes.forEach((node) => {
+      const angle = (node.angleDeg * Math.PI) / 180;
+      const ux = Math.cos(angle);
+      const uy = Math.sin(angle);
+      const ex = centerX + ux * (radius + lineLen);
+      const ey = centerY + uy * (radius + lineLen);
+      const extraGap = extraLabelGapByText.has(node.text) ? 10 * scale : 0;
+      const tx = ex + ux * (labelGap + extraGap);
+      const ty = ey + uy * (labelGap + extraGap);
+
+      if (ux > 0.25) {
+        ctx.textAlign = "left";
+      } else if (ux < -0.25) {
+        ctx.textAlign = "right";
+      } else {
+        ctx.textAlign = "center";
+      }
+      ctx.fillText(node.text, tx, ty);
+    });
+
+    ctx.strokeStyle = color;
     ctx.lineWidth = 6 * scale;
     ctx.beginPath();
     ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
     ctx.stroke();
-
-    const labelsRight = ["가족", "필요요소", "목표", "가치관", "비전", "꿈", "종교", "사랑"];
-    const labelsBottom = ["특기", "취미", "두려움"];
-    const labelsLeft = ["불행", "행복", "단점", "장점", "내가 보는 나", "남이 보는 나", "학교", "친구"];
-
-    ctx.fillStyle = color;
-    ctx.font = `700 ${Math.max(14, 26 * scale)}px sans-serif`;
-    ctx.textBaseline = "middle";
-
-    const rightStartY = centerY - 150 * scale;
-    const leftStartY = centerY + 150 * scale;
-    const rowGap = 40 * scale;
-    const rightX = centerX + radius + lineLen + 22 * scale;
-    const leftX = centerX - radius - lineLen - 22 * scale;
-
-    labelsRight.forEach((text, i) => {
-      ctx.textAlign = "left";
-      ctx.fillText(text, rightX, rightStartY + i * rowGap);
-    });
-
-    labelsBottom.forEach((text, i) => {
-      ctx.textAlign = "center";
-      ctx.fillText(text, centerX + 100 * scale - i * 88 * scale, centerY + radius + lineLen + 30 * scale);
-    });
-
-    labelsLeft.forEach((text, i) => {
-      ctx.textAlign = "right";
-      ctx.fillText(text, leftX, leftStartY - i * rowGap);
-    });
   }, []);
 
   const drawStrokes = useCallback((ctx: CanvasRenderingContext2D, scale: number) => {
