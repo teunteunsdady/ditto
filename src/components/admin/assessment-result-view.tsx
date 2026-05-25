@@ -462,11 +462,39 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
       {},
     );
   }, [resultData]);
+  const sentenceHandwrittenAnswers = useMemo(() => {
+    if (!resultData || typeof resultData !== "object") return {} as Record<number, string>;
+    const raw = (resultData as { handwrittenAnswers?: unknown }).handwrittenAnswers;
+    if (!raw || typeof raw !== "object") return {} as Record<number, string>;
+    return Object.entries(raw as Record<string, unknown>).reduce<Record<number, string>>(
+      (acc, [key, value]) => {
+        const no = Number(key);
+        if (!Number.isFinite(no) || typeof value !== "string") return acc;
+        acc[no] = value;
+        return acc;
+      },
+      {},
+    );
+  }, [resultData]);
   const sentencePrompts = useMemo(() => {
-    if (!resultData || typeof resultData !== "object") return [] as string[];
+    if (!resultData || typeof resultData !== "object") return [] as Array<{ no: number; text: string }>;
     const raw = (resultData as { prompts?: unknown }).prompts;
-    if (!Array.isArray(raw)) return [] as string[];
-    return raw.filter((item): item is string => typeof item === "string");
+    if (!Array.isArray(raw)) return [] as Array<{ no: number; text: string }>;
+    return raw
+      .map((item, index) => {
+        if (typeof item === "string") {
+          return { no: index + 1, text: item };
+        }
+        if (!item || typeof item !== "object") {
+          return null;
+        }
+        const casted = item as { no?: unknown; text?: unknown };
+        if (typeof casted.no !== "number" || typeof casted.text !== "string") {
+          return null;
+        }
+        return { no: casted.no, text: casted.text };
+      })
+      .filter((item): item is { no: number; text: string } => item !== null);
   }, [resultData]);
   const coreEmotionTypes = useMemo(() => {
     if (!resultData || typeof resultData !== "object") return [] as Array<{
@@ -674,6 +702,77 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
     ctx.fillText("-10", axisLeft - 26 * scale, axisBottom + 6 * scale);
   }, []);
 
+  const drawMindMapTemplate = useCallback((
+    ctx: CanvasRenderingContext2D,
+    width: number,
+    height: number,
+    scale: number,
+  ) => {
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, width, height);
+
+    const color = "#3f409f";
+    const centerX = width * 0.52;
+    const centerY = height * 0.5;
+    const radius = Math.min(width, height) * 0.145;
+    const lineLen = Math.min(width, height) * 0.2;
+    const spokeCount = 18;
+
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.8 * scale;
+
+    for (let i = 0; i < spokeCount; i += 1) {
+      const angle = (-Math.PI * 0.9) + (i * (Math.PI * 1.8)) / (spokeCount - 1);
+      const sx = centerX + Math.cos(angle) * radius;
+      const sy = centerY + Math.sin(angle) * radius;
+      const ex = centerX + Math.cos(angle) * (radius + lineLen);
+      const ey = centerY + Math.sin(angle) * (radius + lineLen);
+      ctx.beginPath();
+      ctx.moveTo(sx, sy);
+      ctx.lineTo(ex, ey);
+      ctx.stroke();
+
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(ex, ey, 3.2 * scale, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.lineWidth = 6 * scale;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+    ctx.stroke();
+
+    const labelsRight = ["가족", "필요요소", "목표", "가치관", "비전", "꿈", "종교", "사랑"];
+    const labelsBottom = ["특기", "취미", "두려움"];
+    const labelsLeft = ["불행", "행복", "단점", "장점", "내가 보는 나", "남이 보는 나", "학교", "친구"];
+
+    ctx.fillStyle = color;
+    ctx.font = `700 ${Math.max(14, 26 * scale)}px sans-serif`;
+    ctx.textBaseline = "middle";
+
+    const rightStartY = centerY - 150 * scale;
+    const leftStartY = centerY + 150 * scale;
+    const rowGap = 40 * scale;
+    const rightX = centerX + radius + lineLen + 22 * scale;
+    const leftX = centerX - radius - lineLen - 22 * scale;
+
+    labelsRight.forEach((text, i) => {
+      ctx.textAlign = "left";
+      ctx.fillText(text, rightX, rightStartY + i * rowGap);
+    });
+
+    labelsBottom.forEach((text, i) => {
+      ctx.textAlign = "center";
+      ctx.fillText(text, centerX + 100 * scale - i * 88 * scale, centerY + radius + lineLen + 30 * scale);
+    });
+
+    labelsLeft.forEach((text, i) => {
+      ctx.textAlign = "right";
+      ctx.fillText(text, leftX, leftStartY - i * rowGap);
+    });
+  }, []);
+
   const drawStrokes = useCallback((ctx: CanvasRenderingContext2D, scale: number) => {
     strokes.forEach((stroke) => {
       ctx.strokeStyle = stroke.color;
@@ -711,6 +810,8 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
       drawShapeBoard(ctx, scaledWidth, scaledHeight, dpr);
     } else if (testSlug === "life-graph") {
       drawLifeGraphTemplate(ctx, scaledWidth, scaledHeight, dpr);
+    } else if (testSlug === "mind-map") {
+      drawMindMapTemplate(ctx, scaledWidth, scaledHeight, dpr);
     } else if (testSlug === "htp") {
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, 0, scaledWidth, scaledHeight);
@@ -722,7 +823,7 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
       ctx.fillRect(0, 0, scaledWidth, scaledHeight);
     }
     drawStrokes(ctx, dpr);
-  }, [drawLifeGraphTemplate, drawShapeBoard, drawStrokes, testSlug]);
+  }, [drawLifeGraphTemplate, drawMindMapTemplate, drawShapeBoard, drawStrokes, testSlug]);
 
   useEffect(() => {
     redraw();
@@ -1416,15 +1517,24 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
     return (
       <div className="space-y-3 rounded-xl border border-slate-300 bg-white p-4 sm:p-6">
         {sentencePrompts.map((prompt, index) => {
-          const no = index + 1;
+          const no = prompt.no || index + 1;
           return (
             <article key={no} className="rounded-lg border border-slate-200 bg-slate-50 p-3 sm:p-4">
               <p className="text-sm font-semibold text-slate-800">
-                {no}. {prompt}
+                {no}. {prompt.text}
               </p>
               <p className="mt-2 whitespace-pre-wrap text-sm text-slate-700">
                 {sentenceAnswers[no] || "-"}
               </p>
+              {sentenceHandwrittenAnswers[no] ? (
+                <div className="mt-3 overflow-hidden rounded-md border border-slate-200 bg-white">
+                  <img
+                    src={sentenceHandwrittenAnswers[no]}
+                    alt={`${no}번 문항 필기 답변`}
+                    className="w-full object-contain"
+                  />
+                </div>
+              ) : null}
             </article>
           );
         })}
@@ -1504,7 +1614,7 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
     );
   }
 
-  if (testSlug !== "shape-6" && testSlug !== "life-graph" && testSlug !== "htp") {
+  if (testSlug !== "shape-6" && testSlug !== "life-graph" && testSlug !== "htp" && testSlug !== "mind-map") {
     return (
       <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
         <p className="mb-3 text-sm font-semibold text-slate-700">저장된 원본 데이터</p>

@@ -28,6 +28,12 @@ export const CURRICULUM_TESTS: CurriculumTest[] = [
   { order: 5, slug: "life-graph", title: "인생그래프", description: "삶의 궤적 시각화" },
   {
     order: 6,
+    slug: "mind-map",
+    title: "마인드맵",
+    description: "자기 인식과 대인 인식을 시각적으로 표현",
+  },
+  {
+    order: 7,
     slug: "sentence-completion",
     title: "문장완성검사",
     description: "미완성 문장을 통한 인식/정서 패턴 확인",

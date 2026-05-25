@@ -201,9 +201,9 @@ export default function Home() {
             <div className="my-auto">
               <p className="text-sm font-semibold text-[#d5ece2]">FOUNDER&apos;S MANIFESTO</p>
               <h1 className="mt-3 max-w-4xl text-4xl font-semibold leading-tight tracking-tight text-white sm:text-6xl">
-                왜 지금 CoreGround가
+                지금 CoreGround가 
                 <br />
-                필요한가
+                왜 필요한가
               </h1>
               <p className="mt-6 max-w-2xl text-base leading-relaxed text-[#e8f3ee] sm:text-lg">
                 연결은 많아졌지만 내 기준은 더 쉽게 흔들립니다. CoreGround는 자기 이해를 넘어

@@ -150,18 +150,6 @@
 }
 
 
-.route-stage {
-  transition:
-    transform 460ms cubic-bezier(0.22, 0.61, 0.36, 1),
-    opacity 460ms cubic-bezier(0.22, 0.61, 0.36, 1);
-}
-
-.route-stage-leaving {
-  will-change: transform, opacity;
-  transform: translateY(-4vh) scale(0.988);
-  opacity: 0.86;
-}
-
 .proof-graph-wrap {
   pointer-events: none;
   position: absolute;

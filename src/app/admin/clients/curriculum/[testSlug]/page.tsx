@@ -6,6 +6,7 @@ import { AdultAttachmentSheet } from "@/components/admin/adult-attachment-sheet"
 import { CoreEmotionSheet } from "@/components/admin/core-emotion-sheet";
 import { HtpDrawingBoard } from "@/components/admin/htp-drawing-board";
 import { LifeGraphBoard } from "@/components/admin/life-graph-board";
+import { MindMapBoard } from "@/components/admin/mind-map-board";
 import { PersonalityPlusSheet } from "@/components/admin/personality-plus-sheet";
 import { SentenceCompletionSheet } from "@/components/admin/sentence-completion-sheet";
 import { AUTH_COOKIE_NAME, isMasterSession } from "@/lib/auth/master-session";
@@ -37,6 +38,10 @@ export default function CurriculumTestPage({ params, searchParams }: TestPagePro
   const clientName = searchParams?.name?.trim();
   const clientId = searchParams?.clientId?.trim();
 
+  if (params.testSlug === "mind-map") {
+    redirect(`/admin/clients/curriculum?clientId=${clientId ?? ""}&name=${encodeURIComponent(clientName ?? "")}`);
+  }
+
   const backHref = `/admin/clients/curriculum?clientId=${clientId ?? ""}&name=${encodeURIComponent(clientName ?? "")}`;
 
   return (
@@ -56,6 +61,7 @@ export default function CurriculumTestPage({ params, searchParams }: TestPagePro
 
         {currentTest.slug === "htp" ? <HtpDrawingBoard clientId={clientId} /> : null}
         {currentTest.slug === "life-graph" ? <LifeGraphBoard clientId={clientId} /> : null}
+        {currentTest.slug === "mind-map" ? <MindMapBoard clientId={clientId} /> : null}
         {currentTest.slug === "personality-plus" ? (
           <PersonalityPlusSheet clientId={clientId} testSlug={currentTest.slug} />
         ) : null}
@@ -71,6 +77,7 @@ export default function CurriculumTestPage({ params, searchParams }: TestPagePro
 
         {currentTest.slug !== "htp" &&
         currentTest.slug !== "life-graph" &&
+        currentTest.slug !== "mind-map" &&
         currentTest.slug !== "personality-plus" &&
         currentTest.slug !== "attachment" &&
         currentTest.slug !== "core-emotion" &&

@@ -1,9 +1,14 @@
+"use client";
+
+import { useState } from "react";
+
 export default function ProgramsPage() {
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
   const programs = [
     {
       title: "퍼스널 코어 프로그램",
       target: "PERSONAL TRACK",
-      duration: "6~8회",
+      duration: "최소 6회",
       summary:
         "요즘 마음이 자주 흔들리거나 방향이 잘 안 잡힐 때, 현재 상태를 함께 정리하고 현실적인 변화 방법을 찾는 1:1 프로그램입니다.",
       extras: ["HTP", "소셜아톰", "애니어그램"],
@@ -16,7 +21,7 @@ export default function ProgramsPage() {
     {
       title: "그룹 코어 프로그램",
       target: "TEAM TRACK",
-      duration: "4~6회",
+      duration: "최소 6회",
       summary:
         "팀 분위기가 어색하거나 소통이 자꾸 꼬일 때, 서로의 차이를 이해하고 함께 일하는 방식을 맞춰가는 프로그램입니다.",
       extras: ["팀 진단", "관계 맵", "협업 원칙"],
@@ -29,7 +34,7 @@ export default function ProgramsPage() {
     {
       title: "새학기 온보딩 코칭",
       target: "ONBOARDING TRACK",
-      duration: "3~5회",
+      duration: "최소 6회",
       summary:
         "새로운 학교나 조직에 들어간 초기에 느끼는 불안과 막막함을 줄이고, 첫 100일을 안정적으로 시작하도록 돕는 프로그램입니다.",
       extras: ["적응 코칭", "관계 전략", "초기 목표 설계"],
@@ -70,10 +75,6 @@ export default function ProgramsPage() {
 
   const faqs = [
     {
-      q: "프로그램은 온라인/오프라인 모두 가능한가요?",
-      a: "네. 대상과 목적에 따라 온라인, 오프라인, 혼합형으로 운영 가능합니다.",
-    },
-    {
       q: "개인 코칭과 그룹 코칭 중 어떤 것을 선택해야 하나요?",
       a: "혼자 정리하고 싶은 고민이 크면 개인 코칭, 팀 안에서의 소통과 협업 이슈가 크면 그룹 코칭을 권합니다. 상담에서 현재 상황에 맞게 함께 정해드립니다.",
     },
@@ -101,9 +102,12 @@ export default function ProgramsPage() {
       <section className="border-y border-[#eff1f4] bg-[#fcfcfd]">
         <div className="cg-container cg-section-y">
           <p className="text-xs font-semibold tracking-[0.16em] text-[#6b7684]">PROGRAM TRACKS</p>
-          <div className="mt-8">
+          <div className="mt-8 space-y-4 sm:space-y-5">
             {programs.map((program) => (
-              <article key={program.title} className="border-b border-[#eceff3] py-9 first:pt-0 last:border-b-0 last:pb-0">
+              <article
+                key={program.title}
+                className="rounded-2xl border border-[#dfe4ea] bg-white px-5 py-7 shadow-[0_2px_10px_rgba(15,23,42,0.03)] sm:px-7 sm:py-8"
+              >
                 <p className="text-xs font-semibold tracking-[0.12em] text-[#8b95a1]">{program.target}</p>
                 <h2 className="mt-2 text-xl font-semibold tracking-tight sm:text-2xl lg:text-3xl">{program.title}</h2>
                 <p className="mt-1 text-sm font-medium text-[#6b7684]">{program.duration}</p>
@@ -138,19 +142,48 @@ export default function ProgramsPage() {
         </ol>
       </section>
 
-      <section className="cg-container pb-16 sm:pb-20 lg:pb-24">
+      <section className="border-t border-[#e8edf4] bg-[#f8fafe]">
+        <div className="cg-container pb-16 pt-12 sm:pb-20 sm:pt-14 lg:pb-24 lg:pt-16">
         <p className="text-xs font-semibold tracking-[0.16em] text-[#6b7684]">FAQ</p>
-        <div className="mt-8">
-          {faqs.map((faq) => (
-            <article key={faq.q} className="border-b border-[#eceff3] py-6 first:pt-0 last:border-b-0 last:pb-0">
-              <p className="text-lg font-semibold tracking-tight text-[#191f28]">{faq.q}</p>
-              <p className="mt-2 text-sm leading-relaxed text-[#4e5968] sm:text-base">{faq.a}</p>
-            </article>
-          ))}
+        <p className="mt-3 text-sm text-[#6b7684]">자주 물어보는 내용을 먼저 확인해보세요.</p>
+        <div className="mt-8 space-y-3">
+          {faqs.map((faq, index) => {
+            const isOpen = openFaqIndex === index;
+            return (
+              <article
+                key={faq.q}
+                className="rounded-xl border border-[#e3e8ef] bg-white px-5 py-4"
+              >
+                <button
+                  type="button"
+                  onClick={() => setOpenFaqIndex(isOpen ? null : index)}
+                  className="flex w-full items-center justify-between gap-4 text-left text-lg font-semibold tracking-tight text-[#191f28]"
+                  aria-expanded={isOpen}
+                >
+                  <span>{faq.q}</span>
+                  <span
+                    className={`text-xl font-medium text-[#7b8797] transition-transform duration-200 ${
+                      isOpen ? "rotate-45" : ""
+                    }`}
+                  >
+                    +
+                  </span>
+                </button>
+                <div
+                  className={`overflow-hidden transition-all duration-300 ease-out ${
+                    isOpen ? "mt-3 max-h-40 border-t border-[#e8edf4] pt-3 opacity-100" : "max-h-0 opacity-0"
+                  }`}
+                >
+                  <p className="text-sm leading-relaxed text-[#4e5968] sm:text-base">{faq.a}</p>
+                </div>
+              </article>
+            );
+          })}
         </div>
         <p className="mt-10 text-sm text-[#4e5968]">
           상담 페이지에 현재 상황을 남겨주시면, 어떤 트랙이 맞는지 빠르게 안내해드립니다.
         </p>
+        </div>
       </section>
     </main>
   );

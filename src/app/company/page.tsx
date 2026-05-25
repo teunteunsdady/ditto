@@ -64,7 +64,7 @@ export default function CompanyPage() {
         <div className="mx-auto w-full max-w-6xl px-4 pb-14 pt-12 sm:px-6 sm:pb-16 sm:pt-16 lg:pb-20 lg:pt-20">
           <p className="text-xs font-semibold tracking-[0.16em] text-[#6b7684]">FOUNDER&apos;S MANIFESTO</p>
           <h1 className="mt-5 text-3xl font-semibold leading-[1.18] tracking-tight sm:text-5xl lg:text-6xl">
-            왜 지금 &apos;CoreGround&apos;가 필요한가
+            지금 &apos;CoreGround&apos;가 왜 필요한가
           </h1>
           <p className="mt-7 max-w-3xl text-base leading-relaxed text-[#4e5968] sm:text-lg">
             우리는 연결되어 있지만 쉽게 흔들리는 시대를 살고 있습니다. CoreGround는 위로를 넘어,
