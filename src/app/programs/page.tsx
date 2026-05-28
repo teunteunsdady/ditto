@@ -9,6 +9,7 @@ export default function ProgramsPage() {
       title: "퍼스널 코어 프로그램",
       target: "PERSONAL TRACK",
       duration: "최소 6회",
+      price: 600000,
       summary:
         "요즘 마음이 자주 흔들리거나 방향이 잘 안 잡힐 때, 현재 상태를 함께 정리하고 현실적인 변화 방법을 찾는 1:1 프로그램입니다.",
       extras: ["HTP", "소셜아톰", "애니어그램"],
@@ -22,6 +23,7 @@ export default function ProgramsPage() {
       title: "그룹 코어 프로그램",
       target: "TEAM TRACK",
       duration: "최소 6회",
+      price: 480000,
       summary:
         "팀 분위기가 어색하거나 소통이 자꾸 꼬일 때, 서로의 차이를 이해하고 함께 일하는 방식을 맞춰가는 프로그램입니다.",
       extras: ["팀 진단", "관계 맵", "협업 원칙"],
@@ -35,6 +37,7 @@ export default function ProgramsPage() {
       title: "새학기 온보딩 코칭",
       target: "ONBOARDING TRACK",
       duration: "최소 6회",
+      price: 360000,
       summary:
         "새로운 학교나 조직에 들어간 초기에 느끼는 불안과 막막함을 줄이고, 첫 100일을 안정적으로 시작하도록 돕는 프로그램입니다.",
       extras: ["적응 코칭", "관계 전략", "초기 목표 설계"],
@@ -102,6 +105,9 @@ export default function ProgramsPage() {
       <section className="border-y border-[#eff1f4] bg-[#fcfcfd]">
         <div className="cg-container cg-section-y">
           <p className="text-xs font-semibold tracking-[0.16em] text-[#6b7684]">PROGRAM TRACKS</p>
+          <p className="mt-3 inline-flex rounded-full border border-[#cfe3d7] bg-[#edf7f1] px-4 py-1.5 text-xs font-semibold text-[#2f4f46] sm:text-sm">
+            리뷰 이벤트: 프로그램별 2만원 할인
+          </p>
           <div className="mt-8 space-y-4 sm:space-y-5">
             {programs.map((program) => (
               <article
@@ -111,7 +117,15 @@ export default function ProgramsPage() {
                 <p className="text-xs font-semibold tracking-[0.12em] text-[#8b95a1]">{program.target}</p>
                 <h2 className="mt-2 text-xl font-semibold tracking-tight sm:text-2xl lg:text-3xl">{program.title}</h2>
                 <p className="mt-1 text-sm font-medium text-[#6b7684]">{program.duration}</p>
-                <p className="mt-4 max-w-3xl text-sm leading-relaxed text-[#4e5968] sm:text-base">
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  <p className="text-sm font-medium text-[#8892a0] line-through">
+                    정가 {(program.price / 10000).toLocaleString("ko-KR")}만원
+                  </p>
+                  <p className="text-lg font-semibold text-[#2f4f46]">
+                    이벤트가 {((program.price - 20000) / 10000).toLocaleString("ko-KR")}만원
+                  </p>
+                </div>
+                <p className="mt-4 break-keep text-sm leading-relaxed text-[#4e5968] sm:text-base">
                   {program.summary}
                 </p>
                 <p className="mt-4 text-xs font-semibold tracking-[0.1em] text-[#8b95a1]">TOOLS</p>
