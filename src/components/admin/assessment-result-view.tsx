@@ -36,6 +36,8 @@ type PersonalityTypeProfile = {
   weaknesses: string[];
 };
 
+type PersonalityPlusScaleMode = "new" | "legacy4" | "legacy5";
+
 const PERSONALITY_PLUS_TYPE_PROFILES: Record<number, PersonalityTypeProfile> = {
   1: {
     name: "개혁가",
@@ -171,6 +173,33 @@ const PERSONALITY_STRESS_MAP: Record<number, number> = {
   9: 6,
 };
 
+function detectPersonalityPlusScaleMode(
+  scale: Array<{ value: number; label: string }>,
+): PersonalityPlusScaleMode {
+  const values = new Set(scale.map((item) => item.value));
+  if (values.has(-2) || values.has(-1) || values.has(0) || values.has(1) || values.has(2)) {
+    return "new";
+  }
+  if ([1, 2, 3, 4].every((value) => values.has(value))) return "legacy4";
+  if ([1, 2, 3, 4, 5].every((value) => values.has(value))) return "legacy5";
+  return "new";
+}
+
+function normalizePersonalityPlusScore(raw: number, mode: PersonalityPlusScaleMode): number {
+  if (mode === "legacy4") {
+    if (raw === 1) return -2;
+    if (raw === 2) return -1;
+    if (raw === 3) return 1;
+    if (raw === 4) return 2;
+    return 0;
+  }
+  if (mode === "legacy5") {
+    if (raw < 1 || raw > 5) return 0;
+    return raw - 3;
+  }
+  return raw;
+}
+
 function normalizeStrokes(resultData: unknown): Stroke[] {
   if (!resultData || typeof resultData !== "object") {
     return [];
@@ -233,7 +262,8 @@ function PersonalityPlusScoreChart({
     () =>
       Array.from({ length: 6 }, (_, idx) => {
         const value = chartMax - ((chartMax - chartMin) * idx) / 5;
-        return { value, label: Math.round(value) };
+        const rounded = Math.round(value);
+        return { value, label: Object.is(rounded, -0) ? 0 : rounded };
       }),
     [chartMax, chartMin],
   );
@@ -309,6 +339,16 @@ function PersonalityPlusScoreChart({
       ctx.lineTo(plotLeft + plotWidth, y);
       ctx.stroke();
     });
+
+    if (chartMin < 0 && chartMax > 0) {
+      const zeroY = toYPixel(0);
+      ctx.strokeStyle = "#cbd5e1";
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(plotLeft, zeroY);
+      ctx.lineTo(plotLeft + plotWidth, zeroY);
+      ctx.stroke();
+    }
 
     ctx.fillStyle = "#64748b";
     ctx.font = "11px sans-serif";
@@ -1245,12 +1285,22 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
     testSlug === "personality-plus" &&
     genericScaleQuestions.length > 0
   ) {
+    const scaleMode = detectPersonalityPlusScaleMode(genericScale);
+    const personalityPlusAnswers = Object.entries(genericScaleAnswers).reduce<Record<number, number>>(
+      (acc, [key, raw]) => {
+        const no = Number(key);
+        if (!Number.isFinite(no)) return acc;
+        acc[no] = normalizePersonalityPlusScore(raw, scaleMode);
+        return acc;
+      },
+      {},
+    );
     const typeScores = Array.from({ length: 9 }, (_, idx) => {
       const typeNo = idx + 1;
       const start = idx * 11 + 1;
       const end = start + 10;
       const score = Array.from({ length: end - start + 1 }, (_, offset) => start + offset).reduce(
-        (acc, questionNo) => acc + (genericScaleAnswers[questionNo] ?? 0),
+        (acc, questionNo) => acc + (personalityPlusAnswers[questionNo] ?? 0),
         0,
       );
       return { typeNo, score };
@@ -1267,16 +1317,17 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
     const growthType = PERSONALITY_GROWTH_MAP[primary.typeNo];
     const stressType = PERSONALITY_STRESS_MAP[primary.typeNo];
     const getPersonalityPlusAnswerClass = (score?: number) => {
-      if (score === 4) return "text-emerald-700";
-      if (score === 3) return "text-green-700";
-      if (score === 2) return "text-orange-700";
-      if (score === 1) return "text-rose-700";
+      if (score === 2) return "text-emerald-700";
+      if (score === 1) return "text-green-700";
+      if (score === 0) return "text-slate-600";
+      if (score === -1) return "text-orange-700";
+      if (score === -2) return "text-rose-700";
       return "text-slate-500";
     };
 
     const minScore = Math.min(...typeScores.map((item) => item.score));
     const maxScore = Math.max(...typeScores.map((item) => item.score));
-    const chartMin = Math.max(0, minScore - 4);
+    const chartMin = minScore - 2;
     const chartMax = maxScore + 2;
     const topThree = sortedScores.slice(0, 3);
     const scoreAverage = Math.round((typeScores.reduce((acc, item) => acc + item.score, 0) / typeScores.length) * 10) / 10;
@@ -1473,8 +1524,9 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
                   <tbody>
                     {genericScaleQuestions.map((question, index) => {
                       const no = index + 1;
-                      const score = genericScaleAnswers[no];
-                      const label = score != null ? genericScaleLabelByValue.get(score) ?? "-" : "-";
+                      const rawScore = genericScaleAnswers[no];
+                      const score = rawScore != null ? normalizePersonalityPlusScore(rawScore, scaleMode) : undefined;
+                      const label = rawScore != null ? genericScaleLabelByValue.get(rawScore) ?? "-" : "-";
                       const isScored = index % 11 !== 10;
                       const displayNo = isScored ? String((index % 11) + 1) : "※";
                       const questionText = question.replace(/^(※|\d+)\s+/, "");
@@ -1484,7 +1536,6 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
                           <td className="border border-slate-200 px-3 py-2 text-slate-700">{questionText}</td>
                           <td className={`border border-slate-200 px-3 py-2 text-center font-medium ${getPersonalityPlusAnswerClass(score)}`}>
                             {label}
-                            {score != null ? <span className="ml-1 text-xs text-slate-500">({score}점)</span> : null}
                           </td>
                           <td className="border border-slate-200 px-3 py-2 text-center">
                             <span

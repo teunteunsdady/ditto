@@ -17,11 +17,13 @@ type QuestionRow = {
   text: string;
 };
 
+type ScaleOptionLike = { value?: unknown };
+
 const SCALE_OPTIONS = [
-  { value: 4, label: "매우 그렇다" },
-  { value: 3, label: "그렇다" },
-  { value: 2, label: "아니다" },
-  { value: 1, label: "전혀 아니다" },
+  { value: 2, label: "매우 그렇다" },
+  { value: 1, label: "그렇다" },
+  { value: -1, label: "아니다" },
+  { value: -2, label: "전혀 아니다" },
 ] as const;
 
 const QUESTIONS_BY_SECTION: string[][] = [
@@ -153,12 +155,45 @@ const QUESTIONS: QuestionRow[] = QUESTIONS_BY_SECTION.flatMap((sectionQuestions,
   })),
 );
 
-function normalizeAnswerMap(value: unknown): AnswerMap {
+function parseScaleMode(scale: unknown): "new" | "legacy4" | "legacy5" {
+  if (!Array.isArray(scale)) return "new";
+  const values = scale
+    .map((item) => (item && typeof item === "object" ? Number((item as ScaleOptionLike).value) : NaN))
+    .filter((num) => Number.isFinite(num));
+  if (values.length === 0) return "new";
+
+  const uniq = new Set(values);
+  if (uniq.has(-2) || uniq.has(-1) || uniq.has(0) || uniq.has(1) || uniq.has(2)) {
+    return "new";
+  }
+  if ([1, 2, 3, 4].every((value) => uniq.has(value))) return "legacy4";
+  if ([1, 2, 3, 4, 5].every((value) => uniq.has(value))) return "legacy5";
+  return "new";
+}
+
+function toNormalizedScore(raw: number, mode: "new" | "legacy4" | "legacy5"): number {
+  if (mode === "legacy4") {
+    if (raw === 1) return -2;
+    if (raw === 2) return -1;
+    if (raw === 3) return 1;
+    if (raw === 4) return 2;
+    return NaN;
+  }
+  if (mode === "legacy5") {
+    if (raw < 1 || raw > 5) return NaN;
+    return raw - 3;
+  }
+  return raw;
+}
+
+function normalizeAnswerMap(value: unknown, scale: unknown): AnswerMap {
   if (!value || typeof value !== "object") return {};
+  const scaleMode = parseScaleMode(scale);
   return Object.entries(value as Record<string, unknown>).reduce<AnswerMap>((acc, [key, raw]) => {
     const no = Number(key);
-    const score = Number(raw);
+    const score = toNormalizedScore(Number(raw), scaleMode);
     if (!Number.isFinite(no) || !Number.isFinite(score)) return acc;
+    if (score < -2 || score > 2) return acc;
     acc[no] = score;
     return acc;
   }, {});
@@ -181,10 +216,10 @@ export function PersonalityPlusSheet({ clientId, testSlug }: PersonalityPlusShee
           signal: controller.signal,
         });
         const payload = (await response.json().catch(() => null)) as
-          | { item?: { resultData?: { answers?: unknown } | null } | null }
+          | { item?: { resultData?: { answers?: unknown; scale?: unknown } | null } | null }
           | null;
         if (!response.ok || !payload?.item?.resultData) return;
-        setAnswers(normalizeAnswerMap(payload.item.resultData.answers));
+        setAnswers(normalizeAnswerMap(payload.item.resultData.answers, payload.item.resultData.scale));
       } catch (error) {
         if (error instanceof DOMException && error.name === "AbortError") return;
       }
@@ -264,10 +299,9 @@ export function PersonalityPlusSheet({ clientId, testSlug }: PersonalityPlusShee
           <colgroup>
             <col className="w-16" />
             <col />
-            <col className="w-24" />
-            <col className="w-24" />
-            <col className="w-24" />
-            <col className="w-24" />
+            {SCALE_OPTIONS.map((option) => (
+              <col key={`col-${option.value}`} className="w-24" />
+            ))}
           </colgroup>
           <thead className="bg-slate-100 text-slate-900">
             <tr>
@@ -290,7 +324,10 @@ export function PersonalityPlusSheet({ clientId, testSlug }: PersonalityPlusShee
                 <Fragment key={question.id}>
                   {isSectionStart ? (
                     <tr className="bg-slate-50">
-                      <td colSpan={6} className="border border-slate-300 px-3 py-2 text-xs font-semibold text-slate-700">
+                      <td
+                        colSpan={2 + SCALE_OPTIONS.length}
+                        className="border border-slate-300 px-3 py-2 text-xs font-semibold text-slate-700"
+                      >
                         섹션 {question.section}
                       </td>
                     </tr>
