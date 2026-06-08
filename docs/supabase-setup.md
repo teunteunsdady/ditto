@@ -82,6 +82,10 @@ SUPABASE_SERVICE_ROLE_KEY=...
 1. SQL Editor에서 `docs/sql/007_add_client_access_logs.sql` 실행
 2. `client_access_logs` 테이블이 생성되고, 열람 사유 로그가 저장됩니다.
 
+애니어그램(심화) 기존 응답값이 1~4로 저장된 환경이라면 아래도 실행해주세요:
+1. SQL Editor에서 `docs/sql/008_migrate_personality_plus_scores_1to4_to_signed_scale.sql` 실행
+2. `personality-plus` 응답이 `-2,-1,+1,+2` 체계로 변환됩니다.
+
 ## 3-1) 앱 연동 시 필요한 환경변수
 
 관리자 전용 대상자 등록/조회 API를 사용할 때는 아래도 필요합니다.

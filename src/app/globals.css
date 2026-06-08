@@ -206,8 +206,41 @@
   transform: translateY(0);
 }
 
+.cg-rotate-reveal-card[data-reveal] {
+  transform: translateY(34px) rotate(var(--card-tilt-start, -4deg));
+  transform-origin: 50% 70%;
+}
+
+.cg-rotate-reveal-card[data-reveal].cg-reveal-visible {
+  transform: translateY(0) rotate(0deg);
+}
+
+.cg-vision-reveal[data-reveal] {
+  transform: translateY(36px) scale(0.985);
+  transform-origin: 50% 60%;
+}
+
+.cg-vision-reveal[data-reveal].cg-reveal-visible {
+  transform: translateY(0) scale(1);
+}
+
+.cg-program-rotate-card[data-reveal] {
+  transform: translateY(30px) rotate(var(--program-tilt-start, 6deg));
+  transform-origin: 50% 24%;
+}
+
+.cg-program-rotate-card[data-reveal].cg-reveal-visible {
+  transform: translateY(0) rotate(0deg);
+}
+
 @media (prefers-reduced-motion: reduce) {
   [data-reveal],
+  .cg-rotate-reveal-card[data-reveal],
+  .cg-rotate-reveal-card[data-reveal].cg-reveal-visible,
+  .cg-vision-reveal[data-reveal],
+  .cg-vision-reveal[data-reveal].cg-reveal-visible,
+  .cg-program-rotate-card[data-reveal],
+  .cg-program-rotate-card[data-reveal].cg-reveal-visible,
   [data-reveal].cg-reveal-visible {
     opacity: 1;
     transform: none;
