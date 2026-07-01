@@ -200,6 +200,12 @@ function normalizePersonalityPlusScore(raw: number, mode: PersonalityPlusScaleMo
   return raw;
 }
 
+function isPersonalityPlusScoredQuestion(questionNo: number): boolean {
+  if (!Number.isFinite(questionNo) || questionNo <= 0) return false;
+  // 섹션당 11문항 중 11번째(※ 분별 문항)는 채점에서 제외
+  return questionNo % 11 !== 0;
+}
+
 function normalizeStrokes(resultData: unknown): Stroke[] {
   if (!resultData || typeof resultData !== "object") {
     return [];
@@ -257,6 +263,14 @@ function PersonalityPlusScoreChart({
 }) {
   const chartWrapRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const pointsRef = useRef<Array<{ x: number; y: number; typeNo: number; score: number }>>([]);
+  const touchTooltipTimerRef = useRef<number | null>(null);
+  const [tooltip, setTooltip] = useState<{
+    x: number;
+    y: number;
+    typeNo: number;
+    score: number;
+  } | null>(null);
 
   const yTicks = useMemo(
     () =>
@@ -311,6 +325,7 @@ function PersonalityPlusScoreChart({
 
     const points = scores.map((item, idx) => ({
       typeNo: item.typeNo,
+      score: item.score,
       x: plotLeft + ((idx + 0.5) / Math.max(1, scores.length)) * plotWidth,
       y: toYPixel(item.score),
     }));
@@ -398,6 +413,12 @@ function PersonalityPlusScoreChart({
       ctx.fill();
       ctx.stroke();
     });
+    pointsRef.current = points.map((point) => ({
+      x: point.x,
+      y: point.y,
+      typeNo: point.typeNo,
+      score: point.score,
+    }));
 
     ctx.fillStyle = "#64748b";
     ctx.font = "11px sans-serif";
@@ -414,11 +435,337 @@ function PersonalityPlusScoreChart({
     return () => window.removeEventListener("resize", drawChart);
   }, [drawChart]);
 
+  const clearTouchTooltipTimer = useCallback(() => {
+    if (touchTooltipTimerRef.current != null) {
+      window.clearTimeout(touchTooltipTimerRef.current);
+      touchTooltipTimerRef.current = null;
+    }
+  }, []);
+
+  useEffect(
+    () => () => {
+      clearTouchTooltipTimer();
+    },
+    [clearTouchTooltipTimer],
+  );
+
+  const setTooltipFromClientPoint = useCallback((clientX: number, clientY: number) => {
+    const wrap = chartWrapRef.current;
+    if (!wrap) return;
+
+    const rect = wrap.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+    const threshold = 16;
+
+    let matched: { x: number; y: number; typeNo: number; score: number } | null = null;
+    let minDist = Infinity;
+    pointsRef.current.forEach((point) => {
+      const dist = Math.hypot(point.x - x, point.y - y);
+      if (dist < threshold && dist < minDist) {
+        matched = point;
+        minDist = dist;
+      }
+    });
+
+    if (matched) {
+      setTooltip({
+        x: matched.x,
+        y: matched.y,
+        typeNo: matched.typeNo,
+        score: matched.score,
+      });
+    } else {
+      setTooltip(null);
+    }
+  }, []);
+
   return (
     <div className="mt-4">
       <div className="overflow-hidden rounded-lg border border-[#dce3ef] bg-white px-3 pb-2 pt-3">
-        <div ref={chartWrapRef} className="relative h-[210px]">
+        <div
+          ref={chartWrapRef}
+          className="relative h-[210px]"
+          onMouseMove={(event) => {
+            clearTouchTooltipTimer();
+            setTooltipFromClientPoint(event.clientX, event.clientY);
+          }}
+          onMouseLeave={() => {
+            clearTouchTooltipTimer();
+            setTooltip(null);
+          }}
+          onClick={(event) => {
+            clearTouchTooltipTimer();
+            setTooltipFromClientPoint(event.clientX, event.clientY);
+          }}
+          onTouchStart={(event) => {
+            const touch = event.touches[0];
+            if (!touch) return;
+            clearTouchTooltipTimer();
+            setTooltipFromClientPoint(touch.clientX, touch.clientY);
+            touchTooltipTimerRef.current = window.setTimeout(() => {
+              setTooltip(null);
+              touchTooltipTimerRef.current = null;
+            }, 1800);
+          }}
+        >
           <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
+          {tooltip ? (
+            <div
+              className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full rounded-md bg-[#1f2433] px-2.5 py-1.5 text-xs font-medium text-white shadow-lg"
+              style={{
+                left: `${tooltip.x}px`,
+                top: `${Math.max(tooltip.y - 8, 8)}px`,
+              }}
+            >
+              {tooltip.typeNo}유형: {tooltip.score}점
+            </div>
+          ) : null}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PersonalityPlusRadarChart({
+  scores,
+  primaryTypeNo,
+  chartMin,
+  chartMax,
+}: {
+  scores: PersonalityScorePoint[];
+  primaryTypeNo: number;
+  chartMin: number;
+  chartMax: number;
+}) {
+  const chartWrapRef = useRef<HTMLDivElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const pointsRef = useRef<Array<{ x: number; y: number; typeNo: number; score: number }>>([]);
+  const touchTooltipTimerRef = useRef<number | null>(null);
+  const [tooltip, setTooltip] = useState<{
+    x: number;
+    y: number;
+    typeNo: number;
+    score: number;
+  } | null>(null);
+
+  const clearTouchTooltipTimer = useCallback(() => {
+    if (touchTooltipTimerRef.current != null) {
+      window.clearTimeout(touchTooltipTimerRef.current);
+      touchTooltipTimerRef.current = null;
+    }
+  }, []);
+
+  const drawChart = useCallback(() => {
+    const wrap = chartWrapRef.current;
+    const canvas = canvasRef.current;
+    if (!wrap || !canvas) return;
+
+    const rect = wrap.getBoundingClientRect();
+    const width = Math.max(1, rect.width);
+    const height = Math.max(1, rect.height);
+    const dpr = window.devicePixelRatio || 1;
+
+    canvas.width = Math.floor(width * dpr);
+    canvas.height = Math.floor(height * dpr);
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, width, height);
+
+    const cx = width / 2;
+    const cy = height / 2;
+    const outerRadius = Math.min(width, height) * 0.34;
+    const levelCount = 5;
+    const total = Math.max(1, scores.length);
+
+    const angleOf = (index: number) => (-Math.PI / 2) + (index * Math.PI * 2) / total;
+    const pointAt = (radius: number, angle: number) => ({
+      x: cx + Math.cos(angle) * radius,
+      y: cy + Math.sin(angle) * radius,
+    });
+
+    // 배경 폴리곤 그리드
+    ctx.strokeStyle = "#e8edf6";
+    ctx.lineWidth = 1;
+    for (let level = 1; level <= levelCount; level += 1) {
+      const ratio = level / levelCount;
+      const r = outerRadius * ratio;
+      ctx.beginPath();
+      for (let i = 0; i < total; i += 1) {
+        const angle = angleOf(i);
+        const p = pointAt(r, angle);
+        if (i === 0) ctx.moveTo(p.x, p.y);
+        else ctx.lineTo(p.x, p.y);
+      }
+      ctx.closePath();
+      ctx.stroke();
+    }
+
+    // 축선
+    ctx.strokeStyle = "#e3e9f3";
+    for (let i = 0; i < total; i += 1) {
+      const angle = angleOf(i);
+      const p = pointAt(outerRadius, angle);
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+    }
+
+    const toRadius = (value: number) => {
+      if (chartMax <= chartMin) return outerRadius * 0.5;
+      const ratio = (value - chartMin) / (chartMax - chartMin);
+      return Math.max(0, Math.min(1, ratio)) * outerRadius;
+    };
+
+    // 데이터 다각형
+    ctx.fillStyle = "rgba(79, 70, 229, 0.18)";
+    ctx.strokeStyle = "#4f46e5";
+    ctx.lineWidth = 2.2;
+    ctx.beginPath();
+    for (let i = 0; i < total; i += 1) {
+      const angle = angleOf(i);
+      const r = toRadius(scores[i]?.score ?? chartMin);
+      const p = pointAt(r, angle);
+      if (i === 0) ctx.moveTo(p.x, p.y);
+      else ctx.lineTo(p.x, p.y);
+    }
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // 꼭짓점 포인트
+    const plottedPoints: Array<{ x: number; y: number; typeNo: number; score: number }> = [];
+    for (let i = 0; i < total; i += 1) {
+      const item = scores[i];
+      const angle = angleOf(i);
+      const r = toRadius(item?.score ?? chartMin);
+      const p = pointAt(r, angle);
+      const isPrimary = item?.typeNo === primaryTypeNo;
+      ctx.fillStyle = isPrimary ? "#4338ca" : "#4f46e5";
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, isPrimary ? 4.8 : 3.8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      plottedPoints.push({
+        x: p.x,
+        y: p.y,
+        typeNo: item?.typeNo ?? i + 1,
+        score: item?.score ?? 0,
+      });
+    }
+    pointsRef.current = plottedPoints;
+
+    // 축 라벨(유형 번호)
+    ctx.fillStyle = "#5b6576";
+    ctx.font = "12px sans-serif";
+    ctx.textBaseline = "middle";
+    for (let i = 0; i < total; i += 1) {
+      const item = scores[i];
+      const angle = angleOf(i);
+      const p = pointAt(outerRadius + 18, angle);
+      const ux = Math.cos(angle);
+      if (ux > 0.2) ctx.textAlign = "left";
+      else if (ux < -0.2) ctx.textAlign = "right";
+      else ctx.textAlign = "center";
+      ctx.fillText(String(item?.typeNo ?? i + 1), p.x, p.y);
+    }
+  }, [chartMax, chartMin, primaryTypeNo, scores]);
+
+  useEffect(() => {
+    drawChart();
+    window.addEventListener("resize", drawChart);
+    return () => window.removeEventListener("resize", drawChart);
+  }, [drawChart]);
+
+  useEffect(
+    () => () => {
+      clearTouchTooltipTimer();
+    },
+    [clearTouchTooltipTimer],
+  );
+
+  const setTooltipFromClientPoint = useCallback((clientX: number, clientY: number) => {
+    const wrap = chartWrapRef.current;
+    if (!wrap) return;
+
+    const rect = wrap.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+    const threshold = 18;
+
+    let matched: { x: number; y: number; typeNo: number; score: number } | null = null;
+    let minDist = Infinity;
+    pointsRef.current.forEach((point) => {
+      const dx = point.x - x;
+      const dy = point.y - y;
+      const dist = Math.hypot(dx, dy);
+      if (dist < threshold && dist < minDist) {
+        matched = point;
+        minDist = dist;
+      }
+    });
+
+    if (matched) {
+      setTooltip({
+        x: matched.x,
+        y: matched.y,
+        typeNo: matched.typeNo,
+        score: matched.score,
+      });
+    } else {
+      setTooltip(null);
+    }
+  }, []);
+
+  return (
+    <div className="mt-4">
+      <div className="overflow-hidden rounded-lg border border-[#dce3ef] bg-white px-3 pb-3 pt-3">
+        <div
+          ref={chartWrapRef}
+          className="relative h-[320px]"
+          onMouseMove={(event) => {
+            clearTouchTooltipTimer();
+            setTooltipFromClientPoint(event.clientX, event.clientY);
+          }}
+          onMouseLeave={() => {
+            clearTouchTooltipTimer();
+            setTooltip(null);
+          }}
+          onClick={(event) => {
+            clearTouchTooltipTimer();
+            setTooltipFromClientPoint(event.clientX, event.clientY);
+          }}
+          onTouchStart={(event) => {
+            const touch = event.touches[0];
+            if (!touch) return;
+            clearTouchTooltipTimer();
+            setTooltipFromClientPoint(touch.clientX, touch.clientY);
+            touchTooltipTimerRef.current = window.setTimeout(() => {
+              setTooltip(null);
+              touchTooltipTimerRef.current = null;
+            }, 1800);
+          }}
+        >
+          <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
+          {tooltip ? (
+            <div
+              className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full rounded-md bg-[#1f2433] px-2.5 py-1.5 text-xs font-medium text-white shadow-lg"
+              style={{
+                left: `${tooltip.x}px`,
+                top: `${Math.max(tooltip.y - 10, 8)}px`,
+              }}
+            >
+              {tooltip.typeNo}유형: {tooltip.score}점
+            </div>
+          ) : null}
         </div>
       </div>
     </div>
@@ -430,6 +777,7 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [showAttachmentPointTooltip, setShowAttachmentPointTooltip] = useState(false);
   const [isAttachmentDetailOpen, setIsAttachmentDetailOpen] = useState(false);
+  const [isPersonalityPlusScoreOpen, setIsPersonalityPlusScoreOpen] = useState(false);
   const [isPersonalityPlusDetailOpen, setIsPersonalityPlusDetailOpen] = useState(false);
   const strokes = useMemo(() => normalizeStrokes(resultData), [resultData]);
   const personalityAnswers = useMemo(() => {
@@ -1300,7 +1648,10 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
       const start = idx * 11 + 1;
       const end = start + 10;
       const score = Array.from({ length: end - start + 1 }, (_, offset) => start + offset).reduce(
-        (acc, questionNo) => acc + (personalityPlusAnswers[questionNo] ?? 0),
+        (acc, questionNo) =>
+          isPersonalityPlusScoredQuestion(questionNo)
+            ? acc + (personalityPlusAnswers[questionNo] ?? 0)
+            : acc,
         0,
       );
       return { typeNo, score };
@@ -1415,28 +1766,47 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
             chartMin={chartMin}
             chartMax={chartMax}
           />
+          <PersonalityPlusRadarChart
+            scores={typeScores}
+            primaryTypeNo={primary.typeNo}
+            chartMin={chartMin}
+            chartMax={chartMax}
+          />
         </article>
 
         <article className="rounded-2xl border border-[#dbe4f3] bg-white p-4 sm:p-5">
-          <h4 className="text-sm font-semibold text-slate-700">유형별 점수</h4>
-          <div className="mt-3 grid gap-2 sm:grid-cols-3 lg:grid-cols-9">
-            {typeScores.map((item) => {
-              const isPrimary = item.typeNo === primary.typeNo;
-              return (
-                <div
-                  key={item.typeNo}
-                  className={`rounded-xl border px-3 py-2 text-center ${
-                    isPrimary ? "border-[#b9ccf0] bg-[#edf4ff]" : "border-slate-200 bg-slate-50"
-                  }`}
-                >
-                  <p className="text-[11px] font-semibold text-slate-500">유형 {item.typeNo}</p>
-                  <p className={`mt-1 text-base font-semibold ${isPrimary ? "text-[#2e59b5]" : "text-slate-800"}`}>
-                    {item.score}점
-                  </p>
-                </div>
-              );
-            })}
-          </div>
+          <button
+            type="button"
+            onClick={() => setIsPersonalityPlusScoreOpen((prev) => !prev)}
+            className="flex w-full items-center justify-between rounded-lg px-1 py-1 text-left hover:bg-slate-50"
+            aria-expanded={isPersonalityPlusScoreOpen}
+            aria-controls="personality-plus-score-grid"
+          >
+            <h4 className="text-sm font-semibold text-slate-700">유형별 점수</h4>
+            <span className="text-xs font-semibold text-slate-500">
+              {isPersonalityPlusScoreOpen ? "닫기 ▲" : "열기 ▼"}
+            </span>
+          </button>
+          {isPersonalityPlusScoreOpen ? (
+            <div id="personality-plus-score-grid" className="mt-3 grid gap-2 sm:grid-cols-3 lg:grid-cols-9">
+              {typeScores.map((item) => {
+                const isPrimary = item.typeNo === primary.typeNo;
+                return (
+                  <div
+                    key={item.typeNo}
+                    className={`rounded-xl border px-3 py-2 text-center ${
+                      isPrimary ? "border-[#b9ccf0] bg-[#edf4ff]" : "border-slate-200 bg-slate-50"
+                    }`}
+                  >
+                    <p className="text-[11px] font-semibold text-slate-500">유형 {item.typeNo}</p>
+                    <p className={`mt-1 text-base font-semibold ${isPrimary ? "text-[#2e59b5]" : "text-slate-800"}`}>
+                      {item.score}점
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          ) : null}
         </article>
 
         <article className="cg-panel-muted p-5">
@@ -1527,7 +1897,7 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
                       const rawScore = genericScaleAnswers[no];
                       const score = rawScore != null ? normalizePersonalityPlusScore(rawScore, scaleMode) : undefined;
                       const label = rawScore != null ? genericScaleLabelByValue.get(rawScore) ?? "-" : "-";
-                      const isScored = index % 11 !== 10;
+                      const isScored = isPersonalityPlusScoredQuestion(no);
                       const displayNo = isScored ? String((index % 11) + 1) : "※";
                       const questionText = question.replace(/^(※|\d+)\s+/, "");
                       return (
