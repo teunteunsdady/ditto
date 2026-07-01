@@ -23,6 +23,13 @@ type PersonalityScorePoint = {
   score: number;
 };
 
+type PersonalityPlusChartPoint = {
+  x: number;
+  y: number;
+  typeNo: number;
+  score: number;
+};
+
 type PersonalityTypeProfile = {
   name: string;
   subtitle: string;
@@ -206,6 +213,24 @@ function isPersonalityPlusScoredQuestion(questionNo: number): boolean {
   return questionNo % 11 !== 0;
 }
 
+function findNearestPersonalityPlusPoint(
+  points: PersonalityPlusChartPoint[],
+  x: number,
+  y: number,
+  threshold: number,
+): PersonalityPlusChartPoint | null {
+  let matched: PersonalityPlusChartPoint | null = null;
+  let minDist = Infinity;
+  for (const point of points) {
+    const dist = Math.hypot(point.x - x, point.y - y);
+    if (dist < threshold && dist < minDist) {
+      matched = point;
+      minDist = dist;
+    }
+  }
+  return matched;
+}
+
 function normalizeStrokes(resultData: unknown): Stroke[] {
   if (!resultData || typeof resultData !== "object") {
     return [];
@@ -263,7 +288,7 @@ function PersonalityPlusScoreChart({
 }) {
   const chartWrapRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const pointsRef = useRef<Array<{ x: number; y: number; typeNo: number; score: number }>>([]);
+  const pointsRef = useRef<PersonalityPlusChartPoint[]>([]);
   const touchTooltipTimerRef = useRef<number | null>(null);
   const [tooltip, setTooltip] = useState<{
     x: number;
@@ -458,15 +483,7 @@ function PersonalityPlusScoreChart({
     const y = clientY - rect.top;
     const threshold = 16;
 
-    let matched: { x: number; y: number; typeNo: number; score: number } | null = null;
-    let minDist = Infinity;
-    pointsRef.current.forEach((point) => {
-      const dist = Math.hypot(point.x - x, point.y - y);
-      if (dist < threshold && dist < minDist) {
-        matched = point;
-        minDist = dist;
-      }
-    });
+    const matched = findNearestPersonalityPlusPoint(pointsRef.current, x, y, threshold);
 
     if (matched) {
       setTooltip({
@@ -540,7 +557,7 @@ function PersonalityPlusRadarChart({
 }) {
   const chartWrapRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const pointsRef = useRef<Array<{ x: number; y: number; typeNo: number; score: number }>>([]);
+  const pointsRef = useRef<PersonalityPlusChartPoint[]>([]);
   const touchTooltipTimerRef = useRef<number | null>(null);
   const [tooltip, setTooltip] = useState<{
     x: number;
@@ -639,7 +656,7 @@ function PersonalityPlusRadarChart({
     ctx.stroke();
 
     // 꼭짓점 포인트
-    const plottedPoints: Array<{ x: number; y: number; typeNo: number; score: number }> = [];
+    const plottedPoints: PersonalityPlusChartPoint[] = [];
     for (let i = 0; i < total; i += 1) {
       const item = scores[i];
       const angle = angleOf(i);
@@ -701,17 +718,7 @@ function PersonalityPlusRadarChart({
     const y = clientY - rect.top;
     const threshold = 18;
 
-    let matched: { x: number; y: number; typeNo: number; score: number } | null = null;
-    let minDist = Infinity;
-    pointsRef.current.forEach((point) => {
-      const dx = point.x - x;
-      const dy = point.y - y;
-      const dist = Math.hypot(dx, dy);
-      if (dist < threshold && dist < minDist) {
-        matched = point;
-        minDist = dist;
-      }
-    });
+    const matched = findNearestPersonalityPlusPoint(pointsRef.current, x, y, threshold);
 
     if (matched) {
       setTooltip({
