@@ -557,6 +557,10 @@ function PersonalityPlusRadarChart({
 }) {
   const chartWrapRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const sortedScores = useMemo(
+    () => [...scores].sort((a, b) => b.score - a.score || a.typeNo - b.typeNo),
+    [scores],
+  );
   const pointsRef = useRef<PersonalityPlusChartPoint[]>([]);
   const touchTooltipTimerRef = useRef<number | null>(null);
   const [tooltip, setTooltip] = useState<{
@@ -680,19 +684,21 @@ function PersonalityPlusRadarChart({
     }
     pointsRef.current = plottedPoints;
 
-    // 축 라벨(유형 번호)
+    // 축 라벨(유형 번호-점수)
     ctx.fillStyle = "#5b6576";
-    ctx.font = "12px sans-serif";
+    ctx.font = "11px sans-serif";
     ctx.textBaseline = "middle";
     for (let i = 0; i < total; i += 1) {
       const item = scores[i];
       const angle = angleOf(i);
-      const p = pointAt(outerRadius + 18, angle);
+      const p = pointAt(outerRadius + 24, angle);
       const ux = Math.cos(angle);
       if (ux > 0.2) ctx.textAlign = "left";
       else if (ux < -0.2) ctx.textAlign = "right";
       else ctx.textAlign = "center";
-      ctx.fillText(String(item?.typeNo ?? i + 1), p.x, p.y);
+      const typeNo = item?.typeNo ?? i + 1;
+      const score = item?.score ?? 0;
+      ctx.fillText(`${typeNo} (${score})`, p.x, p.y);
     }
   }, [chartMax, chartMin, primaryTypeNo, scores]);
 
@@ -735,44 +741,66 @@ function PersonalityPlusRadarChart({
   return (
     <div className="mt-4">
       <div className="overflow-hidden rounded-lg border border-[#dce3ef] bg-white px-3 pb-3 pt-3">
-        <div
-          ref={chartWrapRef}
-          className="relative h-[320px]"
-          onMouseMove={(event) => {
-            clearTouchTooltipTimer();
-            setTooltipFromClientPoint(event.clientX, event.clientY);
-          }}
-          onMouseLeave={() => {
-            clearTouchTooltipTimer();
-            setTooltip(null);
-          }}
-          onClick={(event) => {
-            clearTouchTooltipTimer();
-            setTooltipFromClientPoint(event.clientX, event.clientY);
-          }}
-          onTouchStart={(event) => {
-            const touch = event.touches[0];
-            if (!touch) return;
-            clearTouchTooltipTimer();
-            setTooltipFromClientPoint(touch.clientX, touch.clientY);
-            touchTooltipTimerRef.current = window.setTimeout(() => {
+        <div className="grid gap-4 lg:grid-cols-[1fr_210px] lg:items-stretch">
+          <div
+            ref={chartWrapRef}
+            className="relative h-[320px]"
+            onMouseMove={(event) => {
+              clearTouchTooltipTimer();
+              setTooltipFromClientPoint(event.clientX, event.clientY);
+            }}
+            onMouseLeave={() => {
+              clearTouchTooltipTimer();
               setTooltip(null);
-              touchTooltipTimerRef.current = null;
-            }, 1800);
-          }}
-        >
-          <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
-          {tooltip ? (
-            <div
-              className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full rounded-md bg-[#1f2433] px-2.5 py-1.5 text-xs font-medium text-white shadow-lg"
-              style={{
-                left: `${tooltip.x}px`,
-                top: `${Math.max(tooltip.y - 10, 8)}px`,
-              }}
-            >
-              {tooltip.typeNo}유형: {tooltip.score}점
-            </div>
-          ) : null}
+            }}
+            onClick={(event) => {
+              clearTouchTooltipTimer();
+              setTooltipFromClientPoint(event.clientX, event.clientY);
+            }}
+            onTouchStart={(event) => {
+              const touch = event.touches[0];
+              if (!touch) return;
+              clearTouchTooltipTimer();
+              setTooltipFromClientPoint(touch.clientX, touch.clientY);
+              touchTooltipTimerRef.current = window.setTimeout(() => {
+                setTooltip(null);
+                touchTooltipTimerRef.current = null;
+              }, 1800);
+            }}
+          >
+            <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
+            {tooltip ? (
+              <div
+                className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full rounded-md bg-[#1f2433] px-2.5 py-1.5 text-xs font-medium text-white shadow-lg"
+                style={{
+                  left: `${tooltip.x}px`,
+                  top: `${Math.max(tooltip.y - 10, 8)}px`,
+                }}
+              >
+                {tooltip.typeNo}유형: {tooltip.score}점
+              </div>
+            ) : null}
+          </div>
+
+          <aside className="rounded-lg border border-[#e3e8f2] bg-[#f8faff] p-3">
+            <p className="text-xs font-semibold tracking-[0.06em] text-slate-600">항목별 점수</p>
+            <ul className="mt-2 space-y-1.5 text-sm">
+              {sortedScores.map((item) => {
+                const isPrimary = item.typeNo === primaryTypeNo;
+                return (
+                  <li
+                    key={item.typeNo}
+                    className={`flex items-center justify-between rounded-md px-2 py-1 ${
+                      isPrimary ? "bg-[#e9efff] text-[#284ea6]" : "text-slate-700"
+                    }`}
+                  >
+                    <span className="font-medium">유형 {item.typeNo}</span>
+                    <span className="font-semibold">{item.score}점</span>
+                  </li>
+                );
+              })}
+            </ul>
+          </aside>
         </div>
       </div>
     </div>

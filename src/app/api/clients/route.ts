@@ -17,6 +17,33 @@ type CreateClientBody = {
   privacyConsent?: boolean;
 };
 
+const CLIENT_LIST_MAX_RETRIES = 3;
+
+function isRetryableNetworkIssue(error: unknown) {
+  const text = (() => {
+    if (!error) return "";
+    if (error instanceof Error) return error.message;
+    if (typeof error === "string") return error;
+    try {
+      return JSON.stringify(error);
+    } catch {
+      return String(error);
+    }
+  })().toLowerCase();
+
+  return (
+    text.includes("fetch failed") ||
+    text.includes("enotfound") ||
+    text.includes("eai_again") ||
+    text.includes("etimedout") ||
+    text.includes("timeout")
+  );
+}
+
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function getCurrentAdminId() {
   const masterEmail = process.env.MASTER_LOGIN_EMAIL?.trim().toLowerCase();
   if (!masterEmail) {
@@ -58,57 +85,77 @@ export async function GET(request: Request) {
     const from = (safePage - 1) * safePageSize;
     const to = from + safePageSize - 1;
 
-    const supabase = createServiceClient();
-    let query = supabase
-      .from("clients")
-      .select("id, name, stress_factor, location, created_at, deleted_at", {
-        count: "exact",
-      })
-      .range(from, to);
-
-    if (status === "deleted") {
-      query = query.not("deleted_at", "is", null).order("deleted_at", {
-        ascending: false,
-      });
-    } else {
-      query = query.is("deleted_at", null).order("created_at", {
-        ascending: false,
-      });
-    }
-
-    if (search) {
-      query = query.ilike("name", `%${search}%`);
-    }
-
     const hasValidYear = Number.isInteger(year) && year >= 2000 && year <= 2100;
     const hasValidMonth = Number.isInteger(month) && month >= 1 && month <= 12;
-    if (hasValidYear && hasValidMonth) {
-      const fromDate = new Date(Date.UTC(year, month - 1, 1)).toISOString();
-      const toDate = new Date(Date.UTC(year, month, 1)).toISOString();
-      const targetDateColumn = status === "deleted" ? "deleted_at" : "created_at";
-      query = query.gte(targetDateColumn, fromDate).lt(targetDateColumn, toDate);
+
+    const runClientListQuery = async () => {
+      const supabase = createServiceClient();
+      let query = supabase
+        .from("clients")
+        .select("id, name, stress_factor, location, created_at, deleted_at", {
+          count: "exact",
+        })
+        .range(from, to);
+
+      if (status === "deleted") {
+        query = query.not("deleted_at", "is", null).order("deleted_at", {
+          ascending: false,
+        });
+      } else {
+        query = query.is("deleted_at", null).order("created_at", {
+          ascending: false,
+        });
+      }
+
+      if (search) {
+        query = query.ilike("name", `%${search}%`);
+      }
+
+      if (hasValidYear && hasValidMonth) {
+        const fromDate = new Date(Date.UTC(year, month - 1, 1)).toISOString();
+        const toDate = new Date(Date.UTC(year, month, 1)).toISOString();
+        const targetDateColumn = status === "deleted" ? "deleted_at" : "created_at";
+        query = query.gte(targetDateColumn, fromDate).lt(targetDateColumn, toDate);
+      }
+
+      return query;
+    };
+
+    for (let attempt = 1; attempt <= CLIENT_LIST_MAX_RETRIES; attempt += 1) {
+      const { data, count, error } = await runClientListQuery();
+      if (!error) {
+        return NextResponse.json({
+          items: (data ?? []).map((row) => ({
+            id: row.id,
+            name: row.name,
+            stressFactor: row.stress_factor,
+            location: row.location,
+            createdAt: row.created_at,
+            deletedAt: row.deleted_at,
+          })),
+          totalCount: count ?? 0,
+          page: safePage,
+          pageSize: safePageSize,
+        });
+      }
+
+      const canRetry = isRetryableNetworkIssue(error) && attempt < CLIENT_LIST_MAX_RETRIES;
+      if (!canRetry) {
+        logServerError("api/clients.get", error, {
+          attempt,
+          maxAttempts: CLIENT_LIST_MAX_RETRIES,
+          search,
+          status,
+          page: safePage,
+          pageSize: safePageSize,
+        });
+        return NextResponse.json({ message: "대상자 목록 조회에 실패했습니다." }, { status: 400 });
+      }
+
+      await sleep(attempt * 400);
     }
 
-    const { data, count, error } = await query;
-
-    if (error) {
-      logServerError("api/clients.get", error);
-      return NextResponse.json({ message: "대상자 목록 조회에 실패했습니다." }, { status: 400 });
-    }
-
-    return NextResponse.json({
-      items: (data ?? []).map((row) => ({
-        id: row.id,
-        name: row.name,
-        stressFactor: row.stress_factor,
-        location: row.location,
-        createdAt: row.created_at,
-        deletedAt: row.deleted_at,
-      })),
-      totalCount: count ?? 0,
-      page: safePage,
-      pageSize: safePageSize,
-    });
+    return NextResponse.json({ message: "대상자 목록 조회에 실패했습니다." }, { status: 400 });
   } catch (error) {
     logServerError("api/clients.get.unhandled", error);
     return NextResponse.json(
