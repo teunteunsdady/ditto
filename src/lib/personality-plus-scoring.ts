@@ -101,3 +101,10 @@ export function buildPersonalityPlusTypeScoresFromResultData(resultData: {
   const answers = normalizePersonalityPlusAnswers(resultData.answers, resultData.scale);
   return computePersonalityPlusTypeScores(answers);
 }
+
+/** 그래프/점수표 표시용: 유형 번호 1→9 순서 */
+export function orderPersonalityPlusTypeScoresForDisplay(
+  scores: PersonalityPlusTypeScore[],
+): PersonalityPlusTypeScore[] {
+  return [...scores].sort((a, b) => a.typeNo - b.typeNo);
+}

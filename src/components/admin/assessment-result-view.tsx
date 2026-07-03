@@ -9,6 +9,7 @@ import {
   detectPersonalityPlusScaleMode,
   isPersonalityPlusScoredQuestion,
   normalizePersonalityPlusScore,
+  orderPersonalityPlusTypeScoresForDisplay,
 } from "@/lib/personality-plus-scoring";
 
 type Point = { x: number; y: number };
@@ -528,10 +529,6 @@ function PersonalityPlusRadarChart({
 }) {
   const chartWrapRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const sortedScores = useMemo(
-    () => [...scores].sort((a, b) => b.score - a.score || a.typeNo - b.typeNo),
-    [scores],
-  );
   const pointsRef = useRef<PersonalityPlusChartPoint[]>([]);
   const touchTooltipTimerRef = useRef<number | null>(null);
   const [tooltip, setTooltip] = useState<{
@@ -756,7 +753,7 @@ function PersonalityPlusRadarChart({
           <aside className="rounded-lg border border-[#e3e8f2] bg-[#f8faff] p-3">
             <p className="text-xs font-semibold tracking-[0.06em] text-slate-600">항목별 점수</p>
             <ul className="mt-2 space-y-1.5 text-sm">
-              {sortedScores.map((item) => {
+              {scores.map((item) => {
                 const isPrimary = item.typeNo === primaryTypeNo;
                 return (
                   <li
@@ -1644,6 +1641,7 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
       answers: genericScaleAnswers,
       scale: genericScale,
     });
+    const displayTypeScores = orderPersonalityPlusTypeScoresForDisplay(typeScores);
 
     const sortedScores = [...typeScores].sort((a, b) => b.score - a.score);
     const primary = sortedScores[0] ?? { typeNo: 1, score: 0 };
@@ -1749,13 +1747,13 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
             <h3 className="mt-1 text-xl font-semibold text-slate-800">유형별 점수 분포</h3>
           </div>
           <PersonalityPlusScoreChart
-            scores={typeScores}
+            scores={displayTypeScores}
             primaryTypeNo={primary.typeNo}
             chartMin={chartMin}
             chartMax={chartMax}
           />
           <PersonalityPlusRadarChart
-            scores={typeScores}
+            scores={displayTypeScores}
             primaryTypeNo={primary.typeNo}
             chartMin={chartMin}
             chartMax={chartMax}
@@ -1777,7 +1775,7 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
           </button>
           {isPersonalityPlusScoreOpen ? (
             <div id="personality-plus-score-grid" className="mt-3 grid gap-2 sm:grid-cols-3 lg:grid-cols-9">
-              {typeScores.map((item) => {
+              {displayTypeScores.map((item) => {
                 const isPrimary = item.typeNo === primary.typeNo;
                 return (
                   <div
