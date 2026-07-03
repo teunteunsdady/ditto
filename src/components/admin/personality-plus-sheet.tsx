@@ -3,6 +3,12 @@
 import Link from "next/link";
 import { Fragment, useEffect, useMemo, useState } from "react";
 
+import {
+  PERSONALITY_PLUS_SECTION_TYPE_ORDER,
+  computePersonalityPlusTypeScores,
+  normalizePersonalityPlusAnswers,
+} from "@/lib/personality-plus-scoring";
+
 type PersonalityPlusSheetProps = {
   clientId?: string;
   testSlug: string;
@@ -16,8 +22,6 @@ type QuestionRow = {
   displayNo: string;
   text: string;
 };
-
-type ScaleOptionLike = { value?: unknown };
 
 const SCALE_OPTIONS = [
   { value: 2, label: "매우 그렇다" },
@@ -155,50 +159,6 @@ const QUESTIONS: QuestionRow[] = QUESTIONS_BY_SECTION.flatMap((sectionQuestions,
   })),
 );
 
-function parseScaleMode(scale: unknown): "new" | "legacy4" | "legacy5" {
-  if (!Array.isArray(scale)) return "new";
-  const values = scale
-    .map((item) => (item && typeof item === "object" ? Number((item as ScaleOptionLike).value) : NaN))
-    .filter((num) => Number.isFinite(num));
-  if (values.length === 0) return "new";
-
-  const uniq = new Set(values);
-  if (uniq.has(-2) || uniq.has(-1) || uniq.has(0) || uniq.has(1) || uniq.has(2)) {
-    return "new";
-  }
-  if ([1, 2, 3, 4].every((value) => uniq.has(value))) return "legacy4";
-  if ([1, 2, 3, 4, 5].every((value) => uniq.has(value))) return "legacy5";
-  return "new";
-}
-
-function toNormalizedScore(raw: number, mode: "new" | "legacy4" | "legacy5"): number {
-  if (mode === "legacy4") {
-    if (raw === 1) return -2;
-    if (raw === 2) return -1;
-    if (raw === 3) return 1;
-    if (raw === 4) return 2;
-    return NaN;
-  }
-  if (mode === "legacy5") {
-    if (raw < 1 || raw > 5) return NaN;
-    return raw - 3;
-  }
-  return raw;
-}
-
-function normalizeAnswerMap(value: unknown, scale: unknown): AnswerMap {
-  if (!value || typeof value !== "object") return {};
-  const scaleMode = parseScaleMode(scale);
-  return Object.entries(value as Record<string, unknown>).reduce<AnswerMap>((acc, [key, raw]) => {
-    const no = Number(key);
-    const score = toNormalizedScore(Number(raw), scaleMode);
-    if (!Number.isFinite(no) || !Number.isFinite(score)) return acc;
-    if (score < -2 || score > 2) return acc;
-    acc[no] = score;
-    return acc;
-  }, {});
-}
-
 export function PersonalityPlusSheet({ clientId, testSlug }: PersonalityPlusSheetProps) {
   const [answers, setAnswers] = useState<AnswerMap>({});
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
@@ -219,7 +179,7 @@ export function PersonalityPlusSheet({ clientId, testSlug }: PersonalityPlusShee
           | { item?: { resultData?: { answers?: unknown; scale?: unknown } | null } | null }
           | null;
         if (!response.ok || !payload?.item?.resultData) return;
-        setAnswers(normalizeAnswerMap(payload.item.resultData.answers, payload.item.resultData.scale));
+        setAnswers(normalizePersonalityPlusAnswers(payload.item.resultData.answers, payload.item.resultData.scale));
       } catch (error) {
         if (error instanceof DOMException && error.name === "AbortError") return;
       }
@@ -256,17 +216,21 @@ export function PersonalityPlusSheet({ clientId, testSlug }: PersonalityPlusShee
     setMissingNumbers([]);
 
     try {
+      const typeScores = computePersonalityPlusTypeScores(answers);
       const response = await fetch(`/api/clients/${clientId}/tests/${testSlug}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           resultData: {
             answers,
+            typeScores,
             questions: QUESTIONS.map((question) => `${question.displayNo} ${question.text}`),
             scale: SCALE_OPTIONS,
             meta: {
               title: "성격유형검사 (심화)",
               sections: QUESTIONS_BY_SECTION.length,
+              sectionTypeOrder: [...PERSONALITY_PLUS_SECTION_TYPE_ORDER],
+              scoringVersion: 2,
             },
           },
         }),

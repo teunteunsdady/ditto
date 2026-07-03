@@ -4,6 +4,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AlertCircle, BarChart3, CheckCircle2, Heart, Lightbulb } from "lucide-react";
 import { getCoreEmotionTypeName } from "@/lib/core-emotion-types";
 import { PERSONALITY_QUESTIONS, PERSONALITY_SCALE_OPTIONS } from "@/lib/personality-questions";
+import {
+  buildPersonalityPlusTypeScoresFromResultData,
+  detectPersonalityPlusScaleMode,
+  isPersonalityPlusScoredQuestion,
+  normalizePersonalityPlusScore,
+} from "@/lib/personality-plus-scoring";
 
 type Point = { x: number; y: number };
 type Stroke = {
@@ -42,8 +48,6 @@ type PersonalityTypeProfile = {
   strengths: string[];
   weaknesses: string[];
 };
-
-type PersonalityPlusScaleMode = "new" | "legacy4" | "legacy5";
 
 const PERSONALITY_PLUS_TYPE_PROFILES: Record<number, PersonalityTypeProfile> = {
   1: {
@@ -179,39 +183,6 @@ const PERSONALITY_STRESS_MAP: Record<number, number> = {
   8: 5,
   9: 6,
 };
-
-function detectPersonalityPlusScaleMode(
-  scale: Array<{ value: number; label: string }>,
-): PersonalityPlusScaleMode {
-  const values = new Set(scale.map((item) => item.value));
-  if (values.has(-2) || values.has(-1) || values.has(0) || values.has(1) || values.has(2)) {
-    return "new";
-  }
-  if ([1, 2, 3, 4].every((value) => values.has(value))) return "legacy4";
-  if ([1, 2, 3, 4, 5].every((value) => values.has(value))) return "legacy5";
-  return "new";
-}
-
-function normalizePersonalityPlusScore(raw: number, mode: PersonalityPlusScaleMode): number {
-  if (mode === "legacy4") {
-    if (raw === 1) return -2;
-    if (raw === 2) return -1;
-    if (raw === 3) return 1;
-    if (raw === 4) return 2;
-    return 0;
-  }
-  if (mode === "legacy5") {
-    if (raw < 1 || raw > 5) return 0;
-    return raw - 3;
-  }
-  return raw;
-}
-
-function isPersonalityPlusScoredQuestion(questionNo: number): boolean {
-  if (!Number.isFinite(questionNo) || questionNo <= 0) return false;
-  // 섹션당 11문항 중 11번째(※ 분별 문항)는 채점에서 제외
-  return questionNo % 11 !== 0;
-}
 
 function findNearestPersonalityPlusPoint(
   points: PersonalityPlusChartPoint[],
@@ -1669,27 +1640,9 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
     genericScaleQuestions.length > 0
   ) {
     const scaleMode = detectPersonalityPlusScaleMode(genericScale);
-    const personalityPlusAnswers = Object.entries(genericScaleAnswers).reduce<Record<number, number>>(
-      (acc, [key, raw]) => {
-        const no = Number(key);
-        if (!Number.isFinite(no)) return acc;
-        acc[no] = normalizePersonalityPlusScore(raw, scaleMode);
-        return acc;
-      },
-      {},
-    );
-    const typeScores = Array.from({ length: 9 }, (_, idx) => {
-      const typeNo = idx + 1;
-      const start = idx * 11 + 1;
-      const end = start + 10;
-      const score = Array.from({ length: end - start + 1 }, (_, offset) => start + offset).reduce(
-        (acc, questionNo) =>
-          isPersonalityPlusScoredQuestion(questionNo)
-            ? acc + (personalityPlusAnswers[questionNo] ?? 0)
-            : acc,
-        0,
-      );
-      return { typeNo, score };
+    const typeScores = buildPersonalityPlusTypeScoresFromResultData({
+      answers: genericScaleAnswers,
+      scale: genericScale,
     });
 
     const sortedScores = [...typeScores].sort((a, b) => b.score - a.score);
