@@ -42,11 +42,15 @@ function drawMindMapTemplate(ctx: CanvasRenderingContext2D, width: number, heigh
   // centerX / centerY: 전체 마인드맵 원의 중심점
   const centerX = width * 0.5;
   const centerY = height * 0.5;
+  // 템플릿 전체를 2/3로 축소해 주변 작성 영역을 넓힙니다.
+  // 보드 높이를 1.5배로 키워도 템플릿은 이전 비율 기준으로 유지합니다.
+  const mapScale = (2 / 3) * scale;
+  const sizeBase = Math.min(width, height / 1.5);
   // radius: 가운데 원 반지름, lineLen: 각 가지(선) 길이
-  const radius = Math.min(width, height) * 0.14;
-  const lineLen = Math.min(width, height) * 0.19;
+  const radius = sizeBase * 0.14 * (2 / 3);
+  const lineLen = sizeBase * 0.19 * (2 / 3);
   // labelGap: 선 끝 점과 라벨 텍스트 사이 간격
-  const labelGap = 22 * scale;
+  const labelGap = 22 * mapScale;
 
   // 12시(-90도)를 기준으로 19도씩 균등 분할해 19개 항목을 배치합니다.
   const labels = [
@@ -78,9 +82,9 @@ function drawMindMapTemplate(ctx: CanvasRenderingContext2D, width: number, heigh
   }));
 
   ctx.strokeStyle = color;
-  ctx.lineWidth = 1.8 * scale;
+  ctx.lineWidth = 1.8 * mapScale;
   ctx.fillStyle = color;
-  ctx.font = `700 ${Math.max(14, 26 * scale)}px sans-serif`;
+  ctx.font = `700 ${Math.max(12, 26 * mapScale)}px sans-serif`;
   ctx.textBaseline = "middle";
 
   // 1) 중심 원 -> 바깥으로 뻗는 선 + 끝 점(도트) 렌더링
@@ -98,7 +102,7 @@ function drawMindMapTemplate(ctx: CanvasRenderingContext2D, width: number, heigh
     ctx.stroke();
 
     ctx.beginPath();
-    ctx.arc(ex, ey, 3.2 * scale, 0, Math.PI * 2);
+    ctx.arc(ex, ey, 3.2 * mapScale, 0, Math.PI * 2);
     ctx.fill();
   });
 
@@ -110,7 +114,7 @@ function drawMindMapTemplate(ctx: CanvasRenderingContext2D, width: number, heigh
     const uy = Math.sin(angle);
     const ex = centerX + ux * (radius + lineLen);
     const ey = centerY + uy * (radius + lineLen);
-    const extraGap = extraLabelGapByText.has(node.text) ? 10 * scale : 0;
+    const extraGap = extraLabelGapByText.has(node.text) ? 10 * mapScale : 0;
     const tx = ex + ux * (labelGap + extraGap);
     const ty = ey + uy * (labelGap + extraGap);
 
@@ -126,7 +130,7 @@ function drawMindMapTemplate(ctx: CanvasRenderingContext2D, width: number, heigh
   });
 
   ctx.strokeStyle = color;
-  ctx.lineWidth = 6 * scale;
+  ctx.lineWidth = 6 * mapScale;
   ctx.beginPath();
   ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
   ctx.stroke();
@@ -346,7 +350,7 @@ export function MindMapBoard({ clientId }: MindMapBoardProps) {
       </div>
 
       <div className="rounded-xl border border-slate-300 bg-white p-1.5 sm:p-2">
-        <div ref={boardRef} className="relative w-full overflow-hidden rounded-md border border-slate-200 aspect-[16/10] lg:aspect-[16/9]">
+        <div ref={boardRef} className="relative w-full overflow-hidden rounded-md border border-slate-200 aspect-[16/15] lg:aspect-[32/27]">
           <canvas
             ref={canvasRef}
             className={`absolute inset-0 h-full w-full touch-none ${mode === "erase" ? "cursor-cell" : "cursor-crosshair"}`}

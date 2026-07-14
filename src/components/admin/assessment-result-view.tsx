@@ -1107,9 +1107,11 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
     // 저장된 필기(strokes)와 배경 템플릿이 정확히 겹칩니다.
     const centerX = width * 0.5;
     const centerY = height * 0.5;
-    const radius = Math.min(width, height) * 0.14;
-    const lineLen = Math.min(width, height) * 0.19;
-    const labelGap = 22 * scale;
+    const mapScale = (2 / 3) * scale;
+    const sizeBase = Math.min(width, height / 1.5);
+    const radius = sizeBase * 0.14 * (2 / 3);
+    const lineLen = sizeBase * 0.19 * (2 / 3);
+    const labelGap = 22 * mapScale;
 
     // 12시(-90도)를 기준으로 19도씩 균등 분할해 19개 항목을 배치합니다.
     const labels = [
@@ -1141,9 +1143,9 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
     }));
 
     ctx.strokeStyle = color;
-    ctx.lineWidth = 1.8 * scale;
+    ctx.lineWidth = 1.8 * mapScale;
     ctx.fillStyle = color;
-    ctx.font = `700 ${Math.max(14, 26 * scale)}px sans-serif`;
+    ctx.font = `700 ${Math.max(12, 26 * mapScale)}px sans-serif`;
     ctx.textBaseline = "middle";
 
     // 1) 선 + 끝 점 렌더링
@@ -1161,7 +1163,7 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
       ctx.stroke();
 
       ctx.beginPath();
-      ctx.arc(ex, ey, 3.2 * scale, 0, Math.PI * 2);
+      ctx.arc(ex, ey, 3.2 * mapScale, 0, Math.PI * 2);
       ctx.fill();
     });
 
@@ -1173,7 +1175,7 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
       const uy = Math.sin(angle);
       const ex = centerX + ux * (radius + lineLen);
       const ey = centerY + uy * (radius + lineLen);
-      const extraGap = extraLabelGapByText.has(node.text) ? 10 * scale : 0;
+      const extraGap = extraLabelGapByText.has(node.text) ? 10 * mapScale : 0;
       const tx = ex + ux * (labelGap + extraGap);
       const ty = ey + uy * (labelGap + extraGap);
 
@@ -1188,7 +1190,7 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
     });
 
     ctx.strokeStyle = color;
-    ctx.lineWidth = 6 * scale;
+    ctx.lineWidth = 6 * mapScale;
     ctx.beginPath();
     ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
     ctx.stroke();
@@ -2062,11 +2064,16 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
     );
   }
 
+  const boardAspectClass =
+    testSlug === "mind-map"
+      ? "aspect-[16/15] lg:aspect-[32/27]"
+      : "aspect-[16/10] lg:aspect-[16/9]";
+
   return (
     <div className="rounded-xl border border-slate-300 bg-white p-1.5 sm:p-2">
       <div
         ref={boardRef}
-        className="relative w-full overflow-hidden rounded-md border border-slate-200 aspect-[16/10] lg:aspect-[16/9]"
+        className={`relative w-full overflow-hidden rounded-md border border-slate-200 ${boardAspectClass}`}
       >
         <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
       </div>
