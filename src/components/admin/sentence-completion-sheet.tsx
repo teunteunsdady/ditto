@@ -40,7 +40,7 @@ const SENTENCE_PROMPTS: SentencePrompt[] = [
   { no: 17, text: "어렸을 때 잘못했다고 느끼는 것은" },
   { no: 18, text: "내가 보는 나의 앞날은" },
   { no: 19, text: "대개 아버지들이란" },
-  { no: 20, text: "내 생각에 남자들이랑" },
+  { no: 20, text: "내 생각에 남자들이란" },
   { no: 21, text: "다른 친구들이 모르는 나만의 두려움은" },
   { no: 22, text: "내가 싫어하는 사람은" },
   { no: 23, text: "결혼 생활에 대한 나의 생각은" },
