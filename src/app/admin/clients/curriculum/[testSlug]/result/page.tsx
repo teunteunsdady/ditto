@@ -94,7 +94,11 @@ export default async function CurriculumResultPage({ params, searchParams }: Res
             </div>
           ) : null}
           {data?.result_data ? (
-            <AssessmentResultView testSlug={currentTest.slug} resultData={data.result_data} />
+            <AssessmentResultView
+              testSlug={currentTest.slug}
+              resultData={data.result_data}
+              clientId={clientId}
+            />
           ) : (
             <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-sm text-slate-600">
               저장된 결과가 없습니다. 검사 화면에서 저장 버튼을 눌러 결과를 먼저 저장해주세요.

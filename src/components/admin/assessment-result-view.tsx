@@ -23,6 +23,7 @@ type Stroke = {
 type AssessmentResultViewProps = {
   testSlug: string;
   resultData: unknown;
+  clientId?: string;
 };
 
 type PersonalityScorePoint = {
@@ -775,13 +776,17 @@ function PersonalityPlusRadarChart({
   );
 }
 
-export function AssessmentResultView({ testSlug, resultData }: AssessmentResultViewProps) {
+export function AssessmentResultView({ testSlug, resultData, clientId }: AssessmentResultViewProps) {
   const boardRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [showAttachmentPointTooltip, setShowAttachmentPointTooltip] = useState(false);
   const [isAttachmentDetailOpen, setIsAttachmentDetailOpen] = useState(false);
   const [isPersonalityPlusScoreOpen, setIsPersonalityPlusScoreOpen] = useState(false);
   const [isPersonalityPlusDetailOpen, setIsPersonalityPlusDetailOpen] = useState(false);
+  const [isSentenceEditing, setIsSentenceEditing] = useState(false);
+  const [sentenceAnswerDraft, setSentenceAnswerDraft] = useState<Record<number, string>>({});
+  const [sentenceSaveState, setSentenceSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [sentenceSaveMessage, setSentenceSaveMessage] = useState("");
   const strokes = useMemo(() => normalizeStrokes(resultData), [resultData]);
   const personalityAnswers = useMemo(() => {
     if (!resultData || typeof resultData !== "object") return {} as Record<number, number>;
@@ -887,6 +892,51 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
       })
       .filter((item): item is { no: number; text: string } => item !== null);
   }, [resultData]);
+
+  useEffect(() => {
+    setSentenceAnswerDraft(sentenceAnswers);
+  }, [sentenceAnswers]);
+
+  const saveSentenceEdits = useCallback(async () => {
+    if (!clientId) {
+      setSentenceSaveState("error");
+      setSentenceSaveMessage("대상자 정보가 없어 저장할 수 없습니다.");
+      return;
+    }
+
+    setSentenceSaveState("saving");
+    setSentenceSaveMessage("");
+
+    try {
+      const response = await fetch(`/api/clients/${clientId}/tests/${testSlug}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          resultData: {
+            prompts: sentencePrompts,
+            answers: sentenceAnswerDraft,
+            handwrittenAnswers: sentenceHandwrittenAnswers,
+          },
+        }),
+      });
+      const payload = (await response.json().catch(() => null)) as { message?: string } | null;
+      if (!response.ok) throw new Error(payload?.message ?? "저장에 실패했습니다.");
+      setSentenceSaveState("saved");
+      setSentenceSaveMessage("수정한 내용이 저장되었습니다.");
+      setIsSentenceEditing(false);
+    } catch (error) {
+      setSentenceSaveState("error");
+      setSentenceSaveMessage(error instanceof Error ? error.message : "저장 중 오류가 발생했습니다.");
+    }
+  }, [clientId, sentenceAnswerDraft, sentenceHandwrittenAnswers, sentencePrompts, testSlug]);
+
+  const cancelSentenceEdits = useCallback(() => {
+    setSentenceAnswerDraft(sentenceAnswers);
+    setIsSentenceEditing(false);
+    setSentenceSaveState("idle");
+    setSentenceSaveMessage("");
+  }, [sentenceAnswers]);
+
   const coreEmotionTypes = useMemo(() => {
     if (!resultData || typeof resultData !== "object") return [] as Array<{
       typeNo: number;
@@ -1954,29 +2004,82 @@ export function AssessmentResultView({ testSlug, resultData }: AssessmentResultV
 
   if (testSlug === "sentence-completion" && sentencePrompts.length > 0) {
     return (
-      <div className="space-y-3 rounded-xl border border-slate-300 bg-white p-4 sm:p-6">
-        {sentencePrompts.map((prompt, index) => {
-          const no = prompt.no || index + 1;
-          return (
-            <article key={no} className="rounded-lg border border-slate-200 bg-slate-50 p-3 sm:p-4">
-              <p className="text-sm font-semibold text-slate-800">
-                {no}. {prompt.text}
-              </p>
-              <p className="mt-2 whitespace-pre-wrap text-sm text-slate-700">
-                {sentenceAnswers[no] || "-"}
-              </p>
-              {sentenceHandwrittenAnswers[no] ? (
-                <div className="mt-3 overflow-hidden rounded-md border border-slate-200 bg-white">
-                  <img
-                    src={sentenceHandwrittenAnswers[no]}
-                    alt={`${no}번 문항 필기 답변`}
-                    className="w-full object-contain"
+      <div className="space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
+          <p className="text-xs text-slate-500">답변 내용을 확인하고 필요하면 수정할 수 있습니다.</p>
+          <div className="flex items-center gap-2">
+            {isSentenceEditing ? (
+              <>
+                <button
+                  type="button"
+                  onClick={cancelSentenceEdits}
+                  disabled={sentenceSaveState === "saving"}
+                  className="rounded-md border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  취소
+                </button>
+                <button
+                  type="button"
+                  onClick={saveSentenceEdits}
+                  disabled={sentenceSaveState === "saving"}
+                  className="rounded-md border border-[#bcc7c1] bg-white px-3 py-1.5 text-xs font-semibold text-[#2f4f46] hover:bg-[#edf3ef] disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {sentenceSaveState === "saving" ? "저장 중..." : "저장"}
+                </button>
+              </>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setIsSentenceEditing(true)}
+                className="rounded-md border border-[#bcc7c1] bg-white px-3 py-1.5 text-xs font-semibold text-[#2f4f46] hover:bg-[#edf3ef]"
+              >
+                ✏️ 내용 수정
+              </button>
+            )}
+          </div>
+        </div>
+        {sentenceSaveMessage ? (
+          <p className={`text-xs ${sentenceSaveState === "error" ? "text-rose-600" : "text-emerald-600"}`}>
+            {sentenceSaveMessage}
+          </p>
+        ) : null}
+        <div className="space-y-3 rounded-xl border border-slate-300 bg-white p-4 sm:p-6">
+          {sentencePrompts.map((prompt, index) => {
+            const no = prompt.no || index + 1;
+            return (
+              <article key={no} className="rounded-lg border border-slate-200 bg-slate-50 p-3 sm:p-4">
+                <p className="text-sm font-semibold text-slate-800">
+                  {no}. {prompt.text}
+                </p>
+                {isSentenceEditing ? (
+                  <textarea
+                    value={sentenceAnswerDraft[no] ?? ""}
+                    onChange={(event) => {
+                      const next = event.target.value;
+                      setSentenceAnswerDraft((prev) => ({ ...prev, [no]: next }));
+                    }}
+                    rows={3}
+                    className="mt-2 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-[#2f4f46] focus:outline-none"
+                    placeholder="문장을 완성해 입력해주세요."
                   />
-                </div>
-              ) : null}
-            </article>
-          );
-        })}
+                ) : (
+                  <p className="mt-2 whitespace-pre-wrap text-sm text-slate-700">
+                    {sentenceAnswerDraft[no] || "-"}
+                  </p>
+                )}
+                {sentenceHandwrittenAnswers[no] ? (
+                  <div className="mt-3 overflow-hidden rounded-md border border-slate-200 bg-white">
+                    <img
+                      src={sentenceHandwrittenAnswers[no]}
+                      alt={`${no}번 문항 필기 답변`}
+                      className="w-full object-contain"
+                    />
+                  </div>
+                ) : null}
+              </article>
+            );
+          })}
+        </div>
       </div>
     );
   }
